@@ -1,0 +1,38 @@
+#############################
+# PYTHON
+#############################
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+
+#############################
+# UV
+#############################
+.uv/
+
+
+#############################
+# Virtual Environments
+#############################
+.venv/
+venv/
+env/
+
+
+#############################
+# Editors
+#############################
+.vscode/
+#vim 
+*.swp
+# Emacs (As if we will ever use Emacs)
+*~
