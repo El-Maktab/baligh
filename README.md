@@ -22,3 +22,8 @@
 > Once we have a first stable release, we will update this readme with more details on how to try it out yourself.
 > To follow our progress, you can give us a star :) and follow [El-Maktab](https://github.com/El-Maktab).
 > If you have any questions or suggestions, please don't hesitate to reach out to us! We appreciate any feedback and support.
+
+## Project Documents
+
+Research notes, documents, and project deliverables are maintained in a separate repository:
+[El-Maktab/baligh-documents](https://github.com/El-Maktab/baligh-documents)
