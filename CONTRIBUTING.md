@@ -10,6 +10,7 @@ This document outlines the conventions and guidelines to follow when working on 
   - [Table of Contents](#table-of-contents)
   - [File Structure](#file-structure)
     - [Module Structure](#module-structure)
+  - [Preferred Tooling](#preferred-tooling)
   - [Branch Conventions](#branch-conventions)
   - [Commit Conventions](#commit-conventions)
     - [Types](#types)
@@ -59,6 +60,21 @@ Each service under `src/services/` follows this internal layout:
 ├── serving/      # Inference logic and model serving
 └── utils/        # Helper functions specific to this service
 ```
+
+---
+
+## Preferred Tooling
+
+When possible, prefer the following tools in this project:
+
+- `uv` for Python environment and dependency management.
+  Docs: <https://docs.astral.sh/uv/>
+- `Great Expectations` for data validation and data quality checks.
+  Docs: <https://docs.greatexpectations.io/docs/home>
+- `MLflow` for tracking and recording all experiments.
+  Docs: <https://mlflow.org/docs/latest/index.html>
+- `FastAPI` for backend/API implementation.
+  Docs: <https://fastapi.tiangolo.com/>
 
 ---
 
