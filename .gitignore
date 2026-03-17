@@ -32,7 +32,7 @@ env/
 # Editors
 #############################
 .vscode/
-#vim 
+# vim
 *.swp
 # Emacs (As if we will ever use Emacs)
 *~
