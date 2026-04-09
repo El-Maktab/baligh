@@ -51,7 +51,7 @@
 | Field           | Type            | Description                                                        |
 | --------------- | --------------- | ------------------------------------------------------------------ |
 | `token_index`   | `int`           | Index of the corresponding `Token`                                 |
-| `lemma`         | `str`           | Base/root form of the token                                        |
+| `lemma`         | `str\|null`     | Base/root form of the token; `null` for punctuation and non-Arabic tokens  |
 | `pos`           | `str`           | Part-of-speech tag (see POS Tagset below)                          |
 | `gender`        | `str\|null`      | `masculine`, `feminine`, or `null` if not applicable               |
 | `number`        | `str\|null`      | `singular`, `dual`, `plural`, or `null` if not applicable          |
@@ -72,7 +72,7 @@
 
 ## Pipeline Stages
 
-```
+```text
 Raw text + cursor_offset
         │
         ▼
@@ -111,6 +111,8 @@ Determines whether the last token in the input is complete or still being typed 
 
 > [!NOTE]
 > `current_fragment` receives only light normalization (alif variant canonicalization). It does **not** go through segmentation or morphological analysis. It is passed as-is to the NWS module for trie lookup.
+
+<!-- -->
 
 > [!IMPORTANT]
 > GED and GEC must only operate on `tokens` (the completed prefix). The `current_fragment` must never be included in error detection.
