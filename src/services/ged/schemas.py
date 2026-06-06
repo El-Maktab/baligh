@@ -6,7 +6,7 @@ References:
 - docs/contracts/ged-contract.md
 - src/services/ged/contracts.py
 
-Author:
+Authors:
     Amir Anwar
 """
 

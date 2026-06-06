@@ -1,4 +1,4 @@
-"""Smoke test inteneded to make sure that tests run."""
+"""Smoke test intended to make sure that tests run."""
 
 
 def test_smoke() -> None:
