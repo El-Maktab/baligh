@@ -27,6 +27,7 @@ Each submodule returns a status plus a list of candidate edits.
 | `text`           | `str`                 | Original surface text                     |
 | `tokens`         | `list[Token]`         | Token boundaries aligned to original text |
 | `morph_features` | `list[MorphAnalysis]` | Morphological analysis per token          |
+| `errors_span`    | `list[ErrorSpan]`     | GED output                                |
 
 ---
 
