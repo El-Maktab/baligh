@@ -7,6 +7,8 @@ dependencies = [
     "farasapy>=0.1.1",
     "pydantic>=2.13.4",
     "torch<2.3",
+    "arramooz-pysqlite",
+    "sparqlwrapper",
 ]
 
 [dependency-groups]
