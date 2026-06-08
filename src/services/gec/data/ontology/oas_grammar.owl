@@ -1,0 +1,2406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY arabe "http://arabicontology.org/oas_grammar.owl#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:arabe="http://arabicontology.org/oas_grammar.owl#">
+    <Ontology rdf:about="http://arabicontology.org/oas_grammar.owl">
+        <rdfs:label xml:lang="ar">انطلوجيا النحو</rdfs:label>
+        <rdfs:isDefinedBy>http://arabicontology.org/oas_grammar.owl#</rdfs:isDefinedBy>
+        <rdfs:comment xml:lang="ar">انطلوجيا النحو العربي تروم توصيف المفاهيم والعلاقات النحوية</rdfs:comment>
+    </Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_أخوات_ان -->
+
+    <ObjectProperty rdf:about="&arabe;اسم_أخوات_ان">
+        <rdfs:comment rdf:datatype="&xsd;string">يصل بين ناسخ حرفي واسم منصوب</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_ان"/>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <propertyDisjointWith rdf:resource="&arabe;بدل"/>
+        <propertyDisjointWith rdf:resource="&arabe;بدل_من_حرف"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_أخوات_كاد -->
+
+    <ObjectProperty rdf:about="&arabe;اسم_أخوات_كاد">
+        <rdfs:comment rdf:datatype="&xsd;string">اسم كاد وأخواتها هي علاقة تربط كل اسم مرفوع بفعل من أفعال القلوب</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_كاد"/>
+        <propertyDisjointWith rdf:resource="&arabe;اسم_أخوات_كان"/>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <propertyDisjointWith rdf:resource="&arabe;بدل"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_أخوات_كان -->
+
+    <ObjectProperty rdf:about="&arabe;اسم_أخوات_كان">
+        <rdfs:comment rdf:datatype="&xsd;string">اسم كان وأخواتها هي علاقة تربط  اسم مرفوع بفعل ناقص من أخوات كان</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_كان"/>
+        <propertyDisjointWith rdf:resource="&arabe;اسم_الحروف_النافية"/>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <propertyDisjointWith rdf:resource="&arabe;بدل"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_الحروف_النافية -->
+
+    <ObjectProperty rdf:about="&arabe;اسم_الحروف_النافية">
+        <rdfs:comment rdf:datatype="&xsd;string">أشبهت هذه الحروف ليس فرفعت المبتدأ ونصبت الخبر وبناء على ذلك فإن (اسم الحروف النافية) هي علاقة تربط بين اسم مرفوع وحرف ينتمي إلى زمرة من أشبه ليس</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <propertyDisjointWith rdf:resource="&arabe;بدل"/>
+        <rdfs:range rdf:resource="&arabe;حروف_نافية"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_لا_النافية_للجنس -->
+
+    <ObjectProperty rdf:about="&arabe;اسم_لا_النافية_للجنس">
+        <rdfs:comment rdf:datatype="&xsd;string">علاقة تربط بين اسم منصوب ولا النافية للجنس</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:range rdf:resource="&arabe;لا_النافية_للجنس"/>
+        <rdfs:domain rdf:resource="&arabe;نكرة_منصوبة"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اعرابه -->
+
+    <ObjectProperty rdf:about="&arabe;اعرابه">
+        <rdfs:comment rdf:datatype="&xsd;string">هي علاقة تبين حالة الجملة أو الاسم ووظيفتها النحوية داخل التركيب النحوي.إذا كان للجملة أو الاسم محلا للإعراب ربطت العلاقة بين الجملة أو الاسم وبين فئة علامة الاعراب .</rdfs:comment>
+        <propertyDisjointWith rdf:resource="&arabe;بناؤه"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بدل -->
+
+    <ObjectProperty rdf:about="&arabe;بدل">
+        <propertyDisjointWith rdf:resource="&arabe;خبر_أخوات_ان"/>
+        <propertyDisjointWith rdf:resource="&arabe;خبر_أخوات_كاد"/>
+        <propertyDisjointWith rdf:resource="&arabe;خبر_أخوات_كان"/>
+        <propertyDisjointWith rdf:resource="&arabe;خبر_الحروف_النافية"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بدل_من_اسم -->
+
+    <ObjectProperty rdf:about="&arabe;بدل_من_اسم">
+        <rdfs:domain rdf:resource="&arabe;اسم"/>
+        <rdfs:range rdf:resource="&arabe;اسم"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;بدل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بدل_من_جمل -->
+
+    <ObjectProperty rdf:about="&arabe;بدل_من_جمل">
+        <rdfs:subPropertyOf rdf:resource="&arabe;بدل"/>
+        <rdfs:domain rdf:resource="&arabe;جملة"/>
+        <rdfs:range rdf:resource="&arabe;جملة"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بدل_من_حرف -->
+
+    <ObjectProperty rdf:about="&arabe;بدل_من_حرف">
+        <rdfs:subPropertyOf rdf:resource="&arabe;بدل"/>
+        <rdfs:range rdf:resource="&arabe;حرف"/>
+        <rdfs:domain rdf:resource="&arabe;حرف"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بدل_من_فعل -->
+
+    <ObjectProperty rdf:about="&arabe;بدل_من_فعل">
+        <rdfs:subPropertyOf rdf:resource="&arabe;بدل"/>
+        <rdfs:domain rdf:resource="&arabe;فعل"/>
+        <rdfs:range rdf:resource="&arabe;فعل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#بناؤه -->
+
+    <ObjectProperty rdf:about="&arabe;بناؤه">
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تطابق -->
+
+    <ObjectProperty rdf:about="&arabe;تطابق">
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تطابق_اسم_اسم -->
+
+    <ObjectProperty rdf:about="&arabe;تطابق_اسم_اسم">
+        <rdfs:subPropertyOf rdf:resource="&arabe;تطابق"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تطابق_فعل_اسم -->
+
+    <ObjectProperty rdf:about="&arabe;تطابق_فعل_اسم">
+        <rdfs:subPropertyOf rdf:resource="&arabe;تطابق"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تعيينه -->
+
+    <ObjectProperty rdf:about="&arabe;تعيينه">
+        <rdfs:domain rdf:resource="&arabe;اسم"/>
+        <rdfs:range rdf:resource="&arabe;تعيين"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تمييز -->
+
+    <ObjectProperty rdf:about="&arabe;تمييز">
+        <rdfs:comment rdf:datatype="&xsd;string">علاقة تربط بين اسم منصوب واسم أو فعل</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تمييز_ذات -->
+
+    <ObjectProperty rdf:about="&arabe;تمييز_ذات">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين نكرة منصوبة واسم قبله.</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:range rdf:resource="&arabe;اسم_نكرة"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;تمييز"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تمييز_نسبة -->
+
+    <ObjectProperty rdf:about="&arabe;تمييز_نسبة">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين نكرة منصوبة أو جملة في محل نصب واسم قبله.</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;تمييز"/>
+        <rdfs:range rdf:resource="&arabe;فعل_تام"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد: تكرير اللفظ لتثبيته في النفس، اسما كان أو فعلا أو حرفا أو ضميرا. ويتبع في إعرابه إعراب المؤكد قبله، رفعا ونصبا وجرا وبناء عليه فإن التوكيد علاقة تربط بين اسم واسم أو حرف وحرف أو فعل وفعل أو جملة وجملة</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد_اسمي -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد_اسمي">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد الاسمي هي علاقة تربط بين اسم واسم</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم"/>
+        <rdfs:range rdf:resource="&arabe;اسم"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;توكيد_لفظي"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد_حرفي -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد_حرفي">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد الحرفي هي علاقة تربط بين حرف وحرف</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;توكيد_لفظي"/>
+        <rdfs:range rdf:resource="&arabe;حرف"/>
+        <rdfs:domain rdf:resource="&arabe;حرف"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد_فعلي -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد_فعلي">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد الفعلي هي علاقة تربط بين فعل وفعل</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;توكيد_لفظي"/>
+        <rdfs:domain rdf:resource="&arabe;فعل"/>
+        <rdfs:range rdf:resource="&arabe;فعل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد_لفظي -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد_لفظي">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد اللفظي هي علاقة تربط اسم واسم أو فعل وفعل أو حرف بحرف أو جملة بمثلها.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;توكيد"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#توكيد_معنوي -->
+
+    <ObjectProperty rdf:about="&arabe;توكيد_معنوي">
+        <rdfs:comment rdf:datatype="&xsd;string">التوكيد المعنوي هي علاقة تربط بين الكلمات السبع الآتية :[العين ،والنفس، وجميع، وعامة، وكل، وكلا، وكلتا] وبين اللفظ المؤكد</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;توكيد"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جنسه -->
+
+    <ObjectProperty rdf:about="&arabe;جنسه">
+        <rdfs:comment rdf:datatype="&xsd;string">علاقة تختص ببيان جنس الاسم من حيث التذكير والتأنيث.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حال -->
+
+    <ObjectProperty rdf:about="&arabe;حال">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم منصوب أو جملة في محل نصب وفعل أو شبهه.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:domain rdf:resource="&arabe;نكرة_منصوبة"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_أخوات_ان -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_أخوات_ان">
+        <rdfs:comment rdf:datatype="&xsd;string">خبر أخوات إن هي علاقة تربط اسم مرفوع أو جملة في محل رفع بناسخ حرفي</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_ان"/>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_أخوات_كاد -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_أخوات_كاد">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم منصوب أو جملة فعلية في محل نصب وبين احدى حروف أخوات كاد</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_كاد"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:domain rdf:resource="&arabe;منصوبة_المحل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_أخوات_كان -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_أخوات_كان">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم منصوب أو جملة في محل نصب وبين احدى حروف أخوات كان</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;أخوات_كان"/>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <propertyDisjointWith rdf:resource="&arabe;خبر_الحروف_النافية"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_الحروف_النافية -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_الحروف_النافية">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم منصوب وبين احدى الحروف النافية</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:range rdf:resource="&arabe;حروف_نافية"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_لا_النافية_للجنس -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_لا_النافية_للجنس">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط اسم نكرة منصوبة بلا النافية للجنس على سبيل التنصيص لا على سبيل الاحتمال.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:range rdf:resource="&arabe;لا_النافية_للجنس"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#خبر_مبتدأ -->
+
+    <ObjectProperty rdf:about="&arabe;خبر_مبتدأ">
+        <rdfs:comment rdf:datatype="&xsd;string">خبر مبتدأ يربط  اسم مرفوع أو جملة فعلية في محل رفع باسم مرفوع</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:range rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#زمنه -->
+
+    <ObjectProperty rdf:about="&arabe;زمنه">
+        <rdfs:comment rdf:datatype="&xsd;string">يختص الزمن بالفعل فهو علاقة خاصة تربط الفعل بفئة الزمن التي تتضمن الماضي والمضارع والمستقبل</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;زمن"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+        <rdfs:domain rdf:resource="&arabe;فعل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#صلة -->
+
+    <ObjectProperty rdf:about="&arabe;صلة">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين صلة وهي إما أن تكون جملة أو شبه جملة (الظرف والمجرور) أو وصف صريح، وبين موصول حرفي أو موصول اسمي</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;اسم_موصول"/>
+        <rdfs:domain rdf:resource="&arabe;جملة"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#عدده -->
+
+    <ObjectProperty rdf:about="&arabe;عدده">
+        <rdfs:comment rdf:datatype="&xsd;string">عدده عي علاقة تربط بين اسم وفئة العدد التي تتضمن عنصرين مفرد وجمع.</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;عدد"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+        <rdfs:domain rdf:resource="&arabe;كلمة"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علاقة_عاملية -->
+
+    <ObjectProperty rdf:about="&arabe;علاقة_عاملية"/>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علاقة_وظيفية -->
+
+    <ObjectProperty rdf:about="&arabe;علاقة_وظيفية"/>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فاعل -->
+
+    <ObjectProperty rdf:about="&arabe;فاعل">
+        <rdfs:comment rdf:datatype="&xsd;string">الفاعلية علاقة تربط الفعل أو شبهه(اسم الفاعل،اسم المفعول، المصدر..) واسما مرفوعا، واتجاه العلاقة معتبر نحوا،فقد شرط النحويون أن يتقدم الفعل أو شبهه على الاسم المرفوع بالفعل على جهة قيامه به أو وقوعه منه</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <propertyDisjointWith rdf:resource="&arabe;نائب_الفاعل"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مبتدأ -->
+
+    <ObjectProperty rdf:about="&arabe;مبتدأ">
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#متعلق -->
+
+    <ObjectProperty rdf:about="&arabe;متعلق">
+        <rdfs:comment rdf:datatype="&xsd;string">التعلق علاقة تربط بين شبه جملة (الظرف أو الجار والمجرور) وبين فعل أو شبهه.</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;شبه_جملة"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:range rdf:resource="&arabe;فعل"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرور -->
+
+    <ObjectProperty rdf:about="&arabe;مجرور">
+        <rdfs:comment rdf:datatype="&xsd;string">الجر بحرف الجر علاقة تربط حرف من حروف الجر باسم مجرور</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرور_بالاضافة -->
+
+    <ObjectProperty rdf:about="&arabe;مجرور_بالاضافة">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم مجرور وبين اسم نكرة.</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;اسم_نكرة"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مجرور"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرور_بالمجاورة -->
+
+    <ObjectProperty rdf:about="&arabe;مجرور_بالمجاورة">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين اسم مجرور وآخر.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مجرور"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرور_بحرف -->
+
+    <ObjectProperty rdf:about="&arabe;مجرور_بحرف">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط اسم مجرور بحرف من حروف الجر</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مجرور"/>
+        <rdfs:range rdf:resource="&arabe;حرف_جر"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مجرور"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجزوم -->
+
+    <ObjectProperty rdf:about="&arabe;مجزوم">
+        <rdfs:range rdf:resource="&arabe;حرف_جزم"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:domain rdf:resource="&arabe;فعل_مجزوم"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجزوم_بالطلب -->
+
+    <ObjectProperty rdf:about="&arabe;مجزوم_بالطلب">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين عامل معنوي وفعل مضارع مجزوم.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مجزوم"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجزوم_بحرف -->
+
+    <ObjectProperty rdf:about="&arabe;مجزوم_بحرف">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين جوازم الفعل المضارع وبين فعل مضارع.</rdfs:comment>
+        <rdfs:range rdf:resource="&arabe;حرف_جزم"/>
+        <rdfs:domain rdf:resource="&arabe;فعل_مجزوم"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مجزوم"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مضاف_اليه -->
+
+    <ObjectProperty rdf:about="&arabe;مضاف_اليه">
+        <rdfs:comment rdf:datatype="&xsd;string">الاضافة علاقة تربط اسم نكرة باسم مجرور</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مجرور"/>
+        <rdfs:range rdf:resource="&arabe;اسم_نكرة"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معطوف -->
+
+    <ObjectProperty rdf:about="&arabe;معطوف">
+        <rdfs:comment rdf:datatype="&xsd;string">معطوف علاقة تعطف الاسم على الاسم، والفعل على الفعل بغير شروط.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول">
+        <rdfs:comment rdf:datatype="&xsd;string">المفعولية هي علاقة تربط اسم منصوب بفعل متعدي أو شبهه</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول_به -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول_به">
+        <rdfs:comment rdf:datatype="&xsd;string">تصل علاقة المفعولية بين اسم منصوب أو ما يقوم مقامه من المصادر المؤولة أو الجمل وبين فعل متعدي</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مفعول"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_فيه"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_لاجله"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_مطلق"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_معه"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول_فيه -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول_فيه">
+        <rdfs:comment rdf:datatype="&xsd;string">يصل بين فعل واسم ذكر فضلة لأجل أمر وقع فيه الفعل: من زمان مطلق، أو مكان مبهم، أو مفيد مقدارا، أو مادته مادة عامله كـصمت يوما..</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مفعول"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_لاجله"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_مطلق"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_معه"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول_لاجله -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول_لاجله">
+        <rdfs:comment rdf:datatype="&xsd;string">يصل بين فعل ومصدر فضلة معلل لحدث شاركه في الزمان والفاعل</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مفعول"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_مطلق"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_معه"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول_مطلق -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول_مطلق">
+        <rdfs:comment rdf:datatype="&xsd;string">يصل بين فعل ومصدر فضلة مؤكد لعامله أو مبين لنوعه او لعدده</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مفعول"/>
+        <propertyDisjointWith rdf:resource="&arabe;مفعول_معه"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفعول_معه -->
+
+    <ObjectProperty rdf:about="&arabe;مفعول_معه">
+        <rdfs:comment rdf:datatype="&xsd;string">صل بين فعل واسم صريح واقع بعد الواو الدالة على المصاحبة وأن تكون الواو مسبوقة بفعل</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;مفعول"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_عامل"/>
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#منادى -->
+
+    <ObjectProperty rdf:about="&arabe;منادى">
+        <rdfs:comment rdf:datatype="&xsd;string">تربط بين أحد أحرف النداء واسم</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:range rdf:resource="&arabe;حرف_نداء"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#نائب_الفاعل -->
+
+    <ObjectProperty rdf:about="&arabe;نائب_الفاعل">
+        <rdfs:comment rdf:datatype="&xsd;string">إذا حُذف الفاعل أقيم نائبه مقامه، وإن لم يكن في الكلام مفعول به لعدم تعدي الفعل ، سدت شبه الجملة مسد نائب الفاعل ونقصد بشبه الجملة الظرف والجار والمجرور.وبناء على ذلك فإن نائب الفاعل علاقة تربط بين اسم مرفوع أو شبه جملة في محل رفع وفعل مبني للمجهول أو اسم مفعول.</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم_مرفوع"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+        <rdfs:range>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_المفعول"/>
+                    <rdf:Description rdf:about="&arabe;فعل_مبني_للمجهول"/>
+                </unionOf>
+            </Class>
+        </rdfs:range>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#نعت -->
+
+    <ObjectProperty rdf:about="&arabe;نعت">
+        <rdfs:comment rdf:datatype="&xsd;string">النعت علاقة تربط بين اسم وآخر موافق له في التعريف والتنكير، والإفراد والتثنية والجمع،والتذكير والتأنيث.</rdfs:comment>
+        <rdfs:domain rdf:resource="&arabe;اسم"/>
+        <rdfs:range rdf:resource="&arabe;اسم"/>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_عاملية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#وزنه -->
+
+    <ObjectProperty rdf:about="&arabe;وزنه">
+        <rdfs:comment rdf:datatype="&xsd;string">علاقة تختص ببيان هئية الكلمة الصرفية عن طريق ربط اسم أو فعل بوزن مخصوص</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&arabe;علاقة_وظيفية"/>
+    </ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#أخوات_ان -->
+
+    <Class rdf:about="&arabe;أخوات_ان">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_نصب"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#أخوات_كاد -->
+
+    <Class rdf:about="&arabe;أخوات_كاد">
+        <rdfs:subClassOf rdf:resource="&arabe;فعل_ناقص"/>
+        <disjointWith rdf:resource="&arabe;أخوات_كان"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#أخوات_كان -->
+
+    <Class rdf:about="&arabe;أخوات_كان">
+        <rdfs:subClassOf rdf:resource="&arabe;فعل_ناقص"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم -->
+
+    <Class rdf:about="&arabe;اسم">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;كلمة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;زمنه"/>
+                                <someValuesFrom rdf:resource="&arabe;زمن"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;بناؤه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;جنسه"/>
+                        <allValuesFrom rdf:resource="&arabe;جنس"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;وزن"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;كلمة"/>
+        <disjointWith rdf:resource="&arabe;حرف"/>
+        <disjointWith rdf:resource="&arabe;فعل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">الاسم هو ما دل على معنى في نفسه غير مقترن بزمان، للاسم علامات تميزه عن الحرف والفعل وهي ؛ -العلامة الأولى:الجر ويقصد بها الكسرة التي يحدثها عامل الجر، سواء أكان العامل حرفا، أم إضافة ، أم تبعية-الثانية:التنوين. -الثالثة: النداء.-الرابعة:أل غيرالموصولة</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_استفهام -->
+
+    <Class rdf:about="&arabe;اسم_استفهام">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم"/>
+        <rdfs:comment rdf:datatype="&xsd;string">أدوات من أدوات الاستفهام يسأل بها عن أشياء مبهمة تود أن تحصل بها على إجابات حول هذه الأمور ، وتختلف هذه الأدوات باختلافِ الأمور المستفسر عنها .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_اشارة -->
+
+    <Class rdf:about="&arabe;اسم_اشارة">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">أسماء تومئ إلى شخص أو شيء معين بواسطة إشارة حسية باليد أو نحوها ، إن كانَ المشار إليه حاضرا ومرأيا ، أو بإشارة معنوية ، إذا كان المشار إليه معنى ، أو ذاتا غير حاضرة .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_التفضيل -->
+
+    <Class rdf:about="&arabe;اسم_التفضيل">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_الفاعل -->
+
+    <Class rdf:about="&arabe;اسم_الفاعل">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">صفة تؤخذ من الفعل المعلوم لازما أو متعديا لتدل على معنى وقع من الموصوف بها ، أو قام به،وهذه الصفة موقته ،وليست ثابتة لذلك قالوا : تفيد الحدوث لاالثبوت ، للتفريق بينها وبين الصفة المشبهة التي تفيد الثبوت والدوام</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_الفعل -->
+
+    <Class rdf:about="&arabe;اسم_الفعل">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">كلمة، تدل على ما يدل عليه الفعل، لكنها لا تقبل علاماته. مثال ذلك، [شتان] فإنه يدل على ما يدل عليه الفعل الماضي: [افترق]، ولكنه لا يقبل علامة الفعل الماضي. فلا يقال مثلا: [شتانت].</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_المصدر -->
+
+    <Class rdf:about="&arabe;اسم_المصدر">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هو ما ساوى المصدر في الدلالة على الحدث, ولكنه لم يساوه في احتوائه على جميع حروف فعله, أي نقصت حروفه عن الحروف الموجودة في الفعل
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_المفعول -->
+
+    <Class rdf:about="&arabe;اسم_المفعول">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم مصوغُ للدلالة على من وقع عليه فعل الفاعل ، وهو يُبنى من الفعل غير الثلاثي على لفظ مضارعه المجهول ، بإبدال حرف المضارعة ميماً مضمومة .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_عامل -->
+
+    <Class rdf:about="&arabe;اسم_عامل">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم عامل أو شبه الفعل هو كلاسم يعمل عمل الفعل ويكون فيه حروفه أي حروف الفعل ، كاسم الفاعل، واسم المفعول، والصفة المشبهة والمصدر
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_فعل_الامر -->
+
+    <Class rdf:about="&arabe;اسم_فعل_الامر">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_الفعل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يعمل عمل الفعل ويدل على ما يدل عليه فعل الأمر</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_فعل_الماض -->
+
+    <Class rdf:about="&arabe;اسم_فعل_الماض">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_الفعل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يعمل عمل الفعل ويدل على ما يدل عليه فعل الماض
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_فعل_المضارع -->
+
+    <Class rdf:about="&arabe;اسم_فعل_المضارع">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_الفعل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يعمل عمل الفعل ويدل على ما يدل عليه فعل المضارع</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_مجرور -->
+
+    <Class rdf:about="&arabe;اسم_مجرور">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <disjointWith rdf:resource="&arabe;مجرورة_المحل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم جر بعامل من عوامل الجر</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_مرفوع -->
+
+    <Class rdf:about="&arabe;اسم_مرفوع">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم مرفوع بأحد عوامل الرفع </rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_معرفة -->
+
+    <Class rdf:about="&arabe;اسم_معرفة">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;كلمة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;زمنه"/>
+                                <someValuesFrom rdf:resource="&arabe;زمن"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;بناؤه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;تعيينه"/>
+                        <allValuesFrom rdf:resource="&arabe;معرفة"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;جنسه"/>
+                        <allValuesFrom rdf:resource="&arabe;جنس"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;وزن"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;اسم"/>
+        <rdfs:comment rdf:datatype="&xsd;string">المعرفة اسم يدل على معين</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_منصوب -->
+
+    <Class rdf:about="&arabe;اسم_منصوب">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <disjointWith rdf:resource="&arabe;منصوبة_المحل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم منصوب بأحد عوامل النصب</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_موصول -->
+
+    <Class rdf:about="&arabe;اسم_موصول">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسمٌ مُبْهَمٌ يحتاجُ دائماً لإزالة إبهامِهِ وتوضيحِ المرادِ منهُ في الكلامِ إلى جملة تتمم معناه – تُسمى جملةَ الصِّلةِ - التي تتضمن ضميراً يعودُ إلى الاسم الموصولِ، كي يُستفادُ من الاسمِ الموصولِ مع الجملةِ معنى مفهومٌ .
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#اسم_نكرة -->
+
+    <Class rdf:about="&arabe;اسم_نكرة">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;كلمة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;زمنه"/>
+                                <someValuesFrom rdf:resource="&arabe;زمن"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;بناؤه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;تعيينه"/>
+                        <allValuesFrom rdf:resource="&arabe;نكرة"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;جنسه"/>
+                        <allValuesFrom rdf:resource="&arabe;جنس"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;وزن"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;اسم"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الصفة_المشبهة -->
+
+    <Class rdf:about="&arabe;الصفة_المشبهة">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يصاغ من الفعل اللازم للدلالة على معنى اسم الفاعل، فهي تشبه اسم الفاعل من حيث دلالتها على الفعل ومَنْ فعلَ الفعلَ ، ولكنها تفترق عن اسم الفاعل في أنها تدل على الثبوت النِسبي في الصفة وتدل على الفعل ومن اتصف به على وجه الثبوت .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#المصدر -->
+
+    <Class rdf:about="&arabe;المصدر">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يدل على الحدث دون الدلالة على زمن الحدث مختلفاً عن الفعل، لأن الفعل يدل على الحدث وعلى الزمن في آن واحد.
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#تعيين -->
+
+    <Class rdf:about="&arabe;تعيين"/>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جملة -->
+
+    <Class rdf:about="&arabe;جملة">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;جملة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;بناؤه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الاعراب"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:comment rdf:datatype="&xsd;string">الجملة هي اللفظ المفيد فائدة يحسن السكون عليها، وتتكون من مسند ومسند إليه</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جملة_اسمية -->
+
+    <Class rdf:about="&arabe;جملة_اسمية">
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هي الجملة التي أصلها مبتدأ وخبر</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جملة_فعلية -->
+
+    <Class rdf:about="&arabe;جملة_فعلية">
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هي الجملة التي صدرها فعل</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جنس -->
+
+    <Class rdf:about="&arabe;جنس">
+        <rdfs:comment rdf:datatype="&xsd;string">فئة تتضمن ثلاث قيم وهي مذكر ومؤنث ومشترك تسند هذه القيم إلى الاسم بواسطة علاقة جنسه</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف -->
+
+    <Class rdf:about="&arabe;حرف">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;كلمة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;جنسه"/>
+                                <someValuesFrom rdf:resource="&arabe;جنس"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;زمنه"/>
+                                <someValuesFrom rdf:resource="&arabe;زمن"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;وزنه"/>
+                                <someValuesFrom rdf:resource="&arabe;وزن"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;بناؤه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;كلمة"/>
+        <disjointWith rdf:resource="&arabe;فعل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">كلمة دلت على معنى في غيره، أي على معنى ثابت في لفظ غيره ،ويعرف الحرف بأنه لا يحسن فيه شيء من العلامات التسع؛كهل وفي ولم
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_استفهام -->
+
+    <Class rdf:about="&arabe;حرف_استفهام">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف"/>
+        <rdfs:comment rdf:datatype="&xsd;string">يستفهم بحروف الاستفهام طلبا لمعرفة اسم الشيء أو حقيقته أو عدده، أوصفة لاحقة به.
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_تفسير -->
+
+    <Class rdf:about="&arabe;حرف_تفسير">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف"/>
+        <rdfs:comment rdf:datatype="&xsd;string">يستعمل حرف التفسير لتفسير المفردات والجمل
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_جر -->
+
+    <Class rdf:about="&arabe;حرف_جر">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">حروف الجر في العربية هي أحد أنواع حروف المعاني العاملة (أي أنها تغير من إعراب الجملة عند دخولها عليها) المختصة بالأسماء، كبقية حروف العربية، حروف الجر مبنية دائما أي أن لها حركة واحدة لا تتغير بتغير موقعها من الجملة. حروف الجر حسب ما ذكر ابن مالك في ألفيته واحد وعشرون حرفا مجموعة في البيتين التاليين:ما عداحرف لولا ويعد نادراً جداً هاك حروف الجر وهي: من، إلى	 حتى، خلا، حاشا، عدا، في، عن، على مذ، منذ، رُب، اللام، كي، واو، وتا	 والكاف، والباء، ولعل، ومتى</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_جر_أصلي -->
+
+    <Class rdf:about="&arabe;حرف_جر_أصلي">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_جر"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_جر_زائد -->
+
+    <Class rdf:about="&arabe;حرف_جر_زائد">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_جر"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_جر_شبه_زائد -->
+
+    <Class rdf:about="&arabe;حرف_جر_شبه_زائد">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_جر"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_جزم -->
+
+    <Class rdf:about="&arabe;حرف_جزم">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_عامل"/>
+        <rdfs:comment>أحرف الجزم نوعان: ما تجزم  فعلا واحداوهي أربعة: لم ،لما، لام الأمر ، لا النافية والضرب الثاني من الاحرف تجزم فعلين مثل إن وإذ ما</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_عامل -->
+
+    <Class rdf:about="&arabe;حرف_عامل">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف"/>
+        <rdfs:comment>حروف تحدث تغييرا في أواخر الكلم</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_نداء -->
+
+    <Class rdf:about="&arabe;حرف_نداء">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هي حروف لا محل لها من الإعراب تستعمل في النداء، والنداء هو توجيه الدعوة إلى المخاطب وتنبيهه للإصغاء وسماع ما يريده المتكلم.
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_نداء_للبعيد -->
+
+    <Class rdf:about="&arabe;حرف_نداء_للبعيد">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_نداء"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_نداء_للقريب -->
+
+    <Class rdf:about="&arabe;حرف_نداء_للقريب">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_نداء"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حرف_نصب -->
+
+    <Class rdf:about="&arabe;حرف_نصب">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_عامل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حروف_نافية -->
+
+    <Class rdf:about="&arabe;حروف_نافية">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_عامل"/>
+        <rdfs:comment xml:lang="ar">هي أحرف عاملة أشبهت ليس في رفعها للاسم ونصبها للخبر وتشترك في سمة النفي وتتضمن هذه االفئة أربعة عناصر وهي ما ، ولا ،ولاتَ، وإن. وتعمل هذه الأحرف النافية بشروط</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#زمن -->
+
+    <Class rdf:about="&arabe;زمن">
+        <rdfs:comment rdf:datatype="&xsd;string">الزمن فئة تتضمن ثلاث قيم وهي : الماضي والمضارع والمستقبل تسند هذه القيم إلى الفعل خاصة</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#شبه_جملة -->
+
+    <Class rdf:about="&arabe;شبه_جملة">
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#شخص -->
+
+    <Class rdf:about="&arabe;شخص"/>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ضمير -->
+
+    <Class rdf:about="&arabe;ضمير">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">الضمائر هي ألفاظ تُستعمل في الحديث لتدل على أشخاص معروفين، بدلاً من ذكر أسمائهم .
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ضمير_بارز -->
+
+    <Class rdf:about="&arabe;ضمير_بارز">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير"/>
+        <rdfs:comment rdf:datatype="&xsd;string">الضمير البارز ما ينطق به مثل (أَنا كتبتُ) فـ(أَنا) والتاءُ ضميران بارزان ظاهران</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ضمير_متصل -->
+
+    <Class rdf:about="&arabe;ضمير_متصل">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير_بارز"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ضمير_مستتر -->
+
+    <Class rdf:about="&arabe;ضمير_مستتر">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير"/>
+        <rdfs:comment rdf:datatype="&xsd;string">الضمير المستتر ما ينوى في الذهن ويبنى الكلام عليه ولكن لا يتلفظ به، مثل فاعل (يجتهد) في قولنا: (خالد يجتهد)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ضمير_منفصل -->
+
+    <Class rdf:about="&arabe;ضمير_منفصل">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير_بارز"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#عدد -->
+
+    <Class rdf:about="&arabe;عدد">
+        <rdfs:comment rdf:datatype="&xsd;string">العدد فئة تتضمن ثلاث قيم وهي مفرد جمع أو مشترك تسند إلى الاسم بواسطة علاقة جنسه</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة -->
+
+    <Class rdf:about="&arabe;علامة">
+        <rdfs:comment rdf:datatype="&xsd;string">هي العلامات أو الحركات التي تكون في آخر الكلمة فإذا لازم آخر الكلمة حركة واحدة مهما تغيرت العوامل الداخلة عليه قلنا إنه مبني أما إذا تغيرت حركة آخره بحسب تغير العوامل قلنا إنه معرب وعلامات الإعراب والبناء هي الضمة والفتحة والكسرة والسكون والألف والواو والياء وحذف الحرف وقد تكون العلامة مقدرة أو ظاهرة وقد ينوب عن الحركات الحروف أو تنوب حركة عن أخرى.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_الاعراب -->
+
+    <Class rdf:about="&arabe;علامة_الاعراب">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة"/>
+        <disjointWith rdf:resource="&arabe;علامة_البناء"/>
+        <rdfs:comment rdf:datatype="&xsd;string">العلامات الإعرابية هي مجموع القيم التي تسند إلى الاسم المتمكن والفعل المعرب غير المبني وتبين وظيفة الكلمة من الناحية التركيبية</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_البناء -->
+
+    <Class rdf:about="&arabe;علامة_البناء">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_الجر -->
+
+    <Class rdf:about="&arabe;علامة_الجر">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة_الاعراب"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_الجزم -->
+
+    <Class rdf:about="&arabe;علامة_الجزم">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة_الاعراب"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_الرفع -->
+
+    <Class rdf:about="&arabe;علامة_الرفع">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة_الاعراب"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علامة_النصب -->
+
+    <Class rdf:about="&arabe;علامة_النصب">
+        <rdfs:subClassOf rdf:resource="&arabe;علامة_الاعراب"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علم -->
+
+    <Class rdf:about="&arabe;علم">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم يدل على معين بحسب وضعه بلا قرينة مثل خالد وفاطمة ودمشق وقاسيون أو هو اللفظ الذي يدل على تعيين مسماه تعيينا مطلقا غير مقيد بقرينة توضح مدلوله لأن وضوحه ذاتي وهو مقصور على مسماه وشارة خاصة به وافية في الدلالة عليه.
+</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علم_جنسي -->
+
+    <Class rdf:about="&arabe;علم_جنسي">
+        <rdfs:subClassOf rdf:resource="&arabe;علم"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هو الاسم الموضوع للمعنى العقلي العام المجرد ، أي للحقيقة الذهنية المحضة.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#علم_شخصي -->
+
+    <Class rdf:about="&arabe;علم_شخصي">
+        <rdfs:subClassOf rdf:resource="&arabe;علم"/>
+        <rdfs:comment rdf:datatype="&xsd;string">العلم الذي يدل على شخص بعينه ، لا يشاركه فيه غيره ، ولا يحتاج إلى قرينة.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل -->
+
+    <Class rdf:about="&arabe;فعل">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;كلمة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;جنسه"/>
+                                <someValuesFrom rdf:resource="&arabe;جنس"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;بناؤه"/>
+                                <allValuesFrom rdf:resource="&arabe;علامة_البناء"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;زمنه"/>
+                        <someValuesFrom rdf:resource="&arabe;زمن"/>
+                    </Restriction>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;وزن"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;كلمة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">كلمة تدل على حدث وتقترن بأحد الأزمنة الثلاثة وهي : الماض والمضارع والمستقبل.ينجلي الفعل بأربعة علامات: إحداها:تاء الفاعل والثانية :تاء التأنيث الساكنة الثالثة : ياء المخاطبة والرابعة : نون التوكيد شديدة أو خفيفة</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_تام -->
+
+    <Class rdf:about="&arabe;فعل_تام">
+        <rdfs:subClassOf rdf:resource="&arabe;فعل"/>
+        <disjointWith rdf:resource="&arabe;فعل_ناقص"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_مبني_للمجهول -->
+
+    <Class rdf:about="&arabe;فعل_مبني_للمجهول">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;وزنه"/>
+                                <allValuesFrom rdf:resource="&arabe;مبني_للمعلوم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;مبني_للمجهول"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;فعل_تام"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_مبني_للمعلوم -->
+
+    <Class rdf:about="&arabe;فعل_مبني_للمعلوم">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;فعل_تام"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;وزنه"/>
+                                <allValuesFrom rdf:resource="&arabe;مبني_للمجهول"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;وزنه"/>
+                        <allValuesFrom rdf:resource="&arabe;مبني_للمعلوم"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;فعل_تام"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_مجزوم -->
+
+    <Class rdf:about="&arabe;فعل_مجزوم">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;فعل"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;فعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_مرفوع -->
+
+    <Class rdf:about="&arabe;فعل_مرفوع">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;فعل"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;فعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_منصوب -->
+
+    <Class rdf:about="&arabe;فعل_منصوب">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;فعل"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجزم"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;فعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#فعل_ناقص -->
+
+    <Class rdf:about="&arabe;فعل_ناقص">
+        <rdfs:subClassOf rdf:resource="&arabe;فعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#كلمة -->
+
+    <Class rdf:about="&arabe;كلمة">
+        <disjointWith rdf:resource="&arabe;مرفوعة_المحل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#لا_النافية_للجنس -->
+
+    <Class rdf:about="&arabe;لا_النافية_للجنس">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_نصب"/>
+        <rdfs:comment rdf:datatype="&xsd;string"> حرف يعمل للدلالة على نفي الحكم عن جنس أسمها بغير احتمال ، لأكثر من معنى واحد .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مؤنث -->
+
+    <Class rdf:about="&arabe;مؤنث">
+        <rdfs:subClassOf rdf:resource="&arabe;جنس"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مبني_للمجهول -->
+
+    <Class rdf:about="&arabe;مبني_للمجهول">
+        <rdfs:subClassOf rdf:resource="&arabe;وزن_الفعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مبني_للمعلوم -->
+
+    <Class rdf:about="&arabe;مبني_للمعلوم">
+        <rdfs:subClassOf rdf:resource="&arabe;وزن_الفعل"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مثال_المبالغة -->
+
+    <Class rdf:about="&arabe;مثال_المبالغة">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_عامل"/>
+        <rdfs:comment rdf:datatype="&xsd;string">أسماء تعمل عمل الفعل حولت للمبالغة من فاعل إلى فعال أو مفعال أو فعول، بكثرة، أو فيل أو فعل ، بقلة.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرد -->
+
+    <Class rdf:about="&arabe;مجرد">
+        <rdfs:subClassOf rdf:resource="&arabe;مبني_للمعلوم"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجرورة_المحل -->
+
+    <Class rdf:about="&arabe;مجرورة_المحل">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;جملة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">جملة فعلية معربة في محل جر</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مذكر -->
+
+    <Class rdf:about="&arabe;مذكر">
+        <rdfs:subClassOf rdf:resource="&arabe;جنس"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مرفوعة_المحل -->
+
+    <Class rdf:about="&arabe;مرفوعة_المحل">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;جملة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">جملة فعلية معربة في محل رفع</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مزيد -->
+
+    <Class rdf:about="&arabe;مزيد">
+        <rdfs:subClassOf rdf:resource="&arabe;مبني_للمعلوم"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مستتر_جوازا -->
+
+    <Class rdf:about="&arabe;مستتر_جوازا">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير_مستتر"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مستتر_وجوبا -->
+
+    <Class rdf:about="&arabe;مستتر_وجوبا">
+        <rdfs:subClassOf rdf:resource="&arabe;ضمير_مستتر"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معرف_بال -->
+
+    <Class rdf:about="&arabe;معرف_بال">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معرف_بال_الجنسية -->
+
+    <Class rdf:about="&arabe;معرف_بال_الجنسية">
+        <rdfs:subClassOf rdf:resource="&arabe;معرف_بال"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معرف_بال_العهدية -->
+
+    <Class rdf:about="&arabe;معرف_بال_العهدية">
+        <rdfs:subClassOf rdf:resource="&arabe;معرف_بال"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معرف_بالاضافة -->
+
+    <Class rdf:about="&arabe;معرف_بالاضافة">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_معرفة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">هو اسم نكرة في الأصل وعندما أضيف إلى معرفة تحول إلى معرفة</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#معرفة -->
+
+    <Class rdf:about="&arabe;معرفة">
+        <rdfs:subClassOf rdf:resource="&arabe;تعيين"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#منصوبة_المحل -->
+
+    <Class rdf:about="&arabe;منصوبة_المحل">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;جملة"/>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الجر"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Class>
+                        <complementOf>
+                            <Restriction>
+                                <onProperty rdf:resource="&arabe;اعرابه"/>
+                                <someValuesFrom rdf:resource="&arabe;علامة_الرفع"/>
+                            </Restriction>
+                        </complementOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="&arabe;اعرابه"/>
+                        <allValuesFrom rdf:resource="&arabe;علامة_النصب"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;جملة"/>
+        <rdfs:comment rdf:datatype="&xsd;string">جملة فعلية معربة منصوبة بعامل نصب</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#موصول_حرفي -->
+
+    <Class rdf:about="&arabe;موصول_حرفي">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#موصول_مختص -->
+
+    <Class rdf:about="&arabe;موصول_مختص">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_موصول"/>
+        <rdfs:comment rdf:datatype="&xsd;string">كل اسم موصول يختص بنوع معين سواء أكان مفردا ، أو مثنى ، أو جمعا ، مذكرا ، أو مؤنثا ، وألفاظه هي : الذي ، التي ، اللذان ، اللتان ، اللذين ، اللتين ، الذين ، الألى ، اللاتي ، اللائي .</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#موصول_مشترك -->
+
+    <Class rdf:about="&arabe;موصول_مشترك">
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_موصول"/>
+        <rdfs:comment rdf:datatype="&xsd;string">كل اسم موصول يشترك فيه جميع الأنواع المفردة ، والمثناة ، والمجموعة ، والمذكرة ، والمؤنثة ، ولكن يمكن التوصل إلى المقصود منه بوساطة القرينة ، أو الضمير العائد عليه ، حيث اشترطوا فيه أن يطابق اللفظ والمعنى . والأسماء الموصولة المشتركة هي : من ، ما ، أي ، أل ، ذا وذو</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#نكرة -->
+
+    <Class rdf:about="&arabe;نكرة">
+        <rdfs:subClassOf rdf:resource="&arabe;تعيين"/>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#نكرة_منصوبة -->
+
+    <Class rdf:about="&arabe;نكرة_منصوبة">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&arabe;اسم_منصوب"/>
+                    <rdf:Description rdf:about="&arabe;اسم_نكرة"/>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="&arabe;اسم_منصوب"/>
+        <rdfs:comment rdf:datatype="&xsd;string">اسم منصوب لا يدل على معيّن.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#نواصب_المضارع -->
+
+    <Class rdf:about="&arabe;نواصب_المضارع">
+        <rdfs:subClassOf rdf:resource="&arabe;حرف_نصب"/>
+        <rdfs:comment xml:lang="ar">فئة تتضمن العناصر الآتية: أن،لن،كي،وإذن</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#وزن -->
+
+    <Class rdf:about="&arabe;وزن"/>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#وزن_الفعل -->
+
+    <Class rdf:about="&arabe;وزن_الفعل">
+        <rdfs:subClassOf rdf:resource="&arabe;وزن"/>
+    </Class>
+    
+
+
+    <!-- http://www.w3.org/2008/05/skos#وزن_الاسم -->
+
+    <Class rdf:about="http://www.w3.org/2008/05/skos#وزن_الاسم">
+        <rdfs:subClassOf rdf:resource="&arabe;وزن"/>
+    </Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ألف_المثنى -->
+
+    <NamedIndividual rdf:about="&arabe;ألف_المثنى">
+        <rdf:type rdf:resource="&arabe;علامة_الرفع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#التلميذً -->
+
+    <NamedIndividual rdf:about="&arabe;التلميذً">
+        <rdf:type rdf:resource="&arabe;اسم_مرفوع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#السكون -->
+
+    <NamedIndividual rdf:about="&arabe;السكون">
+        <rdf:type rdf:resource="&arabe;علامة_البناء"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#السكون_الظاهر -->
+
+    <NamedIndividual rdf:about="&arabe;السكون_الظاهر">
+        <rdf:type rdf:resource="&arabe;علامة_الجزم"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الضمة -->
+
+    <NamedIndividual rdf:about="&arabe;الضمة">
+        <rdf:type rdf:resource="&arabe;علامة_البناء"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الضمة_الظاهرة -->
+
+    <NamedIndividual rdf:about="&arabe;الضمة_الظاهرة">
+        <rdf:type rdf:resource="&arabe;علامة_الرفع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الضمة_المقدرة -->
+
+    <NamedIndividual rdf:about="&arabe;الضمة_المقدرة">
+        <rdf:type rdf:resource="&arabe;علامة_الرفع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الف_الاسماء_الخمسة -->
+
+    <NamedIndividual rdf:about="&arabe;الف_الاسماء_الخمسة">
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الفتحة -->
+
+    <NamedIndividual rdf:about="&arabe;الفتحة">
+        <rdf:type rdf:resource="&arabe;علامة_البناء"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الفتحة_الظاهرة -->
+
+    <NamedIndividual rdf:about="&arabe;الفتحة_الظاهرة">
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الفتحة_المقدرة -->
+
+    <NamedIndividual rdf:about="&arabe;الفتحة_المقدرة">
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الفتحة_النائبة_عن_الكسرة -->
+
+    <NamedIndividual rdf:about="&arabe;الفتحة_النائبة_عن_الكسرة">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الكسرة -->
+
+    <NamedIndividual rdf:about="&arabe;الكسرة">
+        <rdf:type rdf:resource="&arabe;علامة_البناء"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الكسرة_الظاهرة -->
+
+    <NamedIndividual rdf:about="&arabe;الكسرة_الظاهرة">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الكسرة_المقدرة -->
+
+    <NamedIndividual rdf:about="&arabe;الكسرة_المقدرة">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#الكسرة_النائبة_عن_الفتحة -->
+
+    <NamedIndividual rdf:about="&arabe;الكسرة_النائبة_عن_الفتحة">
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ثبوت_نون_المضارع -->
+
+    <NamedIndividual rdf:about="&arabe;ثبوت_نون_المضارع">
+        <rdf:type rdf:resource="&arabe;علامة_الرفع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جلس -->
+
+    <NamedIndividual rdf:about="&arabe;جلس">
+        <rdf:type rdf:resource="&arabe;فعل_تام"/>
+        <rdf:type rdf:resource="&arabe;فعل_مبني_للمعلوم"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#جمع -->
+
+    <NamedIndividual rdf:about="&arabe;جمع">
+        <rdf:type rdf:resource="&arabe;عدد"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حذف_نون_الافعال_الخمسة -->
+
+    <NamedIndividual rdf:about="&arabe;حذف_نون_الافعال_الخمسة">
+        <rdf:type rdf:resource="&arabe;علامة_الجزم"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#حذف_نون_المضارع -->
+
+    <NamedIndividual rdf:about="&arabe;حذف_نون_المضارع">
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#غائب -->
+
+    <NamedIndividual rdf:about="&arabe;غائب">
+        <rdf:type rdf:resource="&arabe;شخص"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#قُتل -->
+
+    <NamedIndividual rdf:about="&arabe;قُتل">
+        <rdf:type rdf:resource="&arabe;فعل_مبني_للمجهول"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#كاد -->
+
+    <NamedIndividual rdf:about="&arabe;كاد">
+        <rdf:type rdf:resource="&arabe;أخوات_كاد"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#كان -->
+
+    <NamedIndividual rdf:about="&arabe;كان">
+        <rdf:type rdf:resource="&arabe;أخوات_كان"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مؤنث -->
+
+    <NamedIndividual rdf:about="&arabe;مؤنث">
+        <rdf:type rdf:resource="&arabe;جنس"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ماض -->
+
+    <NamedIndividual rdf:about="&arabe;ماض">
+        <rdf:type rdf:resource="&arabe;زمن"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#متكلم -->
+
+    <NamedIndividual rdf:about="&arabe;متكلم">
+        <rdf:type rdf:resource="&arabe;شخص"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مثنى -->
+
+    <NamedIndividual rdf:about="&arabe;مثنى">
+        <rdf:type rdf:resource="&arabe;عدد"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مجتهد -->
+
+    <NamedIndividual rdf:about="&arabe;مجتهد">
+        <rdf:type rdf:resource="&arabe;اسم_مرفوع"/>
+        <arabe:خبر_مبتدأ rdf:resource="&arabe;التلميذً"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مخاطب -->
+
+    <NamedIndividual rdf:about="&arabe;مخاطب">
+        <rdf:type rdf:resource="&arabe;شخص"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مذكر -->
+
+    <NamedIndividual rdf:about="&arabe;مذكر">
+        <rdf:type rdf:resource="&arabe;جنس"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مستقبل -->
+
+    <NamedIndividual rdf:about="&arabe;مستقبل">
+        <rdf:type rdf:resource="&arabe;زمن"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مشترك -->
+
+    <NamedIndividual rdf:about="&arabe;مشترك">
+        <rdf:type rdf:resource="&arabe;جنس"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مضارع -->
+
+    <NamedIndividual rdf:about="&arabe;مضارع">
+        <rdf:type rdf:resource="&arabe;زمن"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#مفرد -->
+
+    <NamedIndividual rdf:about="&arabe;مفرد">
+        <rdf:type rdf:resource="&arabe;عدد"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#واو_جمع_المذكر_السالم -->
+
+    <NamedIndividual rdf:about="&arabe;واو_جمع_المذكر_السالم">
+        <rdf:type rdf:resource="&arabe;علامة_الرفع"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ياء_الاسماء_الخمسة -->
+
+    <NamedIndividual rdf:about="&arabe;ياء_الاسماء_الخمسة">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ياء_المثنى -->
+
+    <NamedIndividual rdf:about="&arabe;ياء_المثنى">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://arabicontology.org/oas_grammar.owl#ياء_جمع_المذكر_السالم -->
+
+    <NamedIndividual rdf:about="&arabe;ياء_جمع_المذكر_السالم">
+        <rdf:type rdf:resource="&arabe;علامة_الجر"/>
+        <rdf:type rdf:resource="&arabe;علامة_النصب"/>
+    </NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+
