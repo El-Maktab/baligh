@@ -17,6 +17,7 @@ dev = [
   "ruff>=0.11.0",
   "mypy>=1.15.0",
   "pytest>=8.3.5",
+  "pytest-asyncio",
   "ipykernel>=7.2.0",
 ]
 
@@ -42,9 +43,12 @@ files = ["src", "tests"]
 [[tool.mypy.overrides]]
 module = [
     "camel_tools.*",
-    "farasa.*"
+    "farasa.*",
+    "arramooz.*"
 ]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
+
