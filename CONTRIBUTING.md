@@ -16,7 +16,7 @@ This document outlines the conventions and guidelines to follow when working on 
     - [Types](#types)
     - [Scopes](#scopes)
   - [Setting up baligh for the first time](#setting-up-baligh-for-the-first-time)
-    - [Prequsites](#prequsites)
+    - [Prerequisites](#prerequisites)
     - [Setting up the project](#setting-up-the-project)
   - [Running Tests](#running-tests)
 
@@ -152,7 +152,7 @@ refactor(core): extract shared Arabic text utilities
 
 ## Setting up baligh for the first time
 
-### Prequsites
+### Prerequisites
 
 Make sure you have these installed:
 
