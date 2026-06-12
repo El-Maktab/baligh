@@ -1,16 +1,15 @@
 """Text normalization service for Baligh.
 
-This module provides utilities to normalize Arabic text (Unicode NFKC --Normalization Form 
-Compatibility Composition-- and whitespace consolidation) while maintaining a mapping of
+This module provides utilities to normalize Arabic text (Unicode NFKC (Normalization Form 
+Compatibility Composition) and whitespace consolidation) while maintaining a mapping of
 character indices back to the original raw text.
 
 Note:
     The canonicalize_* utilities (canonicalize_alif, canonicalize_ya,
     canonicalize_ta_marbuta) are intentionally NOT applied during main text
-    normalization. Alif variants (أ/إ/آ), Alif Maqsura (ى vs ي), and Ta
-    Marbuta (ة vs ه) all carry distinct orthographic meaning and are primary
-    GED error detection targets. Applying any of these to the full text would
-    silently hide those errors from GED. Use them only in the NWS module.
+    normalization. The reason is becuase they will hide errors in the words, where some modules
+    like the GED and GEC, would need the text as it is unmodified, so these features should only
+    be used in the NWS module.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -53,7 +52,7 @@ def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     if not text:
         return "", [0]
 
-    # Step 1: Unicode NFKC character-by-character normalization
+    # step 1: Unicode NFKC character-by-character normalization
     nfkc_chars: list[str] = []
     nfkc_to_orig: list[int] = []
     for orig_idx, char in enumerate(text):
@@ -64,7 +63,7 @@ def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
 
     nfkc_text = "".join(nfkc_chars)
 
-    # Step 2: Whitespace consolidation and final mapping
+    # step 2: Whitespace consolidation and final mapping
     final_chars: list[str] = []
     final_to_orig: list[int] = []
     in_whitespace = False
@@ -96,8 +95,7 @@ def canonicalize_alif(text: str) -> str:
     word being typed). It would help the NWS module to predict the next word.
 
     Warning:
-        Never apply this to the completed prefix or normalized_text. Alif
-        variants carry distinct orthographic meaning that would be used by other modules (ex: GED).
+        Never apply this to the completed prefix or normalized_text.
 
     Args:
         text: The incomplete word fragment being typed by the user.

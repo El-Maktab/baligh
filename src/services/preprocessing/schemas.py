@@ -19,7 +19,7 @@ class PreprocessingInput(BaseModel):
     """The input data structure for the preprocessing service.
 
     Attributes:
-        text: Raw Arabic text as typed by the user, unmodified.
+        text: Raw Arabic text as typed by the user.
         cursor_offset: Character offset of the cursor in text (None means end of input).
     """
 
@@ -31,7 +31,7 @@ class PreprocessingOutput(BaseModel):
     """The complete output of the preprocessing service.
 
     Attributes:
-        text: Original text, unmodified. All downstream spans reference this.
+        text: Original text, unmodified.
         normalized_text: Internally normalized text.
         tokens: Completed tokens only, with character offsets on `text`.
         morph_features: Per-token morphological candidates, outer list is indexed

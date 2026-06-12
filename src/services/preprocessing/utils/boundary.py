@@ -7,7 +7,7 @@ and an optional active word fragment.
 Note:
     cursor_offset is reserved for future mid-sentence editing support and is
     NOT implemented yet. Any non-None value raises NotImplementedError.
-    When implemented, the planned convention is: cursor_offset = i means the
+    When cursor_offset is implemented the convention should be: cursor_offset = i means the
     cursor sits between text[i-1] and text[i] (standard Python slice semantics).
 
 References:
@@ -18,31 +18,30 @@ Authors:
 """
 
 # Delimiter set defined in the contract:
-# - Whitespace (space, tab, newline, etc...)
-# - Arabic punctuation: ، ؟ ؛
-# - Shared punctuation: . , ! ? ; : " ' ( ) [ ] { } - —
+# - whitespace (space, tab, newline, etc...)
+# - arabic punctuation: ، ؟ ؛
+# - shared punctuation: . , ! ? ; : " ' ( ) [ ] { } - —
 DELIMITERS = set(" \t\n\r\v\f" + "،؟؛" + ".,!?;:\"'()[]{}—-")
 
 
 def split_word_boundary(
     text: str, cursor_offset: int | None = None
 ) -> tuple[str, str | None, str]:
-    """Splits input text into a completed prefix, an active fragment, and a mode.
+    """splits input text into a completed prefix, an active fragment, and a mode.
 
-    Determines if the word at the cursor is complete (NWP mode) or incomplete
+    determines if the word at the cursor is complete (NWP mode) or incomplete
     (WAC mode). cursor_offset is NOT SUPPORTED for now.
 
     Args:
         text: The raw or normalized input text.
-        cursor_offset: Reserved for future mid-sentence editing support (DD-002).
-            Must be None in the current phase; passing any other value raises
-            NotImplementedError. See the module-level Note for the planned design.
+        cursor_offset: Reserved for future mid-sentence editing support.
+            Must be None in the current phase, passing any other value raises
+            NotImplementedError.
 
     Returns:
         A tuple of (completed_prefix, current_fragment, mode) where:
             - completed_prefix (str): Text containing all complete words.
-            - current_fragment (str | None): The active incomplete word fragment,
-              or None if the cursor is after a delimiter.
+            - current_fragment (str | None): The active incomplete word fragment.
             - mode (str): "WAC" (Word Autocomplete) or "NWP" (Next Word Prediction).
 
     Raises:
@@ -60,11 +59,11 @@ def split_word_boundary(
 
     last_char = left_text[-1]
     if last_char in DELIMITERS:
-        # The character before the cursor is a delimiter, meaning the word is complete.
+        # the character before the cursor is a delimiter, meaning the word is complete.
         return left_text, None, "NWP"
 
-    # Otherwise, the word before the cursor is incomplete (WAC mode).
-    # Scan backward for the nearest delimiter to find where the fragment starts.
+    # if above not true, then the word before the cursor is incomplete (WAC mode).
+    # so we scan backward for the nearest delimiter to find where the fragment starts.
     last_delimiter_idx = -1
     for idx in range(len(left_text) - 1, -1, -1):
         if left_text[idx] in DELIMITERS:
