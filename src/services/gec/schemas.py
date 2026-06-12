@@ -1,0 +1,103 @@
+"""Pydantic models and schemas for the GEC service.
+
+This module defines the request/response contracts and candidate edits
+as specified in docs/contracts/gec-contract.md.
+"""
+
+from enum import StrEnum
+
+from pydantic import BaseModel
+
+# Reuse Token, MorphAnalysis, and ErrorSpan from the GED schemas
+# since they are shared preprocessing structures
+from src.services.ged.schemas import ErrorSpan, MorphAnalysis, Token
+
+
+class ModuleName(StrEnum):
+    """Submodules inside the GEC service."""
+
+    TAG = "TAG"
+    ONTOLOGY = "ONTOLOGY"
+    DICTIONARY = "DICTIONARY"
+
+
+class ModuleStatus(StrEnum):
+    """Status returned by each GEC submodule."""
+
+    CORRECT = "correct"
+    INCORRECT = "incorrect"
+    ERROR = "error"
+
+
+class CandidateEdit(BaseModel):
+    """Base model for any proposed correction edit."""
+
+    span: tuple[int, int]
+    token_refs: list[int]
+    correction: str
+    edit_confidence: float
+
+
+class EditOperation(StrEnum):
+    """Operation types for sequence tagging edits."""
+
+    REPLACE = "replace"
+    INSERT = "insert"
+    DELETE = "delete"
+    MERGE = "merge"
+    SPLIT = "split"
+
+
+class EditTaggerCandidateEdit(CandidateEdit):
+    """Candidate edit proposed by the ML Edit Tagger (TAG) module."""
+
+    edit_operation: EditOperation
+
+
+class EditGroup(BaseModel):
+    """Represents an atomic edit set for ontology corrections."""
+
+    group_id: str
+    group_rank: int
+    explanation: str | None = None
+
+
+class OntologyCandidateEdit(CandidateEdit):
+    """Candidate edit proposed by the rule-based ONTOLOGY module."""
+
+    group: EditGroup
+    is_independent: bool
+
+
+class DictionaryCandidateEdit(CandidateEdit):
+    """Candidate edit proposed by the DICTIONARY module."""
+
+    alternatives: list[str]
+
+
+# Union type representing any subclass of CandidateEdit
+GECUnionCandidateEdit = (
+    EditTaggerCandidateEdit | OntologyCandidateEdit | DictionaryCandidateEdit
+)
+
+
+class ModuleResult(BaseModel):
+    """Individual output result from one of the GEC submodules."""
+
+    module_name: ModuleName
+    status: ModuleStatus
+    candidate_edits: list[GECUnionCandidateEdit]
+
+
+class GECInput(BaseModel):
+    """Request structure for the GEC pipeline."""
+
+    text: str
+    tokens: list[Token]
+    morph_features: list[list[MorphAnalysis]]
+    errors_span: list[ErrorSpan]
+
+
+# GECOutput is defined as a list of exactly three ModuleResult objects
+# (TAG, ONTOLOGY, DICTIONARY)
+GECOutput = list[ModuleResult]
