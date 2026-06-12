@@ -15,6 +15,10 @@ This document outlines the conventions and guidelines to follow when working on 
   - [Commit Conventions](#commit-conventions)
     - [Types](#types)
     - [Scopes](#scopes)
+  - [Setting up baligh for the first time](#setting-up-baligh-for-the-first-time)
+    - [Prerequisites](#prerequisites)
+    - [Setting up the project](#setting-up-the-project)
+  - [Running Tests](#running-tests)
 
 ---
 
@@ -95,7 +99,7 @@ Use lowercase and hyphens only (no spaces, no underscores).
 
 **Examples:**
 
-```
+```text
 chore/project-bootstrap
 feat/gec-rule-based-pipeline
 fix/api-timeout-handling
@@ -109,7 +113,7 @@ experiment/arabert-finetuning
 
 Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-```
+```text
 <type>(<optional scope>): <short description>
 ```
 
@@ -136,7 +140,7 @@ Scope is optional but encouraged. Use the relevant module or directory name:
 
 **Examples:**
 
-```
+```text
 feat(gec): add rule-based agreement checker
 fix(api): handle empty input payloads gracefully
 docs: add contributing guide
@@ -145,3 +149,38 @@ refactor(core): extract shared Arabic text utilities
 ```
 
 ---
+
+## Setting up baligh for the first time
+
+### Prerequisites
+
+Make sure you have these installed:
+
+- Make
+- UV
+- Java Runtime
+
+### Setting up the project
+
+```bash
+make install
+make camel-data
+```
+
+---
+
+## Running Tests
+
+- Run all tests:
+
+```sh
+uv run pytest -q
+```
+
+- Run a module's tests
+
+```sh
+uv run pytest tests/services/gec
+```
+
+- `-q` flag is there to reduce verbosity, you can remove if you want or even add `-v` for more output.
