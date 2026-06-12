@@ -10,6 +10,7 @@ Authors:
 """
 
 from typing import Literal
+
 from pydantic import BaseModel
 
 from src.core.schemas import MorphAnalysis, Token

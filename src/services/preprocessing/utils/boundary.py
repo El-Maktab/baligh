@@ -7,8 +7,8 @@ and an optional active word fragment.
 Note:
     cursor_offset is reserved for future mid-sentence editing support and is
     NOT implemented yet. Any non-None value raises NotImplementedError.
-    When cursor_offset is implemented the convention should be: cursor_offset = i means the
-    cursor sits between text[i-1] and text[i] (standard Python slice semantics).
+    When cursor_offset is implemented the convention should be: cursor_offset = i means
+    the cursor sits between text[i-1] and text[i] (standard Python slice semantics).
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -27,7 +27,7 @@ DELIMITERS = set(" \t\n\r\v\f" + "،؟؛" + ".,!?;:\"'()[]{}—-")
 def split_word_boundary(
     text: str, cursor_offset: int | None = None
 ) -> tuple[str, str | None, str]:
-    """splits input text into a completed prefix, an active fragment, and a mode.
+    """Splits input text into a completed prefix, an active fragment, and a mode.
 
     determines if the word at the cursor is complete (NWP mode) or incomplete
     (WAC mode). cursor_offset is NOT SUPPORTED for now.
@@ -48,9 +48,7 @@ def split_word_boundary(
         NotImplementedError: If cursor_offset is not None.
     """
     if cursor_offset is not None:
-        raise NotImplementedError(
-            "cursor_offset support is not yet implemented. "
-        )
+        raise NotImplementedError("cursor_offset support is not yet implemented. ")
 
     left_text = text
 
@@ -71,8 +69,8 @@ def split_word_boundary(
             break
 
     if last_delimiter_idx != -1:
-        completed_prefix = left_text[:last_delimiter_idx + 1]
-        current_fragment = left_text[last_delimiter_idx + 1:]
+        completed_prefix = left_text[: last_delimiter_idx + 1]
+        current_fragment = left_text[last_delimiter_idx + 1 :]
     else:
         completed_prefix = ""
         current_fragment = left_text

@@ -1,15 +1,15 @@
 """Text normalization service for Baligh.
 
-This module provides utilities to normalize Arabic text (Unicode NFKC (Normalization Form 
-Compatibility Composition) and whitespace consolidation) while maintaining a mapping of
-character indices back to the original raw text.
+This module provides utilities to normalize Arabic text (Unicode NFKC (Normalization
+Form Compatibility Composition) and whitespace consolidation) while maintaining
+a mapping of character indices back to the original raw text.
 
 Note:
     The canonicalize_* utilities (canonicalize_alif, canonicalize_ya,
     canonicalize_ta_marbuta) are intentionally NOT applied during main text
-    normalization. The reason is becuase they will hide errors in the words, where some modules
-    like the GED and GEC, would need the text as it is unmodified, so these features should only
-    be used in the NWS module.
+    normalization. The reason is becuase they will hide errors in the words,
+    where some modules like the GED and GEC, would need the text as it is unmodified,
+    so these features should only be used in the NWS module.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -37,8 +37,8 @@ def normalize_text(text: str) -> str:
 def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     """Normalizes text and computes a character index mapping back to original text.
 
-    Consolidates multiple consecutive spaces into a single space, applies NFKC 
-    Unicode normalization, and maps each character in the resulting normalized 
+    Consolidates multiple consecutive spaces into a single space, applies NFKC
+    Unicode normalization, and maps each character in the resulting normalized
     string to its corresponding index in the original string.
 
     Args:
@@ -68,8 +68,8 @@ def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     final_to_orig: list[int] = []
     in_whitespace = False
 
-    # Loop over the nfkc_text, only take one whitespace between each 2 chars and append it's orig index to final_to_orig
-    # else ignore any in between whitespaces.
+    # Loop over the nfkc_text, only take one whitespace between each 2 chars and
+    # append it's orig index to final_to_orig else ignore any in between whitespaces.
     for idx, char in enumerate(nfkc_text):
         orig_idx = nfkc_to_orig[idx]
         if char.isspace():
