@@ -15,6 +15,7 @@ This document outlines the conventions and guidelines to follow when working on 
   - [Commit Conventions](#commit-conventions)
     - [Types](#types)
     - [Scopes](#scopes)
+  - [Running Tests](#running-tests)
 
 ---
 
@@ -145,3 +146,19 @@ refactor(core): extract shared Arabic text utilities
 ```
 
 ---
+
+## Running Tests
+
+- Run all tests:
+
+```sh
+uv run pytest -q
+```
+
+- Run a module's tests
+
+```sh
+uv run pytest tests/services/gec
+```
+
+- `-q` flag is there to reduce verbosity, you can remove if you want or even add `-v` for more output.
