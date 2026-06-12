@@ -27,20 +27,3 @@
 
 Research notes, documents, and project deliverables are maintained in a separate repository:
 [El-Maktab/baligh-documents](https://github.com/El-Maktab/baligh-documents)
-
-## Development Setup
-
-To set up the project locally for development, ensure you have Java (JRE) installed using:
-```bash
-sudo apt update && sudo apt install -y default-jre
-```
-
-Then run the following commands:
-```bash
-# 1. Install project dependencies
-uv sync
-
-# 2. Download the required CAMeL Tools databases (for MSA morphology and disambiguation)
-uv run camel_data -i morphology-db-msa-r13
-uv run camel_data -i disambig-mle-calima-msa-r13
-```

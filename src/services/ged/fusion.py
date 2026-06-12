@@ -119,10 +119,10 @@ def resolve_overlaps(errors: list[ErrorSpan]) -> list[ErrorSpan]:
     if not errors:
         return []
 
-    # Pass 1 — Sort by (start_offset ASC, end_offset DESC, confidence DESC)
+    # Pass 1 : Sort
     sorted_errors = sorted(errors, key=lambda e: (e.span[0], -e.span[1], -e.confidence))
 
-    # Pass 2 — Sweep with conflict-resolution decision table
+    # Pass 2 : Sweep with decision table
     accepted: list[ErrorSpan] = [sorted_errors[0]]
 
     for current in sorted_errors[1:]:
@@ -131,5 +131,5 @@ def resolve_overlaps(errors: list[ErrorSpan]) -> list[ErrorSpan]:
         # _resolve_conflict returns 1 or 2 items
         accepted.extend(_resolve_conflict(previous, current))
 
-    # Pass 3 — Eligibility
+    # Pass 3 : Eligibility
     return _normalize_eligibility(accepted)

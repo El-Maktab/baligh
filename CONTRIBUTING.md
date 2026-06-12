@@ -15,6 +15,9 @@ This document outlines the conventions and guidelines to follow when working on 
   - [Commit Conventions](#commit-conventions)
     - [Types](#types)
     - [Scopes](#scopes)
+  - [Setting up baligh for the first time](#setting-up-baligh-for-the-first-time)
+    - [Prequsites](#prequsites)
+    - [Setting up the project](#setting-up-the-project)
   - [Running Tests](#running-tests)
 
 ---
@@ -96,7 +99,7 @@ Use lowercase and hyphens only (no spaces, no underscores).
 
 **Examples:**
 
-```
+```text
 chore/project-bootstrap
 feat/gec-rule-based-pipeline
 fix/api-timeout-handling
@@ -110,7 +113,7 @@ experiment/arabert-finetuning
 
 Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-```
+```text
 <type>(<optional scope>): <short description>
 ```
 
@@ -137,12 +140,31 @@ Scope is optional but encouraged. Use the relevant module or directory name:
 
 **Examples:**
 
-```
+```text
 feat(gec): add rule-based agreement checker
 fix(api): handle empty input payloads gracefully
 docs: add contributing guide
 chore(preprocessing): scaffold tokenizer module
 refactor(core): extract shared Arabic text utilities
+```
+
+---
+
+## Setting up baligh for the first time
+
+### Prequsites
+
+Make sure you have these installed:
+
+- Make
+- UV
+- Java Runtime
+
+### Setting up the project
+
+```bash
+make install
+make camel-data
 ```
 
 ---
