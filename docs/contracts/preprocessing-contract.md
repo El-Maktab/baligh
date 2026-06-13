@@ -155,13 +155,15 @@ The segmenter peels known clitics from both ends of Farasa’s `+`\-split segmen
 | `CONJ` | `و` `ف` |
 | `PREP` | `ب` `ل` `ك` |
 | `DET` | `ال` |
-| `PART` | `ما` |
 
 **Known suffix clitics**
 
 | Tag | Strings |
 | --- | --- |
-| `PRON` | `ه` `ها` `هم` `هن` `ك` `كم` `نا` `ي` |
+| `PRON` | `ها` `هم` `هن` `كم` `نا` `ه` `ك` `ت` `ي` |
+
+> [!NOTE]
+> `ت` covers subject pronoun suffixes attached to verbs (e.g. `كتب+ت`, `ضرب+ت+هم`). `تم` and `تن` are intentionally omitted — Farasa never splits them as separate `+`-segments, so they would never appear in the segment list and adding them would be dead code.
 
 ### Examples
 

@@ -62,7 +62,7 @@ def _get_segmenter() -> "FarasaSegmenter":
 
 
 #############################################################################
-# Clitic lookup tables (closed sets defined by the contract).
+# Clitic lookup tables.
 # Prefix clitics are listed longest-first so that multi-character clitics
 # (ex. "ال") are matched before single-character ones (ex. "ل").
 #############################################################################
@@ -70,7 +70,6 @@ def _get_segmenter() -> "FarasaSegmenter":
 # Maps clitic string -> tag, ordered longest-first within each group.
 _PREFIX_CLITICS: list[tuple[str, str]] = [
     ("ال", "DET"),
-    ("ما", "PART"),     # TODO: make sure that this clitic is actually a valid prefix one!
     ("و", "CONJ"),
     ("ف", "CONJ"),
     ("ب", "PREP"),
@@ -78,8 +77,12 @@ _PREFIX_CLITICS: list[tuple[str, str]] = [
     ("ك", "PREP"),
 ]
 
-# Maps clitic string -> tag, ordered longest-first so "ها", "هم", "هن", "كم"
-# are tried before the single-char fallbacks.
+# Maps clitic string -> tag, ordered longest-first so multi-char suffixes
+# are matched before single-char ones.
+# Note: "ت" is included because Farasa consistently splits it as a 
+# separate +segment. "تم" and "تن" are intentionally omitted -
+# Farasa never splits them, so they never appear
+# as a standalone segment in the +output.
 _SUFFIX_CLITICS: list[tuple[str, str]] = [
     ("ها", "PRON"),
     ("هم", "PRON"),
@@ -88,6 +91,7 @@ _SUFFIX_CLITICS: list[tuple[str, str]] = [
     ("نا", "PRON"),
     ("ه", "PRON"),
     ("ك", "PRON"),
+    ("ت", "PRON"),
     ("ي", "PRON"),
 ]
 
@@ -172,17 +176,6 @@ def _build_affix_structure(farasa_word: str) -> str | None:
     # this is a punctuation token, return None.
     if not has_arabic_letter and not tags and not suffix_tags:
         return None
-
-    # TODO: see if this condition is actually needed, because it assumes farasa would fail in only one case, while we should either check for all failing cases or not check at all.
-    # When Farasa does not insert a '+' (ex. "كتبوه" stays as one chunk),
-    # the suffix clitic may be embedded at the end of the stem string itself.
-    # Try to peel one known suffix from the end of the stem string.
-    if len(stem_parts) == 1 and not suffix_tags:
-        for clitic, tag in _SUFFIX_CLITICS:
-            if stem_str.endswith(clitic) and len(stem_str) > len(clitic):
-                suffix_tags.append(tag)
-                stem_str = stem_str[: -len(clitic)]
-                break
 
     tags.append("STEM")
     tags.extend(reversed(suffix_tags))
