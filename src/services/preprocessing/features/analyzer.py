@@ -321,23 +321,23 @@ def analyze(tokens: list[Token]) -> list[list[MorphAnalysis]]:
         # sure that no 2 entries in candidates have the same identical values.
         seen: set[tuple] = set()
         deduped: list[MorphAnalysis] = []
-        for c in candidates:
+        for ma in candidates:
             key = (
-                c.lemma,
-                c.pos,
-                c.gender,
-                c.number,
-                c.person,
-                c.definiteness,
-                c.case,
-                c.tense,
-                c.voice,
-                c.mood,
-                c.diacritized,
+                ma.lemma,
+                ma.pos,
+                ma.gender,
+                ma.number,
+                ma.person,
+                ma.definiteness,
+                ma.case,
+                ma.tense,
+                ma.voice,
+                ma.mood,
+                ma.diacritized,
             )
             if key not in seen:
                 seen.add(key)
-                deduped.append(c)
+                deduped.append(ma)
         candidates = deduped
 
         output.append(candidates)
