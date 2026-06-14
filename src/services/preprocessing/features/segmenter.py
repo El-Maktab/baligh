@@ -42,7 +42,8 @@ _segmenter: "FarasaSegmenter | None" = None
 _segmenter_lock = threading.Lock()
 
 
-# the type FarasaSegmenter is written as strings so that python don't evaluate it at runtime (would result in error)
+# the type FarasaSegmenter is written as strings so that python don't evaluate
+# it at runtime (would result in error)
 def _get_segmenter() -> "FarasaSegmenter":
     """Returns the shared FarasaSegmenter instance, initialising it if needed.
 
@@ -51,7 +52,7 @@ def _get_segmenter() -> "FarasaSegmenter":
     Returns:
         The process-wide FarasaSegmenter running in interactive mode.
     """
-    global _segmenter   # to access the module level _segmenter
+    global _segmenter  # to access the module level _segmenter
     if _segmenter is None:
         with _segmenter_lock:
             if _segmenter is None:
@@ -79,7 +80,7 @@ _PREFIX_CLITICS: list[tuple[str, str]] = [
 
 # Maps clitic string -> tag, ordered longest-first so multi-char suffixes
 # are matched before single-char ones.
-# Note: "ت" is included because Farasa consistently splits it as a 
+# Note: "ت" is included because Farasa consistently splits it as a
 # separate +segment. "تم" and "تن" are intentionally omitted -
 # Farasa never splits them, so they never appear
 # as a standalone segment in the +output.
@@ -161,7 +162,7 @@ def _build_affix_structure(farasa_word: str) -> str | None:
         # not happen for valid Arabic text, but we check anyways.
         return None
 
-    # join back the remaining segments as they represent the stem (ex. "مدرس"+"ة" → "مدرسة").
+    # join back the remaining segments as they represent the stem.
     stem_str = "".join(stem_parts)
 
     # Punctuation check: check if the stem contains at least one Arabic letter.
@@ -172,7 +173,7 @@ def _build_affix_structure(farasa_word: str) -> str | None:
             has_arabic_letter = True
             break  # we found one, so we can stop
 
-    # if the stem contains no arabic letters and no clitics were found too, 
+    # if the stem contains no arabic letters and no clitics were found too,
     # this is a punctuation token, return None.
     if not has_arabic_letter and not tags and not suffix_tags:
         return None
@@ -224,7 +225,10 @@ def _align_tokens(
         surface_len = len(surface)
 
         # skip whitespace in the normalized text (it would always be one space).
-        while norm_cursor < len(normalized_prefix) and normalized_prefix[norm_cursor].isspace():
+        while (
+            norm_cursor < len(normalized_prefix)
+            and normalized_prefix[norm_cursor].isspace()
+        ):
             norm_cursor += 1
 
         if norm_cursor >= len(normalized_prefix):

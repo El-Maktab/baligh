@@ -2,7 +2,8 @@
 
 Public API:
 
-    from src.services.preprocessing import preprocess, PreprocessingInput, PreprocessingOutput
+    from src.services.preprocessing import preprocess, PreprocessingInput,
+    PreprocessingOutput
 
     result = preprocess(PreprocessingInput(text="ذهب الطلاب إلى المدرسة"))
 """

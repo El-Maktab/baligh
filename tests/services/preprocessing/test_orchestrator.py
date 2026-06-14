@@ -6,18 +6,15 @@ Run with::
     PYTHONPATH=. .venv/bin/pytest tests/services/preprocessing/test_orchestrator.py -v
 """
 
-import pytest
-
 from src.services.preprocessing import (
     PreprocessingInput,
     PreprocessingOutput,
     preprocess,
 )
 
-
-# ---------------------------------------------------------------------------
+#############################################################################
 # Helpers
-# ---------------------------------------------------------------------------
+#############################################################################
 
 
 def _run(text: str) -> PreprocessingOutput:
@@ -25,9 +22,9 @@ def _run(text: str) -> PreprocessingOutput:
     return preprocess(PreprocessingInput(text=text))
 
 
-# ---------------------------------------------------------------------------
+#############################################################################
 # Empty / whitespace-only input
-# ---------------------------------------------------------------------------
+#############################################################################
 
 
 def test_preprocess_empty_string():
@@ -50,9 +47,9 @@ def test_preprocess_whitespace_only():
     assert out.morph_features == []
 
 
-# ---------------------------------------------------------------------------
+#############################################################################
 # Mode detection
-# ---------------------------------------------------------------------------
+#############################################################################
 
 
 def test_preprocess_nwp_mode_delimiter_ending():
@@ -70,9 +67,9 @@ def test_preprocess_wac_mode_incomplete_word():
     assert out.current_fragment != ""
 
 
-# ---------------------------------------------------------------------------
+#############################################################################
 # Shape invariants
-# ---------------------------------------------------------------------------
+#############################################################################
 
 
 def test_preprocess_morph_features_length_matches_tokens():
@@ -97,14 +94,14 @@ def test_preprocess_disambiguated_is_first():
         )
 
 
-# ---------------------------------------------------------------------------
+#############################################################################
 # Data integrity
-# ---------------------------------------------------------------------------
+#############################################################################
 
 
 def test_preprocess_original_text_preserved():
     """output.text must equal the original raw input exactly."""
-    raw = "ذهب  الطلابُ  إلى  المدرسة"   # intentional extra spaces
+    raw = "ذهب  الطلابُ  إلى  المدرسة"  # intentional extra spaces
     out = _run(raw)
     assert out.text == raw
 
@@ -119,7 +116,7 @@ def test_preprocess_token_indices_are_sequential():
 def test_preprocess_token_index_matches_morph_analysis():
     """MorphAnalysis.token_index must match the token's own index."""
     out = _run("ذهب الطلاب إلى المدرسة ")
-    for token, candidates in zip(out.tokens, out.morph_features):
+    for token, candidates in zip(out.tokens, out.morph_features, strict=False):
         for c in candidates:
             assert c.token_index == token.index
 
