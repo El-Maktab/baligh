@@ -9,6 +9,8 @@ dependencies = [
     "torch<2.3",
     "arramooz-pysqlite",
     "sparqlwrapper",
+    "pyyaml>=6.0",
+    "loguru>=0.7.3",
 ]
 
 [dependency-groups]
@@ -19,6 +21,7 @@ dev = [
   "pytest>=8.3.5",
   "pytest-asyncio",
   "ipykernel>=7.2.0",
+  "types-PyYAML>=6.0",
 ]
 
 [tool.ruff]
@@ -51,4 +54,3 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-
