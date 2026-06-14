@@ -45,7 +45,9 @@ class MorphAnalysis(BaseModel):
     Attributes:
         token_index: Index of the corresponding Token.
         lemma: Base/root form of the token, None for punctuation and non-Arabic.
-        pos: Part-of-speech tag.
+        pos: Part-of-speech tag. One of: NOUN, NOUN_PROP, NOUN_QUANT, VERB,
+            ADJ, ADV, PREP, CONJ, PRON, PRON_REL, PRON_INTERROG, DET, PART,
+            PUNC, NUM, INTJ. See the POS Tagset section in the contract.
         gender: "masculine", "feminine", or None.
         number: "singular", "dual", "plural", or None.
         person: "first", "second", "third", or None.
