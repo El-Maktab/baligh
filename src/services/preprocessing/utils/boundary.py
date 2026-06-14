@@ -17,6 +17,8 @@ Authors:
     - Akram Hany
 """
 
+from typing import Literal
+
 # Delimiter set defined in the contract:
 # - whitespace (space, tab, newline, etc...)
 # - arabic punctuation: ، ؟ ؛
@@ -26,7 +28,7 @@ DELIMITERS = set(" \t\n\r\v\f" + "،؟؛" + ".,!?;:\"'()[]{}—-")
 
 def split_word_boundary(
     text: str, cursor_offset: int | None = None
-) -> tuple[str, str | None, str]:
+) -> tuple[str, str | None, Literal["NWP", "WAC"]]:
     """Splits input text into a completed prefix, an active fragment, and a mode.
 
     determines if the word at the cursor is complete (NWP mode) or incomplete
