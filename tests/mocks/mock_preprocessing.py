@@ -79,14 +79,13 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهب إلى المدرسة",
         tokens=[
-            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(index=1, form="إلى", span=(4, 7), norm_span=(4, 7), is_clitic=False),
+            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="إلى", span=(4, 7), norm_span=(4, 7)),
             Token(
                 index=2,
                 form="المدرسة",
                 span=(8, 15),
                 norm_span=(8, 15),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -101,7 +100,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -111,7 +109,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -125,7 +122,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -141,14 +137,13 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهب الى المدرسة",
         tokens=[
-            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(index=1, form="الى", span=(4, 7), norm_span=(4, 7), is_clitic=False),
+            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="الى", span=(4, 7), norm_span=(4, 7)),
             Token(
                 index=2,
                 form="المدرسة",
                 span=(8, 15),
                 norm_span=(8, 15),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -163,7 +158,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -174,7 +168,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -188,7 +181,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -208,12 +200,8 @@ _reg(
     ged_input=_make_ged_input(
         text="المدرسة كبيرة",
         tokens=[
-            Token(
-                index=0, form="المدرسة", span=(0, 7), norm_span=(0, 7), is_clitic=False
-            ),
-            Token(
-                index=1, form="كبيرة", span=(8, 13), norm_span=(8, 13), is_clitic=False
-            ),
+            Token(index=0, form="المدرسة", span=(0, 7), norm_span=(0, 7)),
+            Token(index=1, form="كبيرة", span=(8, 13), norm_span=(8, 13)),
         ],
         morph_features=[
             [
@@ -226,7 +214,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الْمَدْرَسَةُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -240,7 +227,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="كَبِيرَةٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -256,12 +242,8 @@ _reg(
     ged_input=_make_ged_input(
         text="المدرسه كبيرة",
         tokens=[
-            Token(
-                index=0, form="المدرسه", span=(0, 7), norm_span=(0, 7), is_clitic=False
-            ),
-            Token(
-                index=1, form="كبيرة", span=(8, 13), norm_span=(8, 13), is_clitic=False
-            ),
+            Token(index=0, form="المدرسه", span=(0, 7), norm_span=(0, 7)),
+            Token(index=1, form="كبيرة", span=(8, 13), norm_span=(8, 13)),
         ],
         morph_features=[
             # NOTE: preprocessing still resolves the lemma/gender correctly
@@ -275,7 +257,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الْمَدْرَسَةُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -289,7 +270,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="كَبِيرَةٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -309,13 +289,12 @@ _reg(
     ged_input=_make_ged_input(
         text="على الطاولة",
         tokens=[
-            Token(index=0, form="على", span=(0, 3), norm_span=(0, 3), is_clitic=False),
+            Token(index=0, form="على", span=(0, 3), norm_span=(0, 3)),
             Token(
                 index=1,
                 form="الطاولة",
                 span=(4, 11),
                 norm_span=(4, 11),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -325,7 +304,6 @@ _reg(
                     lemma="على",
                     pos="PREP",
                     diacritized="عَلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -339,7 +317,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الطَّاوِلَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -355,13 +332,12 @@ _reg(
     ged_input=_make_ged_input(
         text="علي الطاولة",
         tokens=[
-            Token(index=0, form="علي", span=(0, 3), norm_span=(0, 3), is_clitic=False),
+            Token(index=0, form="علي", span=(0, 3), norm_span=(0, 3)),
             Token(
                 index=1,
                 form="الطاولة",
                 span=(4, 11),
                 norm_span=(4, 11),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -372,7 +348,6 @@ _reg(
                     lemma="على",
                     pos="PREP",
                     diacritized="عَلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -386,7 +361,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الطَّاوِلَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -407,19 +381,14 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهب الطلاب إلى المدرسة",
         tokens=[
-            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(
-                index=1, form="الطلاب", span=(4, 10), norm_span=(4, 10), is_clitic=False
-            ),
-            Token(
-                index=2, form="إلى", span=(11, 14), norm_span=(11, 14), is_clitic=False
-            ),
+            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="الطلاب", span=(4, 10), norm_span=(4, 10)),
+            Token(index=2, form="إلى", span=(11, 14), norm_span=(11, 14)),
             Token(
                 index=3,
                 form="المدرسة",
                 span=(15, 22),
                 norm_span=(15, 22),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -434,7 +403,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -448,7 +416,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطُّلَابُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -458,7 +425,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -472,7 +438,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -488,21 +453,14 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهبوا الطلاب إلى المدرسة",
         tokens=[
-            Token(
-                index=0, form="ذهبوا", span=(0, 5), norm_span=(0, 5), is_clitic=False
-            ),
-            Token(
-                index=1, form="الطلاب", span=(6, 12), norm_span=(6, 12), is_clitic=False
-            ),
-            Token(
-                index=2, form="إلى", span=(13, 16), norm_span=(13, 16), is_clitic=False
-            ),
+            Token(index=0, form="ذهبوا", span=(0, 5), norm_span=(0, 5)),
+            Token(index=1, form="الطلاب", span=(6, 12), norm_span=(6, 12)),
+            Token(index=2, form="إلى", span=(13, 16), norm_span=(13, 16)),
             Token(
                 index=3,
                 form="المدرسة",
                 span=(17, 24),
                 norm_span=(17, 24),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -517,7 +475,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبُوا",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -531,7 +488,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطُّلَابُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -541,7 +497,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -555,7 +510,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -576,21 +530,14 @@ _reg(
     ged_input=_make_ged_input(
         text="الطلاب ذهبوا إلى المدرسة",
         tokens=[
-            Token(
-                index=0, form="الطلاب", span=(0, 6), norm_span=(0, 6), is_clitic=False
-            ),
-            Token(
-                index=1, form="ذهبوا", span=(7, 12), norm_span=(7, 12), is_clitic=False
-            ),
-            Token(
-                index=2, form="إلى", span=(13, 16), norm_span=(13, 16), is_clitic=False
-            ),
+            Token(index=0, form="الطلاب", span=(0, 6), norm_span=(0, 6)),
+            Token(index=1, form="ذهبوا", span=(7, 12), norm_span=(7, 12)),
+            Token(index=2, form="إلى", span=(13, 16), norm_span=(13, 16)),
             Token(
                 index=3,
                 form="المدرسة",
                 span=(17, 24),
                 norm_span=(17, 24),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -604,7 +551,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطُّلَابُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -619,7 +565,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبُوا",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -629,7 +574,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -643,7 +587,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -659,21 +602,14 @@ _reg(
     ged_input=_make_ged_input(
         text="الطالبات ذهب إلى المدرسة",
         tokens=[
-            Token(
-                index=0, form="الطالبات", span=(0, 8), norm_span=(0, 8), is_clitic=False
-            ),
-            Token(
-                index=1, form="ذهب", span=(9, 12), norm_span=(9, 12), is_clitic=False
-            ),
-            Token(
-                index=2, form="إلى", span=(13, 16), norm_span=(13, 16), is_clitic=False
-            ),
+            Token(index=0, form="الطالبات", span=(0, 8), norm_span=(0, 8)),
+            Token(index=1, form="ذهب", span=(9, 12), norm_span=(9, 12)),
+            Token(index=2, form="إلى", span=(13, 16), norm_span=(13, 16)),
             Token(
                 index=3,
                 form="المدرسة",
                 span=(17, 24),
                 norm_span=(17, 24),
-                is_clitic=False,
             ),
         ],
         morph_features=[
@@ -687,7 +623,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطَّالِبَاتُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -702,7 +637,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -712,7 +646,6 @@ _reg(
                     lemma="إلى",
                     pos="PREP",
                     diacritized="إِلَى",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -726,7 +659,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="الْمَدْرَسَةِ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -746,19 +678,14 @@ _reg(
     ged_input=_make_ged_input(
         text="الطالب المجتهد نجح",
         tokens=[
-            Token(
-                index=0, form="الطالب", span=(0, 6), norm_span=(0, 6), is_clitic=False
-            ),
+            Token(index=0, form="الطالب", span=(0, 6), norm_span=(0, 6)),
             Token(
                 index=1,
                 form="المجتهد",
                 span=(7, 14),
                 norm_span=(7, 14),
-                is_clitic=False,
             ),
-            Token(
-                index=2, form="نجح", span=(15, 18), norm_span=(15, 18), is_clitic=False
-            ),
+            Token(index=2, form="نجح", span=(15, 18), norm_span=(15, 18)),
         ],
         morph_features=[
             [
@@ -771,7 +698,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطَّالِبُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -785,7 +711,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الْمُجْتَهِدُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -800,7 +725,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="نَجَحَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -816,15 +740,9 @@ _reg(
     ged_input=_make_ged_input(
         text="الطالب مجتهد نجح",
         tokens=[
-            Token(
-                index=0, form="الطالب", span=(0, 6), norm_span=(0, 6), is_clitic=False
-            ),
-            Token(
-                index=1, form="مجتهد", span=(7, 12), norm_span=(7, 12), is_clitic=False
-            ),
-            Token(
-                index=2, form="نجح", span=(13, 16), norm_span=(13, 16), is_clitic=False
-            ),
+            Token(index=0, form="الطالب", span=(0, 6), norm_span=(0, 6)),
+            Token(index=1, form="مجتهد", span=(7, 12), norm_span=(7, 12)),
+            Token(index=2, form="نجح", span=(13, 16), norm_span=(13, 16)),
         ],
         morph_features=[
             [
@@ -837,7 +755,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطَّالِبُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -851,7 +768,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="مُجْتَهِدٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -866,7 +782,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="نَجَحَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -882,10 +797,8 @@ _reg(
     ged_input=_make_ged_input(
         text="كتب مفيدة",
         tokens=[
-            Token(index=0, form="كتب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(
-                index=1, form="مفيدة", span=(4, 9), norm_span=(4, 9), is_clitic=False
-            ),
+            Token(index=0, form="كتب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="مفيدة", span=(4, 9), norm_span=(4, 9)),
         ],
         morph_features=[
             [
@@ -898,7 +811,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="كُتُبٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -912,7 +824,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="مُفِيدَةٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -928,10 +839,8 @@ _reg(
     ged_input=_make_ged_input(
         text="كتب مفيدون",
         tokens=[
-            Token(index=0, form="كتب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(
-                index=1, form="مفيدون", span=(4, 10), norm_span=(4, 10), is_clitic=False
-            ),
+            Token(index=0, form="كتب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="مفيدون", span=(4, 10), norm_span=(4, 10)),
         ],
         morph_features=[
             [
@@ -944,7 +853,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="كُتُبٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -958,7 +866,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="مُفِيدُونَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -978,19 +885,11 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهب الطالب، ثم عاد",
         tokens=[
-            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(
-                index=1, form="الطالب", span=(4, 10), norm_span=(4, 10), is_clitic=False
-            ),
-            Token(
-                index=2, form="،", span=(10, 11), norm_span=(10, 11), is_clitic=False
-            ),
-            Token(
-                index=3, form="ثم", span=(12, 14), norm_span=(12, 14), is_clitic=False
-            ),
-            Token(
-                index=4, form="عاد", span=(15, 18), norm_span=(15, 18), is_clitic=False
-            ),
+            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="الطالب", span=(4, 10), norm_span=(4, 10)),
+            Token(index=2, form="،", span=(10, 11), norm_span=(10, 11)),
+            Token(index=3, form="ثم", span=(12, 14), norm_span=(12, 14)),
+            Token(index=4, form="عاد", span=(15, 18), norm_span=(15, 18)),
         ],
         morph_features=[
             [
@@ -1004,7 +903,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1018,7 +916,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطَّالِبُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1028,7 +925,6 @@ _reg(
                     lemma=None,
                     pos="PUNC",
                     diacritized=None,
-                    affix_structure=None,
                     is_disambiguated=True,
                 )
             ],
@@ -1038,7 +934,6 @@ _reg(
                     lemma="ثم",
                     pos="CONJ",
                     diacritized="ثُمَّ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1053,7 +948,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="عَادَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1069,19 +963,11 @@ _reg(
     ged_input=_make_ged_input(
         text="ذهب الطالب ، ثم عاد",
         tokens=[
-            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(
-                index=1, form="الطالب", span=(4, 10), norm_span=(4, 10), is_clitic=False
-            ),
-            Token(
-                index=2, form="،", span=(11, 12), norm_span=(11, 12), is_clitic=False
-            ),
-            Token(
-                index=3, form="ثم", span=(13, 15), norm_span=(13, 15), is_clitic=False
-            ),
-            Token(
-                index=4, form="عاد", span=(16, 19), norm_span=(16, 19), is_clitic=False
-            ),
+            Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="الطالب", span=(4, 10), norm_span=(4, 10)),
+            Token(index=2, form="،", span=(11, 12), norm_span=(11, 12)),
+            Token(index=3, form="ثم", span=(13, 15), norm_span=(13, 15)),
+            Token(index=4, form="عاد", span=(16, 19), norm_span=(16, 19)),
         ],
         morph_features=[
             [
@@ -1095,7 +981,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="ذَهَبَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1109,7 +994,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="الطَّالِبُ",
-                    affix_structure="DET+STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1119,7 +1003,6 @@ _reg(
                     lemma=None,
                     pos="PUNC",
                     diacritized=None,
-                    affix_structure=None,
                     is_disambiguated=True,
                 )
             ],
@@ -1129,7 +1012,6 @@ _reg(
                     lemma="ثم",
                     pos="CONJ",
                     diacritized="ثُمَّ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1144,7 +1026,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="عَادَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1164,12 +1045,8 @@ _reg(
     ged_input=_make_ged_input(
         text="عبدالله طالب",
         tokens=[
-            Token(
-                index=0, form="عبدالله", span=(0, 7), norm_span=(0, 7), is_clitic=False
-            ),
-            Token(
-                index=1, form="طالب", span=(8, 12), norm_span=(8, 12), is_clitic=False
-            ),
+            Token(index=0, form="عبدالله", span=(0, 7), norm_span=(0, 7)),
+            Token(index=1, form="طالب", span=(8, 12), norm_span=(8, 12)),
         ],
         morph_features=[
             [
@@ -1182,7 +1059,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="عَبْدُاللَّهِ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1196,7 +1072,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="طَالِبٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1212,11 +1087,9 @@ _reg(
     ged_input=_make_ged_input(
         text="عبد الله طالب",
         tokens=[
-            Token(index=0, form="عبد", span=(0, 3), norm_span=(0, 3), is_clitic=False),
-            Token(index=1, form="الله", span=(4, 8), norm_span=(4, 8), is_clitic=False),
-            Token(
-                index=2, form="طالب", span=(9, 13), norm_span=(9, 13), is_clitic=False
-            ),
+            Token(index=0, form="عبد", span=(0, 3), norm_span=(0, 3)),
+            Token(index=1, form="الله", span=(4, 8), norm_span=(4, 8)),
+            Token(index=2, form="طالب", span=(9, 13), norm_span=(9, 13)),
         ],
         morph_features=[
             [
@@ -1229,7 +1102,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="عَبْدُ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1243,7 +1115,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="اللَّهِ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1257,7 +1128,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="طَالِبٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1277,12 +1147,8 @@ _reg(
     ged_input=_make_ged_input(
         text="إنشاء الله",
         tokens=[
-            Token(
-                index=0, form="إنشاء", span=(0, 5), norm_span=(0, 5), is_clitic=False
-            ),
-            Token(
-                index=1, form="الله", span=(6, 10), norm_span=(6, 10), is_clitic=False
-            ),
+            Token(index=0, form="إنشاء", span=(0, 5), norm_span=(0, 5)),
+            Token(index=1, form="الله", span=(6, 10), norm_span=(6, 10)),
         ],
         morph_features=[
             [
@@ -1295,7 +1161,6 @@ _reg(
                     definiteness="indefinite",
                     case="nominative",
                     diacritized="إِنْشَاءٌ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1309,7 +1174,6 @@ _reg(
                     definiteness="definite",
                     case="genitive",
                     diacritized="اللَّهِ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1325,11 +1189,9 @@ _reg(
     ged_input=_make_ged_input(
         text="إن شاء الله",
         tokens=[
-            Token(index=0, form="إن", span=(0, 2), norm_span=(0, 2), is_clitic=False),
-            Token(index=1, form="شاء", span=(3, 6), norm_span=(3, 6), is_clitic=False),
-            Token(
-                index=2, form="الله", span=(7, 11), norm_span=(7, 11), is_clitic=False
-            ),
+            Token(index=0, form="إن", span=(0, 2), norm_span=(0, 2)),
+            Token(index=1, form="شاء", span=(3, 6), norm_span=(3, 6)),
+            Token(index=2, form="الله", span=(7, 11), norm_span=(7, 11)),
         ],
         morph_features=[
             [
@@ -1338,7 +1200,6 @@ _reg(
                     lemma="إن",
                     pos="PART",
                     diacritized="إِنْ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1353,7 +1214,6 @@ _reg(
                     tense="past",
                     voice="active",
                     diacritized="شَاءَ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],
@@ -1367,7 +1227,6 @@ _reg(
                     definiteness="definite",
                     case="nominative",
                     diacritized="اللَّهُ",
-                    affix_structure="STEM",
                     is_disambiguated=True,
                 )
             ],

@@ -17,17 +17,24 @@ class Token(BaseModel):
 
     Attributes:
         index: Position of this token in the token list (0-based).
-        form: Original form of the token as it appears in the original text.
-        span: Start and end character offsets in the original text.
-        norm_span: Start and end character offsets on the normalized text.
-        is_clitic: Whether this token is a clitic segmented off a word.
+        form: Surface form of the token taken from normalized_text. Semantically
+            equivalent to the original surface form, span is provided for UI
+            character-offset positioning on the original text.
+        span: Start and end character offsets in the original text, used by the
+            UI to highlight characters the user actually typed.
+        norm_span: Start and end character offsets on the normalized text, may
+            differ from span when NFKC expands a single codepoint into multiple
+            characters.
+        affix_structure: Plus-joined clitic/stem breakdown derived from Farasa
+            segmentation (ex. "CONJ+PREP+DET+STEM"), None for punctuation and
+            non-Arabic tokens.
     """
 
     index: int
     form: str
     span: tuple[int, int]
     norm_span: tuple[int, int]
-    is_clitic: bool
+    affix_structure: str | None = None
 
 
 class MorphAnalysis(BaseModel):
@@ -38,7 +45,9 @@ class MorphAnalysis(BaseModel):
     Attributes:
         token_index: Index of the corresponding Token.
         lemma: Base/root form of the token, None for punctuation and non-Arabic.
-        pos: Part-of-speech tag.
+        pos: Part-of-speech tag. One of: NOUN, NOUN_PROP, NOUN_QUANT, VERB,
+            ADJ, ADV, PREP, CONJ, PRON, PRON_REL, PRON_INTERROG, DET, PART,
+            PUNC, NUM, INTJ. See the POS Tagset section in the contract.
         gender: "masculine", "feminine", or None.
         number: "singular", "dual", "plural", or None.
         person: "first", "second", "third", or None.
@@ -48,7 +57,6 @@ class MorphAnalysis(BaseModel):
         voice: "active", "passive", or None for non verbs.
         mood: "indicative", "subjunctive", "jussive", or None for non verbs.
         diacritized: The token form with full diacritics as resolved by disambiguation.
-        affix_structure: Encoded prefix/suffix breakdown (ex. CONJ+PREP+DET+STEM).
         is_disambiguated: True for the candidate selected by the disambiguator.
     """
 
@@ -64,5 +72,4 @@ class MorphAnalysis(BaseModel):
     voice: str | None = None
     mood: str | None = None
     diacritized: str | None = None
-    affix_structure: str | None = None
     is_disambiguated: bool = False
