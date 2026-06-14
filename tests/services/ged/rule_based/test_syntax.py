@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from src.services.ged.features.subsystems.rule_based.registry import rule_registry
 from src.services.ged.schemas import ErrorCategory
+
 from tests.services.ged.rule_based.conftest import make_morph, make_token
 
 _T = make_token
