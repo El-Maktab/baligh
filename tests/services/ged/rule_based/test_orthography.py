@@ -120,9 +120,9 @@ class TestAlifMaqsuraPrep:
     @pytest.mark.parametrize(
         "form,lemma",
         [
-            ("علي", "على"),
-            ("الي", "إلى"),
-            ("حتي", "حتى"),
+            ("علي", "عَلَى"),
+            ("الي", "إِلَى"),
+            ("حتي", "حَتَّى"),
         ],
     )
     def test_prep_ya_flagged(self, form, lemma):
@@ -137,9 +137,9 @@ class TestAlifMaqsuraPrep:
     @pytest.mark.parametrize(
         "form,lemma",
         [
-            ("على", "على"),
-            ("إلى", "إلى"),
-            ("حتى", "حتى"),
+            ("على", "عَلَى"),
+            ("إلى", "إِلَى"),
+            ("حتى", "حَتَّى"),
         ],
     )
     def test_prep_alif_maqsura_silent(self, form, lemma):
