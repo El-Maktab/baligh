@@ -23,6 +23,7 @@ from src.services.ged.features.subsystems.rule_based.models import (
 )
 from src.services.ged.features.subsystems.rule_based.registry import RuleRegistry
 from src.services.ged.schemas import ErrorCategory, ErrorSource, ProvenanceTier
+
 from tests.services.ged.rule_based.conftest import make_morph, make_token
 
 # ###########################################################################
