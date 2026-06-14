@@ -1,0 +1,28 @@
+# Orthographic declarative rules for the GED rule-based detector.
+#
+# To add a future rule, append a new list entry following the same schema.
+
+- id: OT_ALIF_MAQSURA_PREP
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "حرف الجر ينتهي بألف مقصورة (ى) لا ياء (ي)، مثل: على، إلى، حتى"
+  pattern:
+    match: token
+    pos: PREP
+    lemma_in:
+      - "على"
+      - "إلى"
+      - "حتى"
+    form_ends_with: "ي"
+
+- id: OT_TA_MARBUTA_NOUN
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)"
+  pattern:
+    match: token
+    pos: NOUN
+    gender: feminine
+    form_ends_with: "ه"

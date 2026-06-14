@@ -50,6 +50,15 @@ TA_MARBUTA = "ة"
 # Ha
 HA = "ه"
 
+# Bare Alif الف وصل
+BARE_ALIF = "ا"
+
+# POS tags that require a همزة قطع on the stem's initial Alif.
+# PREP حرف جر
+# PART أداة
+# CONJ أداة ربط
+HAMZA_REQUIRED_POS: frozenset[str] = frozenset({"PREP", "PART", "CONJ"})
+
 
 # ################################################################################
 # Functions
