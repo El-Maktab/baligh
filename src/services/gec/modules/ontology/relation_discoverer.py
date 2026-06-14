@@ -50,7 +50,7 @@ class RelationMetadata(BaseModel):
 
 def _to_rdf_term(val: Any) -> Any:
     """Converts a value to its appropriate RDF term (URIRef or BNode)."""
-    if isinstance(val, (URIRef, BNode)):
+    if isinstance(val, URIRef | BNode):
         return val
     if isinstance(val, str):
         if val.startswith("_:"):

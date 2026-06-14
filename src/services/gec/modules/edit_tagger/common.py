@@ -6,6 +6,24 @@ from enum import StrEnum
 from src.services.gec.schemas import EditOperation
 
 
+@dataclass
+class ProjectedExample:
+    """A training example with subword tokens and compressed edit labels."""
+
+    subwords: list[str]
+    labels: list[str]
+    labels_star: list[str] | None = None
+
+
+@dataclass
+class JSONLEditTagExample:
+    """Token-classification example stored in JSONL format."""
+
+    input_ids: list[int]
+    attention_mask: list[int]
+    labels: list[int]
+
+
 class AlignmentType(StrEnum):
     """Type of alignment."""
 
@@ -44,3 +62,11 @@ class BackPointer:
 
     prev_i: int
     prev_j: int
+
+
+@dataclass
+class ParallelExample:
+    """Parallel example with source and target text."""
+
+    source: str
+    target: str

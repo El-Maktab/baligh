@@ -3,7 +3,7 @@
 from src.services.gec.schemas import EditOperation
 from src.services.gec.utils.distance_utils import levenshtein
 
-from .common import Alignment, AlignmentType, BackPointer
+from ..common import Alignment, AlignmentType, BackPointer
 
 
 class Aligner:
@@ -16,18 +16,18 @@ class Aligner:
 
     def align_words(self, source: str, target: str) -> list[Alignment]:
         """Aligns two words and returns a list of Alignment."""
-        source_list = source.split(" ")
-        target_list = target.split(" ")
+        source_list = source.split(" ") if source else []
+        target_list = target.split(" ") if target else []
 
         _, parent = self._build_dp(source_list, target_list)
-        return self._backtrack(source, target, parent, AlignmentType.WORD)
+        return self._backtrack(source_list, target_list, parent, AlignmentType.WORD)
 
     def align_characters(self, source: str, target: str) -> list[Alignment]:
         """Aligns two strings at character level."""
         source_chars = list(source)
         target_chars = list(target)
 
-        dp, parent = self._build_dp(source_chars, target_chars)
+        _, parent = self._build_dp(source_chars, target_chars)
         return self._backtrack(
             source_chars, target_chars, parent, AlignmentType.CHARACTER
         )

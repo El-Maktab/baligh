@@ -8,12 +8,12 @@
 
 ## Input
 
-| Field                | Type                    | Description                  |
-| -------------------- | ----------------------- | ---------------------------- |
-| `text`               | `str`                   | Original surface text        |
-| `tokens`             | `list[Token]`           | Token list                   |
-| `errors_span`        | `list[ErrorSpan]`       | GED output                   |
-| `errors_corrections` | `list[GECModuleOutput]` | Outputs from all GEC modules |
+| Field                | Type              | Description             |
+| -------------------- | ----------------- | ----------------------- |
+| `text`               | `str`             | Original surface text   |
+| `tokens`             | `list[Token]`     | Token list              |
+| `errors_span`        | `list[ErrorSpan]` | GED output              |
+| `errors_corrections` | `list[GECOutput]` | Outputs from GEC module |
 
 ---
 
