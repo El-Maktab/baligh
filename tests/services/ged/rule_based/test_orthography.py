@@ -95,8 +95,8 @@ class TestHamzaPrep:
         The affix structure ``CONJ+PREP+STEM`` tells first_significant_char
         to skip one character (و) and inspect the next (ا).
         """
-        tok = _T("والى", (0, 4), 0)
-        morph = _M(0, "PREP", lemma="إلى", affix_structure="CONJ+PREP+STEM")
+        tok = _T("والى", (0, 4), 0, affix_structure="CONJ+PREP+STEM")
+        morph = _M(0, "PREP", lemma="إلى")
         spans = self._run([tok], [[morph]])
         assert len(spans) == 1
 

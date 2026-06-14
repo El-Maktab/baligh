@@ -57,7 +57,7 @@ def check_hamza_prep(
         if morph.pos not in HAMZA_REQUIRED_POS:
             continue
 
-        stem_first = first_significant_char(token.form, morph.affix_structure)
+        stem_first = first_significant_char(token.form, token.affix_structure)
         if stem_first == BARE_ALIF:
             hits.append((token.span[0], token.span[1], token.index))
 

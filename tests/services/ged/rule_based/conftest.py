@@ -15,7 +15,7 @@ def make_token(
     span: tuple[int, int],
     index: int,
     *,
-    is_clitic: bool = False,
+    affix_structure: str | None = None,
     norm_span: tuple[int, int] | None = None,
 ) -> Token:
     """Build a Token for use in tests."""
@@ -24,7 +24,7 @@ def make_token(
         form=form,
         span=span,
         norm_span=norm_span or span,
-        is_clitic=is_clitic,
+        affix_structure=affix_structure,
     )
 
 
@@ -42,7 +42,6 @@ def make_morph(
     voice: str | None = None,
     mood: str | None = None,
     diacritized: str | None = None,
-    affix_structure: str | None = None,
     is_disambiguated: bool = True,
 ) -> MorphAnalysis:
     """Build a MorphAnalysis for use in tests."""
@@ -59,7 +58,6 @@ def make_morph(
         voice=voice,
         mood=mood,
         diacritized=diacritized,
-        affix_structure=affix_structure,
         is_disambiguated=is_disambiguated,
     )
 
