@@ -8,7 +8,7 @@ Design decisions:
         is_disambiguated=True. All other unique analyzer candidates follow
         with is_disambiguated=False.
     - Deduplication: We skip the disambiguated value from the results of the analyzer
-        if it is generated again by it. The match key is (diac, pos, lex) which 
+        if it is generated again by it. The match key is (diac, pos, lex) which
         should be distinctive within one word.
     - CAMeL's lex field maps to our lemma (base/dictionary form).
         CAMeL's diac field maps to our diacritized (fully diacritized
@@ -302,10 +302,8 @@ def analyze(tokens: list[Token]) -> list[list[MorphAnalysis]]:
 
     output: list[list[MorphAnalysis]] = []
 
-    for token, dw in zip(tokens, disambig_results):
-        disambig_dict: dict | None = (
-            dw.analyses[0].analysis if dw.analyses else None
-        )
+    for token, dw in zip(tokens, disambig_results, strict=False):
+        disambig_dict: dict | None = dw.analyses[0].analysis if dw.analyses else None
         all_candidates: list[dict] = ana.analyze(token.form)
 
         candidates: list[MorphAnalysis] = []
@@ -325,8 +323,16 @@ def analyze(tokens: list[Token]) -> list[list[MorphAnalysis]]:
         deduped: list[MorphAnalysis] = []
         for c in candidates:
             key = (
-                c.lemma, c.pos, c.gender, c.number, c.person,
-                c.definiteness, c.case, c.tense, c.voice, c.mood,
+                c.lemma,
+                c.pos,
+                c.gender,
+                c.number,
+                c.person,
+                c.definiteness,
+                c.case,
+                c.tense,
+                c.voice,
+                c.mood,
                 c.diacritized,
             )
             if key not in seen:

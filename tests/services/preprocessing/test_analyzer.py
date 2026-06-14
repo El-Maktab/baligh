@@ -6,7 +6,6 @@ from src.services.preprocessing.features.analyzer import (
     analyze,
 )
 
-
 #############################################################################
 # Helpers
 #############################################################################
@@ -31,9 +30,17 @@ def _make_token(index: int, form: str, affix_structure: str | None = "STEM") -> 
 def test_map_analysis_verb():
     """A verb analysis dict should map to the correct MorphAnalysis fields."""
     camel_dict = {
-        "lex": "ذَهَب", "pos": "verb", "gen": "m", "num": "s",
-        "per": "3", "cas": "na", "vox": "a", "mod": "i",
-        "asp": "p", "diac": "ذَهَبَ", "stt": "na",
+        "lex": "ذَهَب",
+        "pos": "verb",
+        "gen": "m",
+        "num": "s",
+        "per": "3",
+        "cas": "na",
+        "vox": "a",
+        "mod": "i",
+        "asp": "p",
+        "diac": "ذَهَبَ",
+        "stt": "na",
     }
     result = _map_analysis(camel_dict, token_index=0, is_disambiguated=True)
 
@@ -53,9 +60,17 @@ def test_map_analysis_verb():
 def test_map_analysis_noun():
     """A noun analysis dict should map correctly including definiteness and case."""
     camel_dict = {
-        "lex": "طالِب", "pos": "noun", "gen": "m", "num": "p",
-        "per": "na", "cas": "g", "vox": "na", "mod": "na",
-        "asp": "na", "diac": "الطُلّابِ", "stt": "d",
+        "lex": "طالِب",
+        "pos": "noun",
+        "gen": "m",
+        "num": "p",
+        "per": "na",
+        "cas": "g",
+        "vox": "na",
+        "mod": "na",
+        "asp": "na",
+        "diac": "الطُلّابِ",
+        "stt": "d",
     }
     result = _map_analysis(camel_dict, token_index=1, is_disambiguated=False)
 
@@ -74,9 +89,17 @@ def test_map_analysis_noun():
 def test_map_analysis_punctuation():
     """Punctuation analysis should have pos=PUNC, lemma=None, diacritized=None."""
     camel_dict = {
-        "lex": "،", "pos": "punc", "gen": "na", "num": "na",
-        "per": "na", "cas": "na", "vox": "na", "mod": "na",
-        "asp": "na", "diac": "،", "stt": "na",
+        "lex": "،",
+        "pos": "punc",
+        "gen": "na",
+        "num": "na",
+        "per": "na",
+        "cas": "na",
+        "vox": "na",
+        "mod": "na",
+        "asp": "na",
+        "diac": "،",
+        "stt": "na",
     }
     result = _map_analysis(camel_dict, token_index=2, is_disambiguated=True)
 
@@ -90,9 +113,17 @@ def test_map_analysis_punctuation():
 def test_map_analysis_undefined_case_is_none():
     """CAMeL case='u' (undefined) should map to None."""
     camel_dict = {
-        "lex": "ذَهَب", "pos": "noun", "gen": "m", "num": "s",
-        "per": "na", "cas": "u", "vox": "na", "mod": "na",
-        "asp": "na", "diac": "ذَهَب", "stt": "i",
+        "lex": "ذَهَب",
+        "pos": "noun",
+        "gen": "m",
+        "num": "s",
+        "per": "na",
+        "cas": "u",
+        "vox": "na",
+        "mod": "na",
+        "asp": "na",
+        "diac": "ذَهَب",
+        "stt": "i",
     }
     result = _map_analysis(camel_dict, token_index=0, is_disambiguated=False)
     assert result.case is None
@@ -102,9 +133,17 @@ def test_map_analysis_undefined_case_is_none():
 def test_map_analysis_noun_prop_maps_to_noun_prop():
     """CAMeL noun_prop POS should map to our distinct NOUN_PROP tag."""
     camel_dict = {
-        "lex": "ذَهَب", "pos": "noun_prop", "gen": "f", "num": "s",
-        "per": "na", "cas": "u", "vox": "na", "mod": "na",
-        "asp": "na", "diac": "ذَهَب", "stt": "i",
+        "lex": "ذَهَب",
+        "pos": "noun_prop",
+        "gen": "f",
+        "num": "s",
+        "per": "na",
+        "cas": "u",
+        "vox": "na",
+        "mod": "na",
+        "asp": "na",
+        "diac": "ذَهَب",
+        "stt": "i",
     }
     result = _map_analysis(camel_dict, token_index=0, is_disambiguated=False)
     assert result.pos == "NOUN_PROP"
@@ -165,8 +204,16 @@ def test_analyze_no_duplicate_analyses():
     seen: set[tuple] = set()
     for c in result[0]:
         key = (
-            c.lemma, c.pos, c.gender, c.number, c.person,
-            c.definiteness, c.case, c.tense, c.voice, c.mood,
+            c.lemma,
+            c.pos,
+            c.gender,
+            c.number,
+            c.person,
+            c.definiteness,
+            c.case,
+            c.tense,
+            c.voice,
+            c.mood,
             c.diacritized,
         )
         assert key not in seen, f"Duplicate analysis: {key}"
@@ -183,7 +230,7 @@ def test_analyze_token_index_correct():
 
 
 def test_analyze_pos_is_uppercase_nonempty():
-    """pos field must be non-empty and uppercase for all candidates."""
+    """Pos field must be non-empty and uppercase for all candidates."""
     tokens = [_make_token(0, "ذهب"), _make_token(1, "الطلاب")]
     result = analyze(tokens)
     for candidates in result:

@@ -4,14 +4,11 @@ Each test uses the public *segment()* function and verifies the returned
 Token list for correctness of form, span, norm_span, and affix_structure.
 """
 
-import pytest
-
 from src.services.preprocessing.features.segmenter import (
     _build_affix_structure,
     segment,
 )
 from src.services.preprocessing.utils.normalizer import normalize_with_mapping
-
 
 #############################################################################
 # Unit tests for _build_affix_structure (pure, no Farasa needed)
@@ -112,7 +109,11 @@ def test_segment_definite_noun():
 
 
 def test_segment_multi_clitic_word():
-    """A word with conjunction + preposition + definite article should produce CONJ+PREP+DET+STEM."""
+    """Test segmentation of a multi-clitic word.
+
+    A word with conjunction + preposition + definite article should produce
+    CONJ+PREP+DET+STEM.
+    """
     text = "وبالمدرسة"
     normalized, mapping = normalize_with_mapping(text)
     tokens = segment(normalized, mapping)
