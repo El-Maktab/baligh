@@ -11,9 +11,9 @@
     match: token
     pos: PREP
     lemma_in:
-      - "على"
-      - "إلى"
-      - "حتى"
+      - "عَلَى"
+      - "إِلَى"
+      - "حَتَّى"
     form_ends_with: "ي"
 
 - id: OT_TA_MARBUTA_NOUN
