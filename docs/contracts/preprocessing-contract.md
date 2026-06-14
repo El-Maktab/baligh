@@ -75,9 +75,6 @@
 
 ## Pipeline Stages
 
-text
-
-Copy
 
 ```text
 Raw text + cursor_offset        │        ▼[1] Normalization                         → normalized_text + norm_to_orig_map        │  Unicode NFKC + whitespace consolidation        │  norm_to_orig_map[i] = index of normalized_text[i] in original text        ▼[2] Word Boundary Detection               → completed_prefix, current_fragment, mode        │  Runs on normalized_text        │  Split into completed_prefix and current_fragment (see DD-002)        ▼[3] Segmentation — Farasa                 → list[Token]  (on completed_prefix only)        │  Farasa runs in interactive mode (JVM kept alive; fast repeated calls)        │  Farasa output (+‑split) → affix_structure per token        │  Sequential alignment → norm_span; norm_to_orig_map → span        │  Token.form = normalized_text[norm_span[0]:norm_span[1]]        ▼[4] Morphological Analysis + Disambiguation - CAMeL        │  Receives whole word forms (not Farasa sub-segments)        │  Joint morph analysis + diacritization in one pass (see DD-001)        ▼Output: tokens[], morph_features[], current_fragment, mode
@@ -112,20 +109,24 @@ Determines whether the last token in the input is complete or still being typed 
 
 ## POS Tagset
 
-| Tag | Description |
-| --- | --- |
-| `NOUN` | Noun |
-| `VERB` | Verb |
-| `ADJ` | Adjective |
-| `ADV` | Adverb |
-| `PREP` | Preposition |
-| `CONJ` | Conjunction |
-| `PRON` | Pronoun |
-| `DET` | Determiner (`ال`) |
-| `PART` | Particle |
-| `PUNC` | Punctuation |
-| `NUM` | Number |
-| `INTJ` | Interjection |
+| Tag | Description | Examples |
+| --- | --- | --- |
+| `NOUN` | Common noun | كتاب، مدرسة |
+| `NOUN_PROP` | Proper noun | محمد، القاهرة، مصر |
+| `NOUN_QUANT` | Quantifier noun | كل، بعض، جميع، معظم |
+| `VERB` | Verb | ذهب، يكتب، اكتب |
+| `ADJ` | Adjective | كبير، جميل |
+| `ADV` | Adverb | سريعاً، جداً |
+| `PREP` | Preposition | في، على، من |
+| `CONJ` | Conjunction | و، ف، لكن |
+| `PRON` | Personal / possessive pronoun | هو، هم، أنا |
+| `PRON_REL` | Relative pronoun | الذي، التي، الذين |
+| `PRON_INTERROG` | Interrogative pronoun | من، ما، أين، كيف، متى |
+| `DET` | Determiner (`ال`) | ال |
+| `PART` | Particle | قد، لم، ما |
+| `PUNC` | Punctuation | ، . ؟ ! |
+| `NUM` | Number / digit | ١٢٣، 456 |
+| `INTJ` | Interjection | آه، واو |
 
 ---
 
