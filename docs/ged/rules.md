@@ -62,3 +62,24 @@
 | SE_IDHTARADA | lexical_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح: «اطرّد» بدل «اضطرد». |
 | SE_MUJBAA | lexical_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح: «مجبية» بدل «مجباة». |
 | SE_MOUSOUD | lexical_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح: «موصَد» بدل «موصود». |
+| SE_MUASHIRAT | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يستحسن في هذا المعنى: إشارات أو علامات أو شواهد أو دلائل بدل «مؤشرات». |
+| SE_MISHWAR | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يستحسن تجنب «مشوار» بهذا المعنى، والأفصح: طريق أو مسار أو نزهة. |
+| SE_MACHINE | lexical_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح: «مكنة» بدل «ماكينة». |
+| SE_IMKANIYAT | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «إمكانات» بدل «إمكانيات». |
+| SE_TAWAJUD | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل في هذا الاستعمال «وجد» بدل «تواجد». |
+| SE_MUSBAQAN | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «مقدمًا» أو «سلفًا» أو «قبلًا» بدل «مسبقا». |
+| SE_WABITTALI | lexical_usage | YAML (Declarative) | tier_1_rule_derived | «وبالتالي» تعبير ركيك في هذا السياق، ويستحسن استبداله ببدائل أفصح. |
+| SE_BIMATHABATI | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «بمنزلة» أو «تقوم مقام» بدل «بمثابة». |
+| SE_ISTIBYAN | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «استبانة» بدل «استبيان». |
+| SE_AKHISSAI | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «اختصاصي» بدل «أخصائي». |
+| SE_TOQOS | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «شعائر» بدل «طقوس» في هذا الاستعمال. |
+| SE_BIHASABI | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يستحسن تجنب «بحسب» في هذا الاستعمال واستبدالها ببدائل أفصح. |
+| SE_LISALIHIKA | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «لمصلحتك» بدل «لصالحك». |
+| SE_LISALIHI | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «لمصلحة» بدل «لصالح». |
+| SE_I3TABAR | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل في هذا الاستعمال «عدّ» بدل «اعتبر». |
+| SE_BURHA | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «هنيهة» بدل «برهة» في هذا السياق. |
+| SE_AAWINA | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «أوان» بدل «آونة». |
+| SE_BAWASIL | lexical_usage | YAML (Declarative) | tier_1_rule_derived | في هذا الاستعمال يفضل «بسلاء» أو «باسلون» بدل «بواسل». |
+| SE_MUSTAHTIR | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «مستهين» أو «مستخفّ» بدل «مستهتر» في هذا الاستعمال. |
+| SE_SUWAH | lexical_usage | YAML (Declarative) | tier_1_rule_derived | يفضل «سياح» بدل «سواح». |
+| SE_KAKULL | lexical_usage | YAML (Declarative) | tier_1_rule_derived | «ككل» ترجمة ركيكة، ويستحسن «كليًا». |

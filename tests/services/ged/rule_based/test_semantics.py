@@ -178,3 +178,108 @@ def test_se_mujbaa():
 def test_se_mousoud():
     """Flags the lexical form «موصود»."""
     _assert_semantic_hit("SE_MOUSOUD", "الموصود", _M(0, "ADJ"))
+
+
+def test_se_muashirat():
+    """Flags the lexical choice «مؤشرات» in the discouraged meaning."""
+    _assert_semantic_hit("SE_MUASHIRAT", "مؤشرات", _M(0, "NOUN"))
+
+
+def test_se_mishwar():
+    """Flags the lexical choice «مشوار»."""
+    _assert_semantic_hit("SE_MISHWAR", "المشوار", _M(0, "NOUN"))
+
+
+def test_se_machine():
+    """Flags the lexical choice «ماكينة»."""
+    _assert_semantic_hit("SE_MACHINE", "ماكينة", _M(0, "NOUN"))
+
+
+def test_se_imkaniyat():
+    """Flags the plural form «إمكانيات»."""
+    _assert_semantic_hit("SE_IMKANIYAT", "إمكانيات", _M(0, "NOUN"))
+
+
+def test_se_tawajud():
+    """Flags the lexical choice «تواجد» in the discouraged usage."""
+    _assert_semantic_hit("SE_TAWAJUD", "تواجد", _M(0, "VERB"))
+
+
+def test_se_musbaqan():
+    """Flags the adverbial form «مسبقا»."""
+    _assert_semantic_hit("SE_MUSBAQAN", "مسبقا", _M(0, "ADV"))
+
+
+def test_se_wabittali():
+    """Flags the connective form «وبالتالي»."""
+    _assert_semantic_hit("SE_WABITTALI", "وبالتالي", _M(0, "ADV"))
+
+
+def test_se_bimathabati():
+    """Flags the lexical choice «بمثابة»."""
+    _assert_semantic_hit("SE_BIMATHABATI", "بمثابة", _M(0, "NOUN"))
+
+
+def test_se_istibyan():
+    """Flags the noun «استبيان» in favor of «استبانة»."""
+    _assert_semantic_hit("SE_ISTIBYAN", "الاستبيان", _M(0, "NOUN"))
+
+
+def test_se_akhissai():
+    """Flags the noun «أخصائي» in favor of «اختصاصي»."""
+    _assert_semantic_hit("SE_AKHISSAI", "الأخصائي", _M(0, "NOUN"))
+
+
+def test_se_toqos():
+    """Flags the lexical choice «طقوس»."""
+    _assert_semantic_hit("SE_TOQOS", "الطقوس", _M(0, "NOUN"))
+
+
+def test_se_bihasabi():
+    """Flags the connective form «بحسب»."""
+    _assert_semantic_hit("SE_BIHASABI", "بحسب", _M(0, "PREP"))
+
+
+def test_se_lisalihika():
+    """Flags enclitic forms built on «لصالحـ»."""
+    _assert_semantic_hit("SE_LISALIHIKA", "لصالحك", _M(0, "NOUN"))
+
+
+def test_se_lisalihi():
+    """Flags the lexical choice «لصالح»."""
+    _assert_semantic_hit("SE_LISALIHI", "لصالح", _M(0, "NOUN"))
+
+
+def test_se_i3tabar():
+    """Flags the verb «اعتبر» in the discouraged usage."""
+    _assert_semantic_hit("SE_I3TABAR", "اعتبر", _M(0, "VERB"))
+
+
+def test_se_burha():
+    """Flags the noun «برهة» in the discouraged usage."""
+    _assert_semantic_hit("SE_BURHA", "برهة", _M(0, "NOUN"))
+
+
+def test_se_aawina():
+    """Flags the plural form «آونة»."""
+    _assert_semantic_hit("SE_AAWINA", "آونة", _M(0, "NOUN"))
+
+
+def test_se_bawasil():
+    """Flags the plural form «بواسل» in the discouraged usage."""
+    _assert_semantic_hit("SE_BAWASIL", "بواسل", _M(0, "NOUN"))
+
+
+def test_se_mustahtir():
+    """Flags the adjective «مستهتر» in the discouraged usage."""
+    _assert_semantic_hit("SE_MUSTAHTIR", "مستهتر", _M(0, "ADJ"))
+
+
+def test_se_suwah():
+    """Flags the plural form «سواح»."""
+    _assert_semantic_hit("SE_SUWAH", "سواح", _M(0, "NOUN"))
+
+
+def test_se_kakull():
+    """Flags the expression «ككل»."""
+    _assert_semantic_hit("SE_KAKULL", "ككل", _M(0, "ADV"))
