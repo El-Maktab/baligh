@@ -1,0 +1,461 @@
+- id: SE_DECADES_IYAT
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن في العقود أن تكتب بصيغة «ـينيات» لا «ـينات»، مثل: الثلاثينيات"
+  pattern:
+    match: token
+    form_regex: "^(و|ف)?(كال|لل|بال|ال)(عشر|ثلاث|أربع|خمس|ست|سبع|ثمان|تسع)ينات$"
+
+- id: SE_MOAKHARAN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن تجنب «مؤخرا» بهذا المعنى، والأفصح: حديثًا أو قريبًا"
+  pattern:
+    match: token
+    form_regex: "^مؤخرا$"
+
+- id: SE_MUTAAKID
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن استعمال «متحقق» أو «متيقن» بدل «متأكد»"
+  pattern:
+    match: token
+    form_regex: "^متأكد$"
+
+- id: SE_DHATA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "«ذاتا» لا تستعمل هنا، والأفصح: «ذواتا»"
+  pattern:
+    match: token
+    form_regex: "^ذاتا$"
+
+- id: SE_KHATIR
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن تجنب «خطير» في هذا الاستعمال، والأفصح: شديد الخطر أو محفوف بالخطر"
+  pattern:
+    match: token
+    pos: ADJ
+    form_regex: "^خطير$"
+
+- id: SE_KHAMMARA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "«الخمّارة» بائعة الخمر، ويستحسن في المكان: «مخمرة» أو «حانة»"
+  pattern:
+    match: token
+    form_regex: "^خمارة$"
+
+- id: SE_INDHAHALA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الفعل الأفصح: «ذهل» لا «انذهل»"
+  pattern:
+    match: token
+    form_regex: "^انذهل$"
+
+- id: SE_BIAKMALIHI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن في نحو «بأكمله» أن يقال: كله أو جميعه أو برمته"
+  pattern:
+    match: token
+    form_regex: "^بأكمل(ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)$"
+
+- id: SE_TAHAMMAMA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن استعمال «استحم» بدل «تحمم»"
+  pattern:
+    match: token
+    form_regex: "^تحمم$"
+
+- id: SE_TASHKILU
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن الاستغناء عن «تشكل» في هذا الاستعمال أو استبدالها بـ«هي»"
+  pattern:
+    match: token
+    form_regex: "^تشكل$"
+
+- id: SE_TASAMAMA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الفعل المضعف هنا يدغم، والأفصح: «تصامّ» لا «تصامم»"
+  pattern:
+    match: token
+    form_regex: "^تصامم$"
+
+- id: SE_TATMIN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «طمأنة» لا «تطمين»"
+  pattern:
+    match: token
+    form_regex: "^تطمين$"
+
+- id: SE_TA3KISU
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن في هذا السياق «تظهر» أو «تفضح» بدل «تعكس»"
+  pattern:
+    match: token
+    form_regex: "^تعكس$"
+
+- id: SE_JANOOBI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "في الظرفية المكانية يفضل «جنوبَ» بدل «جنوبي»"
+  pattern:
+    match: token
+    form_regex: "^جنوبي$"
+
+- id: SE_KHESISAN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن «خِصِّيصَى» أو «خاصًا» بدل «خصيصا»"
+  pattern:
+    match: token
+    form_regex: "^خصيصا$"
+
+- id: SE_KHALOOQ
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح في الوصف هنا: «حسن الخلق» بدل «خلوق»"
+  pattern:
+    match: token
+    pos: ADJ
+    form_regex: "^خلوق$"
+
+- id: SE_RAGHMA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن «على الرغم» أو «بالرغم» أو «على» أو «مع» بدل «رغم»"
+  pattern:
+    match: token
+    form_regex: "^رغم$"
+
+- id: SE_RAFAH
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "«رفات» هو المستعمل هنا لا «رفاة»"
+  pattern:
+    match: token
+    form_regex: "^رفاة$"
+
+- id: SE_SHAWYAN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح في مصدر «شوى»: «شَيًّا» لا «شويا»"
+  pattern:
+    match: token
+    form_regex: "^شويا$"
+
+- id: SE_ARAYA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن في هذا المعنى «عريانـون» لا «عرايا»"
+  pattern:
+    match: token
+    form_regex: "^عرايا$"
+
+- id: SE_LIWAHDIHI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «وحده» بدل «لوحده»"
+  pattern:
+    match: token
+    form_regex: "^لوحده$"
+
+- id: SE_MAHALAT
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "جمع «محل» في هذا الاستعمال هو «محالّ» لا «محلات»"
+  pattern:
+    match: token
+    form_regex: "^محلات$"
+
+- id: SE_NAFOUKH
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «يافوخ» بدل «نافوخ»"
+  pattern:
+    match: token
+    form_regex: "^نافوخ(ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)?$"
+
+- id: SE_NASHET
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "في الوصف يفضل «نشيط» أو «ناشط» بدل «نشط»"
+  pattern:
+    match: token
+    pos: ADJ
+    form_regex: "^نشط$"
+
+- id: SE_WALLATI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن حذف الواو من «والتي» في هذا الربط"
+  pattern:
+    match: token
+    form_regex: "^والتي$"
+
+- id: SE_WALLADHI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن حذف الواو من «والذي» في هذا الربط"
+  pattern:
+    match: token
+    form_regex: "^والذي$"
+
+- id: SE_ITTILA3
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «اطّلاع» بدل «إطلاع»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?إطلاع$"
+
+- id: SE_IDHTARADA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «اطرّد» بدل «اضطرد»"
+  pattern:
+    match: token
+    form_regex: "^اضطرد$"
+
+- id: SE_MUJBAA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «مجبية» بدل «مجباة»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?مجباة$"
+
+- id: SE_MOUSOUD
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «موصَد» بدل «موصود»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?موصود$"
+
+- id: SE_MUASHIRAT
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن في هذا المعنى: إشارات أو علامات أو شواهد أو دلائل بدل «مؤشرات»"
+  pattern:
+    match: token
+    form_regex: "^مؤشرات$"
+
+- id: SE_MISHWAR
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن تجنب «مشوار» بهذا المعنى، والأفصح: طريق أو مسار أو نزهة"
+  pattern:
+    match: token
+    form_regex: "^(ال)?مشوار$"
+
+- id: SE_MACHINE
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح: «مكنة» بدل «ماكينة»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?ماكينة$"
+
+- id: SE_IMKANIYAT
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «إمكانات» بدل «إمكانيات»"
+  pattern:
+    match: token
+    form_regex: "^إمكانيات$"
+
+- id: SE_TAWAJUD
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل في هذا الاستعمال «وجد» بدل «تواجد»"
+  pattern:
+    match: token
+    form_regex: "^تواجد$"
+
+- id: SE_MUSBAQAN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «مقدمًا» أو «سلفًا» أو «قبلًا» بدل «مسبقا»"
+  pattern:
+    match: token
+    form_regex: "^مسبقا$"
+
+- id: SE_WABITTALI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "«وبالتالي» تعبير ركيك في هذا السياق، ويستحسن استبداله ببدائل أفصح"
+  pattern:
+    match: token
+    form_regex: "^وبالتالي$"
+
+- id: SE_BIMATHABATI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «بمنزلة» أو «تقوم مقام» بدل «بمثابة»"
+  pattern:
+    match: token
+    form_regex: "^بمثابة$"
+
+- id: SE_ISTIBYAN
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «استبانة» بدل «استبيان»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?استبيان$"
+
+- id: SE_AKHISSAI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «اختصاصي» بدل «أخصائي»"
+  pattern:
+    match: token
+    form_regex: "^(ال)?أخصائي$"
+
+- id: SE_TOQOS
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «شعائر» بدل «طقوس» في هذا الاستعمال"
+  pattern:
+    match: token
+    form_regex: "^(ال)?طقوس$"
+
+- id: SE_BIHASABI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يستحسن تجنب «بحسب» في هذا الاستعمال واستبدالها ببدائل أفصح"
+  pattern:
+    match: token
+    form_regex: "^بحسب$"
+
+- id: SE_LISALIHIKA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «لمصلحتك» بدل «لصالحك»"
+  pattern:
+    match: token
+    form_regex: "^لصالح(ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)$"
+
+- id: SE_LISALIHI
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «لمصلحة» بدل «لصالح»"
+  pattern:
+    match: token
+    form_regex: "^(ل|لل)صالح$"
+
+- id: SE_I3TABAR
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل في هذا الاستعمال «عدّ» بدل «اعتبر»"
+  pattern:
+    match: token
+    form_regex: "^اعتبر$"
+
+- id: SE_BURHA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «هنيهة» بدل «برهة» في هذا السياق"
+  pattern:
+    match: token
+    form_regex: "^برهة$"
+
+- id: SE_AAWINA
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «أوان» بدل «آونة»"
+  pattern:
+    match: token
+    form_regex: "^آونة$"
+
+- id: SE_BAWASIL
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "في هذا الاستعمال يفضل «بسلاء» أو «باسلون» بدل «بواسل»"
+  pattern:
+    match: token
+    form_regex: "^بواسل$"
+
+- id: SE_MUSTAHTIR
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «مستهين» أو «مستخفّ» بدل «مستهتر» في هذا الاستعمال"
+  pattern:
+    match: token
+    form_regex: "^مستهتر$"
+
+- id: SE_SUWAH
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل «سياح» بدل «سواح»"
+  pattern:
+    match: token
+    form_regex: "^سواح$"
+
+- id: SE_KAKULL
+  category: SE
+  subtype: lexical_usage
+  tier: tier_1_rule_derived
+  explanation: "«ككل» ترجمة ركيكة، ويستحسن «كليًا»"
+  pattern:
+    match: token
+    form_regex: "^ككل$"
