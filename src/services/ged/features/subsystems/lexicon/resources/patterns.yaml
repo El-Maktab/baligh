@@ -1,0 +1,24 @@
+# Curated exact patterns for the GED lexicon matcher.
+
+- id: LEX_SPLIT_LAKIN
+  match_type: split
+  wrong_tokens:
+    - "لا"
+    - "كن"
+  correct: "لكن"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "تكتب الكلمة متصلة: لكن."
+
+- id: LEX_MERGE_IN_SHA_ALLAH
+  match_type: merge
+  wrong: "انشاءالله"
+  correct_tokens:
+    - "إن"
+    - "شاء"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل العبارة: إن شاء الله."
