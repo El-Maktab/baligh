@@ -12,13 +12,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from src.core.schemas import MorphAnalysis, Token
+from src.services.ged.confidence import TIER_CONFIDENCE
 from src.services.ged.schemas import ErrorCategory, ErrorSource, ProvenanceTier
-
-TIER_CONFIDENCE: dict[ProvenanceTier, float] = {
-    ProvenanceTier.TIER_1_RULE_DERIVED: 1.0,
-    ProvenanceTier.TIER_2_RULE_SUPPORTED: 0.8,
-    ProvenanceTier.TIER_3_STATISTICAL: 0.5,
-}
 
 RuleFn = Callable[
     [str, list[Token], list[list[MorphAnalysis]]],

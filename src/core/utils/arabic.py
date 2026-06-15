@@ -10,6 +10,7 @@ Authors:
 from __future__ import annotations
 
 import re
+import unicodedata
 
 # ################################################################################
 # character sets
@@ -18,6 +19,29 @@ import re
 # Tashkeel (diacritics) range U+064B - U+065F and the U+0670 is a supscript alif.
 # For the arabic unicode block you could see this https://en.wikipedia.org/wiki/Arabic_(Unicode_block)
 _DIACRITICS_RE = re.compile(r"[\u064b-\u065f\u0670]")
+
+# Tatweel/kashida elongation mark.
+# ـــــــــــــــــــــــــــ
+_TATWEEL = "\u0640"
+
+# Invisible directional/control marks commonly found in scraped Arabic resources.
+_CONTROL_MARKS_RE = re.compile(r"[\u200e\u200f\u202a-\u202e\u2066-\u2069]")
+
+_WHITESPACE_RE = re.compile(r"\s+")
+
+# Arabic letters plus common Arabic presentation extensions used in wordlists.
+_ARABIC_LETTERS_RE = re.compile(r"^[\u0621-\u064a\u066e-\u06d3]+$")
+
+_LOOSE_ARABIC_TRANSLATION = str.maketrans(
+    {
+        "أ": "ا",
+        "إ": "ا",
+        "آ": "ا",
+        "ٱ": "ا",
+        "ى": "ي",
+        "ة": "ه",
+    }
+)
 
 # Arabic-script punctuation characters.
 # NOTE: these are not the same as the latin ones we are used too.
@@ -75,6 +99,50 @@ def strip_diacritics(text: str) -> str:
         The string with all diacritics (U+064B-U+065F, U+0670) removed.
     """
     return _DIACRITICS_RE.sub("", text)
+
+
+def normalize_arabic_surface(
+    text: str,
+    *,
+    collapse_whitespace: bool = False,
+) -> str:
+    """Return a form without hidden marks or diacritics.
+
+    Args:
+        text: Arabic or mixed-script text.
+        collapse_whitespace: When true, any whitespace run is replaced by one
+            regular space.
+
+    Returns:
+        Cleaned text that preserves Arabic spelling distinctions.
+    """
+    normalized = unicodedata.normalize("NFKC", text)
+    normalized = _CONTROL_MARKS_RE.sub("", normalized)
+    normalized = normalized.replace(_TATWEEL, "")
+    normalized = strip_diacritics(normalized)
+    if collapse_whitespace:
+        normalized = _WHITESPACE_RE.sub(" ", normalized)
+    return normalized.strip()
+
+
+def loose_arabic_lookup_key(text: str) -> str:
+    """Created a dict lookup key."""
+    return normalize_arabic_surface(text, collapse_whitespace=True).translate(
+        _LOOSE_ARABIC_TRANSLATION
+    )
+
+
+def is_arabic_word(text: str) -> bool:
+    """Return true when text is a single Arabic-letter word.
+
+    Args:
+        text: Text
+
+    Returns:
+        True if the cleaned text contains only Arabic letters.
+    """
+    key = normalize_arabic_surface(text)
+    return bool(key) and bool(_ARABIC_LETTERS_RE.fullmatch(key))
 
 
 def first_significant_char(form: str, affix_structure: str | None = None) -> str:

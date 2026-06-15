@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon pre-commit
 
 # Default target
 help:
@@ -8,6 +8,8 @@ help:
 	@echo "Setup:"
 	@echo "  make install       Install all dependencies"
 	@echo "  make camel-data    Download CAMeL Tools data (morphology & disambiguation)"
+	@echo "  make ged-dict      Download dictionaries from our drive"
+	@echo "  make ged-lexicon   Build processed GED lexicon trie resources"
 	@echo ""
 	@echo "Quality Checks:"
 	@echo "  make format        Format code with ruff"
@@ -31,6 +33,17 @@ camel-data:
 	@echo "Downloading CAMeL Tools data..."
 	uv run camel_data -i morphology-db-msa-r13
 	uv run camel_data -i disambig-mle-calima-msa-r13
+
+# Download GED dictionaries
+ged-dict:
+	@echo "Downloading GED dictionaries..."
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
+
+# Build processed GED lexicon tries
+ged-lexicon:
+	@echo "Building GED lexicon trie resources..."
+	uv run python -m src.services.ged.features.subsystems.lexicon.processor
 
 # Format code
 format:
