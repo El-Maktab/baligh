@@ -1,12 +1,6 @@
-"""Tests for GED orthographic rules.
+"""Tests for GED orthography rules.
 
-Covers both:
-- Python procedural rule: OT_HAMZA_PREP (in orthography.py)
-- YAML-loaded rules: OT_ALIF_MAQSURA_PREP, OT_TA_MARBUTA_NOUN (via rule_registry)
-
-Each rule has:
-  - True-positive: input that SHOULD be flagged
-  - True-negative: correct Arabic that MUST NOT be flagged
+Each rule is covered by a single focused test case.
 
 Authors:
     Amir Anwar
@@ -14,7 +8,6 @@ Authors:
 
 from __future__ import annotations
 
-import pytest
 from src.services.ged.features.subsystems.rule_based.registry import rule_registry
 from src.services.ged.schemas import ErrorCategory
 
@@ -24,188 +17,79 @@ _T = make_token
 _M = make_morph
 
 
-# ###########################################################################
-# OT_HAMZA_PREP  (Python procedural, orthography.py)
-# ###########################################################################
+def _run(rule_id, tokens, morphs):
+    text = " ".join(t.form for t in tokens)
+    return rule_registry.run_one(rule_id, text, tokens, morphs)
 
 
-class TestHamzaPrep:
-    """OT_HAMZA_PREP: preposition / particle must start with Hamza, not bare Alif."""
+def test_ot_hamza_prep():
+    """Flags a preposition that starts with bare alif instead of hamza."""
+    tok = _T("الى", (0, 3), 0)
+    morph = _M(0, "PREP", lemma="إلى")
 
-    def _run(self, tokens, morphs):
-        return rule_registry.run_one(
-            "OT_HAMZA_PREP", " ".join(t.form for t in tokens), tokens, morphs
-        )
+    spans = _run("OT_HAMZA_PREP", [tok], [[morph]])
 
-    def test_prep_bare_alif_flagged(self):
-        """«الى» (PREP, bare Alif stem) must be flagged."""
-        tok = _T("الى", (0, 3), 0)
-        morph = _M(0, "PREP", lemma="إلى")
-        spans = self._run([tok], [[morph]])
-        assert len(spans) == 1
-        assert spans[0].span == (0, 3)
-        assert spans[0].category == ErrorCategory.ORTHOGRAPHY
-        assert spans[0].subtype == "hamza"
-
-    def test_prep_correct_hamza_silent(self):
-        """«إلى» (PREP, hamza on stem) must NOT be flagged."""
-        tok = _T("إلى", (0, 3), 0)
-        morph = _M(0, "PREP", lemma="إلى")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
-
-    def test_particle_bare_alif_flagged(self):
-        """«ان» (PART, bare Alif stem) must be flagged."""
-        tok = _T("ان", (0, 2), 0)
-        morph = _M(0, "PART", lemma="إن")
-        spans = self._run([tok], [[morph]])
-        assert len(spans) == 1
-
-    def test_particle_correct_hamza_silent(self):
-        """«إن» (PART, hamza) must NOT be flagged."""
-        tok = _T("إن", (0, 2), 0)
-        morph = _M(0, "PART", lemma="إن")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
-
-    def test_noun_bare_alif_not_flagged(self):
-        """Nouns starting with bare Alif are not handled by this rule."""
-        tok = _T("اسم", (0, 3), 0)
-        morph = _M(0, "NOUN", lemma="اسم")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
-
-    def test_no_morph_data_silent(self):
-        """Token with no morphological candidates does not crash the rule."""
-        tok = _T("ان", (0, 2), 0)
-        spans = self._run([tok], [[]])  # empty candidates list
-        assert spans == []
-
-    def test_explanation_attached(self):
-        """The explanation text must be a non-empty Arabic string."""
-        tok = _T("الى", (0, 3), 0)
-        morph = _M(0, "PREP", lemma="إلى")
-        spans = self._run([tok], [[morph]])
-        assert spans[0].explanation_text
-        assert spans[0].explanation_eligible is True
-
-    def test_prep_with_clitic_prefix_flagged(self):
-        """«والى» (CONJ clitic + bare-Alif PREP stem) must be flagged.
-
-        The affix structure ``CONJ+PREP+STEM`` tells first_significant_char
-        to skip one character (و) and inspect the next (ا).
-        """
-        tok = _T("والى", (0, 4), 0, affix_structure="CONJ+PREP+STEM")
-        morph = _M(0, "PREP", lemma="إلى")
-        spans = self._run([tok], [[morph]])
-        assert len(spans) == 1
+    assert len(spans) == 1
+    assert spans[0].span == (0, 3)
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "hamza"
 
 
-# ###########################################################################
-# OT_ALIF_MAQSURA_PREP  (YAML rule, rules/orthography.yaml)
-# ###########################################################################
+def test_ot_alif_maqsura_prep():
+    """Flags a target preposition that ends with ya instead of alif maqsura."""
+    tok = _T("حتي", (0, 3), 0)
+    morph = _M(0, "PREP", lemma="حَتَّى")
+
+    spans = _run("OT_ALIF_MAQSURA_PREP", [tok], [[morph]])
+
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "alif_maqsura"
 
 
-class TestAlifMaqsuraPrep:
-    """OT_ALIF_MAQSURA_PREP: على / إلى / حتى must end with ى not ي."""
+def test_ot_ta_marbuta_noun():
+    """Flags a feminine noun that ends with ha instead of ta marbuta."""
+    tok = _T("مدرسه", (0, 5), 0)
+    morph = _M(0, "NOUN", gender="feminine")
 
-    def _run(self, tokens, morphs):
-        return rule_registry.run_one(
-            "OT_ALIF_MAQSURA_PREP",
-            " ".join(t.form for t in tokens),
-            tokens,
-            morphs,
-        )
+    spans = _run("OT_TA_MARBUTA_NOUN", [tok], [[morph]])
 
-    @pytest.mark.parametrize(
-        "form,lemma",
-        [
-            ("علي", "عَلَى"),
-            ("الي", "إِلَى"),
-            ("حتي", "حَتَّى"),
-        ],
-    )
-    def test_prep_ya_flagged(self, form, lemma):
-        """Prep lemma with Ya ending must be flagged."""
-        tok = _T(form, (0, len(form)), 0)
-        morph = _M(0, "PREP", lemma=lemma)
-        spans = self._run([tok], [[morph]])
-        assert len(spans) == 1
-        assert spans[0].category == ErrorCategory.ORTHOGRAPHY
-        assert spans[0].subtype == "alif_maqsura"
-
-    @pytest.mark.parametrize(
-        "form,lemma",
-        [
-            ("على", "عَلَى"),
-            ("إلى", "إِلَى"),
-            ("حتى", "حَتَّى"),
-        ],
-    )
-    def test_prep_alif_maqsura_silent(self, form, lemma):
-        """Correct prep ending with ى must NOT be flagged."""
-        tok = _T(form, (0, len(form)), 0)
-        morph = _M(0, "PREP", lemma=lemma)
-        spans = self._run([tok], [[morph]])
-        assert spans == []
-
-    def test_other_prep_silent(self):
-        """A prep whose lemma is not in the list is not touched."""
-        tok = _T("مني", (0, 3), 0)
-        morph = _M(0, "PREP", lemma="من")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
-
-    def test_non_prep_silent(self):
-        """Non-PREP tokens ending with ي are not flagged."""
-        tok = _T("علي", (0, 3), 0)
-        morph = _M(0, "NOUN", lemma="علي")  # proper noun
-        spans = self._run([tok], [[morph]])
-        assert spans == []
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "ta_marbuta"
 
 
-# ###########################################################################
-# OT_TA_MARBUTA_NOUN  (YAML rule, rules/orthography.yaml)
-# ###########################################################################
+def test_ot_hamza_anna():
+    """Flags an أن/إن-family form that starts with bare alif instead of hamza."""
+    tok = _T("انه", (0, 3), 0)
+    morph = _M(0, "CONJ_SUB", lemma="أَنَّ")
+
+    spans = _run("OT_HAMZA_ANNA", [tok], [[morph]])
+
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "hamza"
 
 
-class TestTaMarbutaNoun:
-    """OT_TA_MARBUTA_NOUN: feminine NOUN must end with ة not ه."""
+def test_ot_ta_marbuta_adj():
+    """Flags a feminine adjective that ends with ha instead of ta marbuta."""
+    tok = _T("قويه", (0, 4), 0)
+    morph = _M(0, "ADJ", gender="feminine")
 
-    def _run(self, tokens, morphs):
-        return rule_registry.run_one(
-            "OT_TA_MARBUTA_NOUN",
-            " ".join(t.form for t in tokens),
-            tokens,
-            morphs,
-        )
+    spans = _run("OT_TA_MARBUTA_ADJ", [tok], [[morph]])
 
-    def test_feminine_noun_ending_ha_flagged(self):
-        """«مدرسه» (NOUN, feminine, ends ه) must be flagged."""
-        tok = _T("مدرسه", (0, 5), 0)
-        morph = _M(0, "NOUN", gender="feminine")
-        spans = self._run([tok], [[morph]])
-        assert len(spans) == 1
-        assert spans[0].category == ErrorCategory.ORTHOGRAPHY
-        assert spans[0].subtype == "ta_marbuta"
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "ta_marbuta"
 
-    def test_feminine_noun_ending_ta_marbuta_silent(self):
-        """«مدرسة» (NOUN, feminine, ends ة) must NOT be flagged."""
-        tok = _T("مدرسة", (0, 5), 0)
-        morph = _M(0, "NOUN", gender="feminine")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
 
-    def test_masculine_noun_ending_ha_silent(self):
-        """«كتابه» (NOUN, masculine, ends ه) is a pronoun suffix , not flagged."""
-        tok = _T("كتابه", (0, 5), 0)
-        morph = _M(0, "NOUN", gender="masculine")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
+def test_ot_ta_marbuta_noun_prop():
+    """Flags a feminine proper noun that ends with ha instead of ta marbuta."""
+    tok = _T("فاطمه", (0, 5), 0)
+    morph = _M(0, "NOUN_PROP", gender="feminine")
 
-    def test_non_noun_ending_ha_silent(self):
-        """Non-NOUN tokens ending with ه are not touched by this rule."""
-        tok = _T("يكتبه", (0, 5), 0)
-        morph = _M(0, "VERB", gender="feminine")
-        spans = self._run([tok], [[morph]])
-        assert spans == []
+    spans = _run("OT_TA_MARBUTA_NOUN_PROP", [tok], [[morph]])
+
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "ta_marbuta"

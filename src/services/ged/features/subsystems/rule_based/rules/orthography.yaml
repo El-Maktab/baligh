@@ -26,3 +26,38 @@
     pos: NOUN
     gender: feminine
     form_ends_with: "ه"
+
+- id: OT_HAMZA_ANNA
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "أداتا التوكيد والنصب «أن/إن» تُكتبان بهمزة قطع لا بألف مجردة، مثل: أن، إنه، أنه"
+  pattern:
+    match: token
+    lemma_in:
+      - "أَنَّ"
+      - "إِنَّ"
+      - "إِن"
+    form_regex: "^ا"
+
+- id: OT_TA_MARBUTA_ADJ
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الصفة المؤنثة تُكتب بتاء مربوطة (ة) لا هاء (ه)"
+  pattern:
+    match: token
+    pos: ADJ
+    gender: feminine
+    form_ends_with: "ه"
+
+- id: OT_TA_MARBUTA_NOUN_PROP
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم العلم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)، مثل: مكة، فاطمة"
+  pattern:
+    match: token
+    pos: NOUN_PROP
+    gender: feminine
+    form_ends_with: "ه"
