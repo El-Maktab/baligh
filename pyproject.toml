@@ -11,6 +11,7 @@ dependencies = [
     "sparqlwrapper",
     "pyyaml>=6.0",
     "loguru>=0.7.3",
+    "marisa-trie>=1.2.1",
 ]
 
 [dependency-groups]
@@ -47,6 +48,7 @@ files = ["src", "tests"]
 module = [
     "camel_tools.*",
     "farasa.*",
+    "marisa_trie",
     "arramooz.*"
 ]
 ignore_missing_imports = true
