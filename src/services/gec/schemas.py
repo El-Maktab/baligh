@@ -41,11 +41,12 @@ class CandidateEdit(BaseModel):
 class EditOperation(StrEnum):
     """Operation types for sequence tagging edits."""
 
-    REPLACE = "replace"
-    INSERT = "insert"
-    DELETE = "delete"
-    MERGE = "merge"
-    SPLIT = "split"
+    KEEP = "K"
+    REPLACE = "R"
+    INSERT = "I"
+    DELETE = "D"
+    MERGE = "M"
+    SPLIT = "S"
 
 
 class EditTaggerCandidateEdit(CandidateEdit):
