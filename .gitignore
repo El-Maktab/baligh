@@ -37,3 +37,8 @@ env/
 *.swp
 # Emacs (As if we will ever use Emacs)
 *~
+
+#############################
+# Data/Resources
+#############################
+/src/services/ged/features/subsystems/lexicon/dictionary

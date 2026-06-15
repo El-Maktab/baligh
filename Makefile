@@ -8,6 +8,7 @@ help:
 	@echo "Setup:"
 	@echo "  make install       Install all dependencies"
 	@echo "  make camel-data    Download CAMeL Tools data (morphology & disambiguation)"
+	@echo "  make ged-dict      Download dictionaries from our drive"
 	@echo ""
 	@echo "Quality Checks:"
 	@echo "  make format        Format code with ruff"
@@ -31,6 +32,12 @@ camel-data:
 	@echo "Downloading CAMeL Tools data..."
 	uv run camel_data -i morphology-db-msa-r13
 	uv run camel_data -i disambig-mle-calima-msa-r13
+
+# Download GED dictionaries
+ged-dict:
+	@echo "Downloading GED dictionaries..."
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
 
 # Format code
 format:
