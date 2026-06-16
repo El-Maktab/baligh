@@ -269,3 +269,10 @@ def test_analyze_verb_fields():
     assert best.tense == "past"
     assert best.voice == "active"
     assert best.diacritized is not None
+
+
+def test_analyze_oov():
+    tokens = [_make_token(0, "ذهب"), _make_token(1, "الطلابب")]
+    analyze(tokens)
+    assert tokens[0].is_oov is False
+    assert tokens[1].is_oov is True

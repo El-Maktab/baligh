@@ -28,6 +28,8 @@ class Token(BaseModel):
         affix_structure: Plus-joined clitic/stem breakdown derived from Farasa
             segmentation (ex. "CONJ+PREP+DET+STEM"), None for punctuation and
             non-Arabic tokens.
+        is_oov: stands for Out-Of-Vocabulary, which means that the word is invalid
+            and matches no word in dictionary.
     """
 
     index: int
@@ -35,6 +37,7 @@ class Token(BaseModel):
     span: tuple[int, int]
     norm_span: tuple[int, int]
     affix_structure: str | None = None
+    is_oov: bool = False
 
 
 class MorphAnalysis(BaseModel):
