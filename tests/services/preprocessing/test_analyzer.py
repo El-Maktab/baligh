@@ -272,6 +272,7 @@ def test_analyze_verb_fields():
 
 
 def test_analyze_oov():
+    """Test oov words."""
     tokens = [_make_token(0, "ذهب"), _make_token(1, "الطلابب")]
     analyze(tokens)
     assert tokens[0].is_oov is False

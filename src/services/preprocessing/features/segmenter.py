@@ -295,9 +295,9 @@ def break_token(token: Token) -> list[tuple[str, str]] | None:
     form = token.form
 
     # We are sure that STEM must exist if affix_structure is not none
-    stem_idx = tags.index("STEM")       
+    stem_idx = tags.index("STEM")
     prefix_tags = tags[:stem_idx]
-    suffix_tags = tags[stem_idx + 1:]
+    suffix_tags = tags[stem_idx + 1 :]
 
     components: list[tuple[str, str]] = []
     left = 0

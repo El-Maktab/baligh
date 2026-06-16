@@ -26,7 +26,7 @@ def preprocess(input: PreprocessingInput) -> PreprocessingOutput:
 
     runs the four stages in order:
         1. Normalization -> Unicode NFKC + whitespace consolidation.
-        2. Word Boundary Detection -> splits completed prefix from the current 
+        2. Word Boundary Detection -> splits completed prefix from the current
             fragment being typed and determines NWP vs WAC mode.
         3. Segmentation -> Farasa segments completed tokens, calculating
             affix_structure and character offsets.
@@ -42,18 +42,18 @@ def preprocess(input: PreprocessingInput) -> PreprocessingOutput:
         completed tokens, per-token morphological candidates, the current
         fragment (or None), and the detected mode.
     """
-    # 1. Normalization                                             
+    # 1. Normalization
     normalized_text, norm_to_orig_map = normalize_with_mapping(input.text)
 
-    # 2. Word Boundary Detection                                   
+    # 2. Word Boundary Detection
     completed_prefix, current_fragment, mode = split_word_boundary(
         normalized_text, input.cursor_offset
     )
 
-    # 3. Segmentation (completed prefix only)                     
+    # 3. Segmentation (completed prefix only)
     tokens = segment(completed_prefix, norm_to_orig_map)
 
-    # 4. Morphological Analysis + Disambiguation                  
+    # 4. Morphological Analysis + Disambiguation
     morph_features = analyze(tokens)
 
     return PreprocessingOutput(
