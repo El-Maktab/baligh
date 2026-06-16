@@ -13,7 +13,7 @@ from src.services.preprocessing import (
 
 
 def main() -> None:
-    """reads Arabic text, runs preprocessing, GED, and prints JSON."""
+    """Reads Arabic text, runs preprocessing, GED, and prints JSON."""
     print("Baligh - interactive mode")
     print("Type Arabic text and press Enter. Press Ctrl+C or Ctrl+D to exit.\n")
 
