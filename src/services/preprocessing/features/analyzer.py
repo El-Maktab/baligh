@@ -306,6 +306,8 @@ def analyze(tokens: list[Token]) -> list[list[MorphAnalysis]]:
         disambig_dict: dict | None = dw.analyses[0].analysis if dw.analyses else None
         all_candidates: list[dict] = ana.analyze(token.form)
 
+        token.is_oov = len(all_candidates) == 0
+
         candidates: list[MorphAnalysis] = []
 
         if disambig_dict is not None:

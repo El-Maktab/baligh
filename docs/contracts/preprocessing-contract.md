@@ -46,6 +46,8 @@
 | `span` | `tuple[int,int]` | Start and end character offsets on the original `text,` used by the UI to highlight characters the user actually typed |
 | `norm_span` | `tuple[int,int]` | Start and end character offsets on `normalized_text`; may differ from `span` when NFKC expands a single codepoint into multiple characters |
 | `affix_structure` | `str|null` | `+`\-joined clitic/stem breakdown derived from Farasa segmentation (ex. `CONJ+PREP+DET+STEM`), `null` for punctuation and non-Arabic tokens |
+| `is_oov` | `bool` | `true` if the morphological analyzer finds no candidates for this token (indicating it is out-of-vocabulary), `false` otherwise |
+
 
 ### `MorphAnalysis`
 
