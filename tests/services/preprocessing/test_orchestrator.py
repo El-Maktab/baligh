@@ -1,9 +1,6 @@
 """Integration tests for the preprocessing orchestrator.
 
 These tests require all CAMeL Tools and Farasa models to be installed.
-Run with::
-
-    PYTHONPATH=. .venv/bin/pytest tests/services/preprocessing/test_orchestrator.py -v
 """
 
 from src.services.preprocessing import (
@@ -39,7 +36,7 @@ def test_preprocess_empty_string():
 
 
 def test_preprocess_whitespace_only():
-    """Whitespace-only input ends with a delimiter → NWP, no tokens."""
+    """Whitespace-only input ends with a delimiter -> NWP, no tokens."""
     out = _run("   ")
     assert out.mode == "NWP"
     assert out.current_fragment is None
@@ -53,14 +50,14 @@ def test_preprocess_whitespace_only():
 
 
 def test_preprocess_nwp_mode_delimiter_ending():
-    """Input ending with a delimiter → NWP mode, current_fragment is None."""
+    """Input ending with a delimiter -> NWP mode, current_fragment is None."""
     out = _run("ذهب الطلاب ")
     assert out.mode == "NWP"
     assert out.current_fragment is None
 
 
 def test_preprocess_wac_mode_incomplete_word():
-    """Input NOT ending with a delimiter → WAC mode, current_fragment is set."""
+    """Input NOT ending with a delimiter -> WAC mode, current_fragment is set."""
     out = _run("ذهب الطلاب إلى المدرس")
     assert out.mode == "WAC"
     assert out.current_fragment is not None
@@ -68,7 +65,7 @@ def test_preprocess_wac_mode_incomplete_word():
 
 
 #############################################################################
-# Shape invariants
+# Different shapes for input
 #############################################################################
 
 
@@ -90,7 +87,7 @@ def test_preprocess_disambiguated_is_first():
     out = _run("ذهب الطلاب إلى المدرسة ")
     for i, candidates in enumerate(out.morph_features):
         assert candidates[0].is_disambiguated is True, (
-            f"Token {i}: first candidate is not disambiguated"
+            f"Token {i}: first candidate is not the disambiguated one"
         )
 
 
@@ -101,7 +98,7 @@ def test_preprocess_disambiguated_is_first():
 
 def test_preprocess_original_text_preserved():
     """output.text must equal the original raw input exactly."""
-    raw = "ذهب  الطلابُ  إلى  المدرسة"  # intentional extra spaces
+    raw = "ذهب  الطلابُ  إلى  المدرسة"
     out = _run(raw)
     assert out.text == raw
 
