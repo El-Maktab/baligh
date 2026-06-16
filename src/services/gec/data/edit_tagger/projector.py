@@ -3,26 +3,26 @@
 from .common import Alignment
 from .compressor import Compressor
 from .extractor import Extractor
+from core.schemas import Token
 
 
 class SubwordProjection:
     """Projects word-level alignments to subword level."""
 
-    def compute_spans(self, subwords: list[str]) -> list[tuple[int, int]]:
-        """Computes the character spans of each subword within the word."""
-        # TODO: ARABert returns a ## for subwords, that needs to be handled (if i used
-        # ARABert version of tokenization)
-        # in span computation in case we used the ARABert version of
-        # tokenization, otherwise, nope?
-        current_ind = 0
-        spans = []
-        for subword in subwords:
-            clean_subword = subword.replace("##", "")
-            start = current_ind
-            end = start + len(clean_subword) - 1
-            spans.append((start, end))
-            current_ind = end + 1
-        return spans
+    # def compute_spans(self, tokens: list[Token]) -> list[tuple[int, int]]:
+    #     """Computes the character spans of each subword within the word."""
+    #     current_ind = 0
+    #     spans = []
+    #     for subword in tokens:
+    #         clean_subword = subword.replace("##", "")
+    #         start = current_ind
+    #         end = start + len(clean_subword) - 1
+    #         spans.append((start, end))
+    #         current_ind = end + 1
+    #     return spans
+
+    def get_spans(self, tokens: list[Token]) -> list[tuple[int, int]]:
+        return [token.span for token in tokens]
 
     def find_corresponding_subword_edit(
         self, char_ind: int, spans: list[tuple[int, int]]
@@ -34,10 +34,10 @@ class SubwordProjection:
         raise ValueError(f"Character index {char_ind} out of bounds")
 
     def project(
-        self, tokens: list[str], edits: list[Alignment]
+        self, tokens: list[Token], edits: list[Alignment]
     ) -> list[list[Alignment]]:
         """Projects word-level edits to subword level."""
-        spans = self.compute_spans(tokens)
+        spans = self.get_spans(tokens)
         projection: list[list[Alignment]] = [[] for _ in tokens]
 
         for edit in edits:
