@@ -80,10 +80,6 @@ _PREFIX_CLITICS: list[tuple[str, str]] = [
 
 # Maps clitic string -> tag, ordered longest-first so multi-char suffixes
 # are matched before single-char ones.
-# Note: "ت" is included because Farasa consistently splits it as a
-# separate +segment. "تم" and "تن" are intentionally omitted -
-# Farasa never splits them, so they never appear
-# as a standalone segment in the +output.
 _SUFFIX_CLITICS: list[tuple[str, str]] = [
     ("ها", "PRON"),
     ("هم", "PRON"),
@@ -166,12 +162,12 @@ def _build_affix_structure(farasa_word: str) -> str | None:
     stem_str = "".join(stem_parts)
 
     # Punctuation check: check if the stem contains at least one Arabic letter.
-    # Arabic letters span U+0621–U+064A (basic Arabic alphabet).
+    # Arabic letters span U+0621-U+064A (basic Arabic alphabet).
     has_arabic_letter = False
     for ch in stem_str:
         if "\u0621" <= ch <= "\u064a":
             has_arabic_letter = True
-            break  # we found one, so we can stop
+            break
 
     # if the stem contains no arabic letters and no clitics were found too,
     # this is a punctuation token, return None.
@@ -268,6 +264,72 @@ def _align_tokens(
 #############################################################################
 # Public API
 #############################################################################
+
+_PREFIX_TAG_TO_CLITICS: dict[str, list[str]] = {}
+for clitic, tag in _PREFIX_CLITICS:
+    _PREFIX_TAG_TO_CLITICS.setdefault(tag, []).append(clitic)
+
+_SUFFIX_TAG_TO_CLITICS: dict[str, list[str]] = {}
+for clitic, tag in _SUFFIX_CLITICS:
+    _SUFFIX_TAG_TO_CLITICS.setdefault(tag, []).append(clitic)
+
+
+def break_token(token: Token) -> list[tuple[str, str]] | None:
+    """Reconstructs the clitic/stem breakdown for a token from its affix_structure.
+
+    use the affix_structure to break the token to it's segmented parts.
+
+    Args:
+        token: A Token produced by the segmentation stage.
+
+    Returns:
+        A list of (tag, substring) pairs in left-to-right order, where each
+        pair contains a component label (ex. CONJ, DET, STEM, PRON) and the
+        corresponding part from token.form. Returns None when
+        affix_structure is None.
+    """
+    if token.affix_structure is None:
+        return None
+
+    tags = token.affix_structure.split("+")
+    form = token.form
+
+    # We are sure that STEM must exist if affix_structure is not none
+    stem_idx = tags.index("STEM")       
+    prefix_tags = tags[:stem_idx]
+    suffix_tags = tags[stem_idx + 1:]
+
+    components: list[tuple[str, str]] = []
+    left = 0
+    right = len(form)
+
+    for tag in prefix_tags:
+        matched = False
+        for clitic in _PREFIX_TAG_TO_CLITICS.get(tag, []):
+            if form[left:].startswith(clitic):
+                components.append((tag, clitic))
+                left += len(clitic)
+                matched = True
+                break
+        if not matched:
+            return None
+
+    suffix_components: list[tuple[str, str]] = []
+    for tag in reversed(suffix_tags):
+        matched = False
+        for clitic in _SUFFIX_TAG_TO_CLITICS.get(tag, []):
+            if form[:right].endswith(clitic):
+                suffix_components.append((tag, clitic))
+                right -= len(clitic)
+                matched = True
+                break
+        if not matched:
+            return None
+
+    components.append(("STEM", form[left:right]))
+    components.extend(reversed(suffix_components))
+
+    return components
 
 
 def segment(completed_prefix: str, norm_to_orig_map: list[int]) -> list[Token]:

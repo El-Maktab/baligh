@@ -6,6 +6,7 @@ Token list for correctness of form, span, norm_span, and affix_structure.
 
 from src.services.preprocessing.features.segmenter import (
     _build_affix_structure,
+    break_token,
     segment,
 )
 from src.services.preprocessing.utils.normalizer import normalize_with_mapping
@@ -178,3 +179,50 @@ def test_segment_token_indices_are_sequential():
 
     for expected_idx, token in enumerate(tokens):
         assert token.index == expected_idx
+
+
+#############################################################################
+# Unit tests for decompose() (pure, no Farasa needed)
+#############################################################################
+
+
+def _make_token(form: str, affix_structure: str | None) -> object:
+    from src.core.schemas import Token
+    return Token(index=0, form=form, span=(0, len(form)), norm_span=(0, len(form)), affix_structure=affix_structure)
+
+
+def test_decompose_none_affix_structure():
+    assert break_token(_make_token("،", None)) is None
+
+
+def test_decompose_stem_only():
+    assert break_token(_make_token("ذهب", "STEM")) == [("STEM", "ذهب")]
+
+
+def test_decompose_det_stem():
+    assert break_token(_make_token("الطلاب", "DET+STEM")) == [("DET", "ال"), ("STEM", "طلاب")]
+
+
+def test_decompose_conj_prep_det_stem():
+    result = break_token(_make_token("وبالمدرسة", "CONJ+PREP+DET+STEM"))
+    assert result == [("CONJ", "و"), ("PREP", "ب"), ("DET", "ال"), ("STEM", "مدرسة")]
+
+
+def test_decompose_stem_pron():
+    assert break_token(_make_token("كتبها", "STEM+PRON")) == [("STEM", "كتب"), ("PRON", "ها")]
+
+
+def test_decompose_conj_stem_pron():
+    result = break_token(_make_token("وكتبها", "CONJ+STEM+PRON"))
+    assert result == [("CONJ", "و"), ("STEM", "كتب"), ("PRON", "ها")]
+
+
+def test_decompose_repeated_pron_suffix():
+    result = break_token(_make_token("ضربتهم", "STEM+PRON+PRON"))
+    assert result == [("STEM", "ضرب"), ("PRON", "ت"), ("PRON", "هم")]
+
+
+def test_decompose_result_concatenates_to_form():
+    token = _make_token("وبالمدرسة", "CONJ+PREP+DET+STEM")
+    result = break_token(token)
+    assert "".join(v for _, v in result) == token.form
