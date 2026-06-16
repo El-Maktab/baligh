@@ -1,8 +1,4 @@
-"""Main entry point for Baligh.
-
-Currently runs as a simple interactive REPL that reads Arabic text from stdin,
-runs the full preprocessing pipeline, and prints the JSON output.
-"""
+"""Main entry point for Baligh."""
 
 import json
 import sys
@@ -17,7 +13,7 @@ from src.services.preprocessing import (
 
 
 def main() -> None:
-    """Interactive REPL: reads Arabic text, runs preprocessing, and GED prints JSON."""
+    """reads Arabic text, runs preprocessing, GED, and prints JSON."""
     print("Baligh - interactive mode")
     print("Type Arabic text and press Enter. Press Ctrl+C or Ctrl+D to exit.\n")
 
@@ -45,7 +41,6 @@ def main() -> None:
             )
         )
 
-        # Pretty-print JSON (Pydantic model -> dict -> JSON string)
         print(json.dumps(result.model_dump(), ensure_ascii=False, indent=2))
 
         if ged_result.errors:
