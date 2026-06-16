@@ -12,6 +12,7 @@ dependencies = [
     "pyyaml>=6.0",
     "loguru>=0.7.3",
     "marisa-trie>=1.2.1",
+    "transformers>=4.43.4",
 ]
 
 [dependency-groups]
@@ -49,7 +50,8 @@ module = [
     "camel_tools.*",
     "farasa.*",
     "marisa_trie",
-    "arramooz.*"
+    "arramooz.*",
+    "transformers.*"
 ]
 ignore_missing_imports = true
 

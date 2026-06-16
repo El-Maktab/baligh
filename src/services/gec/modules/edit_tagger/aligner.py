@@ -3,7 +3,7 @@
 from src.services.gec.schemas import EditOperation
 from src.services.gec.utils.distance_utils import levenshtein
 
-from .common import Alignment, BackPointer
+from .common import Alignment, AlignmentType, BackPointer
 
 
 class Aligner:
@@ -14,18 +14,23 @@ class Aligner:
     MERGE_COST = 1
     SPLIT_COST = 1
 
-    def align_words(self, source: list[str], target: list[str]) -> list[Alignment]:
-        """Aligns two lists of words and returns a list of Alignment."""
-        dp, parent = self._build_dp(source, target)
-        return self._backtrack(source, target, parent)
+    def align_words(self, source: str, target: str) -> list[Alignment]:
+        """Aligns two words and returns a list of Alignment."""
+        source_list = source.split(" ") if source else []
+        target_list = target.split(" ") if target else []
+
+        _, parent = self._build_dp(source_list, target_list)
+        return self._backtrack(source_list, target_list, parent, AlignmentType.WORD)
 
     def align_characters(self, source: str, target: str) -> list[Alignment]:
         """Aligns two strings at character level."""
         source_chars = list(source)
         target_chars = list(target)
 
-        dp, parent = self._build_dp(source_chars, target_chars)
-        return self._backtrack(source_chars, target_chars, parent)
+        _, parent = self._build_dp(source_chars, target_chars)
+        return self._backtrack(
+            source_chars, target_chars, parent, AlignmentType.CHARACTER
+        )
 
     def _word_cost(self, source_word: str, target_word: str) -> float:
         """Computes the cost of replacing source_word with target_word."""
@@ -56,7 +61,9 @@ class Aligner:
         return self._word_cost(source, split_target)
 
     def _build_dp(
-        self, source: list[str], target: list[str]
+        self,
+        source: list[str],
+        target: list[str],
     ) -> tuple[list[list[float]], list[list[BackPointer | None]]]:
         """Builds the DP table and parent pointers for the given source and target."""
         n = len(source)
@@ -154,7 +161,7 @@ class Aligner:
 
         return dp, parent
 
-    def _backtrack(self, source, target, parent):
+    def _backtrack(self, source, target, parent, alignment_type: AlignmentType):
         """Backtrack through parent pointers to construct alignments.
 
         Backtracks through the parent pointers to construct the list of
@@ -180,6 +187,7 @@ class Aligner:
                         target_end=j - 1,
                         operation=op,
                         label=label,
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -191,6 +199,7 @@ class Aligner:
                         target_start=j - 1,
                         target_end=j - 1,
                         operation=op,
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -202,6 +211,7 @@ class Aligner:
                         target_start=ptr.prev_j,
                         target_end=j - 1,
                         operation=op,
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -213,6 +223,7 @@ class Aligner:
                         target_start=j,
                         target_end=j - 1,
                         operation=op,
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -225,6 +236,7 @@ class Aligner:
                         target_end=j - 1,
                         operation=op,
                         label=label,
+                        alignment_type=alignment_type,
                     )
                 )
 

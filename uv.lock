@@ -101,6 +101,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "sparqlwrapper" },
     { name = "torch" },
+    { name = "transformers" },
 ]
 
 [package.dev-dependencies]
@@ -125,6 +126,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "sparqlwrapper" },
     { name = "torch", specifier = "<2.3" },
+    { name = "transformers", specifier = ">=4.43.4" },
 ]
 
 [package.metadata.requires-dev]
