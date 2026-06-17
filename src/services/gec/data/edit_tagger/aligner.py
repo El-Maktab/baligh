@@ -3,7 +3,7 @@
 from src.services.gec.schemas import EditOperation
 from src.services.gec.utils.distance_utils import levenshtein
 
-from .common import Alignment, BackPointer, AlignmentType
+from .common import Alignment, AlignmentType, BackPointer
 
 
 class Aligner:
@@ -16,7 +16,7 @@ class Aligner:
 
     def align_words(self, source: str, target: str) -> list[Alignment]:
         """Aligns two words and returns a list of Alignment."""
-        source = str.split(source," ")
+        source = str.split(source, " ")
         target = str.split(target, " ")
 
         _, parent = self._build_dp(source, target)
@@ -28,7 +28,9 @@ class Aligner:
         target_chars = list(target)
 
         dp, parent = self._build_dp(source_chars, target_chars)
-        return self._backtrack(source_chars, target_chars, parent, AlignmentType.CHARACTER)
+        return self._backtrack(
+            source_chars, target_chars, parent, AlignmentType.CHARACTER
+        )
 
     def _word_cost(self, source_word: str, target_word: str) -> float:
         """Computes the cost of replacing source_word with target_word."""
@@ -59,7 +61,9 @@ class Aligner:
         return self._word_cost(source, split_target)
 
     def _build_dp(
-        self, source: list[str], target: list[str], 
+        self,
+        source: list[str],
+        target: list[str],
     ) -> tuple[list[list[float]], list[list[BackPointer | None]]]:
         """Builds the DP table and parent pointers for the given source and target."""
         n = len(source)
@@ -183,7 +187,7 @@ class Aligner:
                         target_end=j - 1,
                         operation=op,
                         label=label,
-                        alignment_type=alignment_type
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -195,7 +199,7 @@ class Aligner:
                         target_start=j - 1,
                         target_end=j - 1,
                         operation=op,
-                        alignment_type=alignment_type
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -207,7 +211,7 @@ class Aligner:
                         target_start=ptr.prev_j,
                         target_end=j - 1,
                         operation=op,
-                        alignment_type=alignment_type
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -219,7 +223,7 @@ class Aligner:
                         target_start=j,
                         target_end=j - 1,
                         operation=op,
-                        alignment_type=alignment_type
+                        alignment_type=alignment_type,
                     )
                 )
 
@@ -232,7 +236,7 @@ class Aligner:
                         target_end=j - 1,
                         operation=op,
                         label=label,
-                        alignment_type=alignment_type
+                        alignment_type=alignment_type,
                     )
                 )
 
