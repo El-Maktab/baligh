@@ -9,8 +9,8 @@ from src.services.gec.schemas import EditOperation
 class AlignmentType(StrEnum):
     """Type of alignment."""
 
-    WORD = "word"
-    SENTENCE = "sentence"
+    WORD = "WORD"
+    CHARACTER = "CHARACTER"
 
 
 @dataclass

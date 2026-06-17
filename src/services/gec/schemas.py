@@ -52,7 +52,7 @@ class EditOperation(StrEnum):
 class EditTaggerCandidateEdit(CandidateEdit):
     """Candidate edit proposed by the ML Edit Tagger (TAG) module."""
 
-    edit_operation: EditOperation
+    edit_operation: list[EditOperation]
 
 
 class EditGroup(BaseModel):

@@ -76,9 +76,9 @@ Each submodule returns a status plus a list of candidate edits.
 
 Inherits from `CandidateEdit` and adds:
 
-| Field            | Type            | Description                          |
-| ---------------- | --------------- | ------------------------------------ |
-| `edit_operation` | `EditOperation` | Operation type for the proposed edit |
+| Field            | Type                  | Description                          |
+| ---------------- | --------------------- | ------------------------------------ |
+| `edit_operation` | `list[EditOperation]` | Operation type for the proposed edit |
 
 #### EditOperation
 
