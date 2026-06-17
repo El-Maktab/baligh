@@ -1,9 +1,10 @@
 """Project word-level alignments to subword level."""
 
+from src.core.schemas import Token
+
 from .common import Alignment
 from .compressor import Compressor
 from .extractor import Extractor
-from core.schemas import Token
 
 
 class SubwordProjection:
@@ -22,6 +23,7 @@ class SubwordProjection:
     #     return spans
 
     def get_spans(self, tokens: list[Token]) -> list[tuple[int, int]]:
+        """Get character spans for each token."""
         return [token.span for token in tokens]
 
     def find_corresponding_subword_edit(

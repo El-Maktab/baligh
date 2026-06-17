@@ -7,13 +7,13 @@ from src.services.gec.schemas import EditOperation
 class Rewriter:
     """Applies character-level edits to text."""
 
-    def apply_word_edits(text: str, edits: list[Alignment]) -> str:
+    def apply_word_edits(self, text: str, edits: list[Alignment]) -> str:
         """Apply the word level edits to the text."""
         result = []
         cursor = 0
 
         for edit in edits:
-            if edit.operation == EditOperation.KEEP | EditOperation.REPLACE:
+            if edit.operation in (EditOperation.KEEP, EditOperation.REPLACE):
                 result.append(text[cursor])
 
             elif edit.operation == EditOperation.DELETE:
@@ -31,7 +31,7 @@ class Rewriter:
 
         return "".join(result)
 
-    def apply_char_edits(text: str, edits: list[Alignment]) -> str:
+    def apply_char_edits(self, text: str, edits: list[Alignment]) -> str:
         """Apply the character level edits to the text."""
         result = []
         cursor = 0
@@ -42,14 +42,16 @@ class Rewriter:
                 cursor = edit.source_start + 1
 
             elif edit.operation == EditOperation.REPLACE:
-                result.append(edit.label)
+                if edit.label is not None:
+                    result.append(edit.label)
                 cursor = edit.source_start + 1
 
             elif edit.operation == EditOperation.DELETE:
                 cursor = edit.source_start + 1
 
             elif edit.operation == EditOperation.INSERT:
-                result.append(edit.label)
+                if edit.label is not None:
+                    result.append(edit.label)
                 cursor = edit.source_start
 
             else:

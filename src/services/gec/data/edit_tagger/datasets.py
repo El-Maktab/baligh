@@ -1,6 +1,7 @@
 """Dataset handling for edit tagging."""
 
-from data import dataclass
+from dataclasses import dataclass
+
 from src.services.gec.data.edit_tagger.common import Alignment
 from src.services.gec.data.edit_tagger.segregator import EditSegregator
 from src.services.gec.utils.rewriter import Rewriter
@@ -31,7 +32,7 @@ class DatasetSegregator:
         nopnx = self.rewriter.apply_char_edits(
             source_text, seg_edit.non_punctuation_edits
         )
-        return ParallelExample(pnx, nopnx)
+        return (ParallelExample(source_text, pnx), ParallelExample(source_text, nopnx))
 
 
 class DatasetExporter:

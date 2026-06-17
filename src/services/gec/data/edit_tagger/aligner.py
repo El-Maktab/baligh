@@ -16,10 +16,10 @@ class Aligner:
 
     def align_words(self, source: str, target: str) -> list[Alignment]:
         """Aligns two words and returns a list of Alignment."""
-        source = str.split(source, " ")
-        target = str.split(target, " ")
+        source_list = source.split(" ")
+        target_list = target.split(" ")
 
-        _, parent = self._build_dp(source, target)
+        _, parent = self._build_dp(source_list, target_list)
         return self._backtrack(source, target, parent, AlignmentType.WORD)
 
     def align_characters(self, source: str, target: str) -> list[Alignment]:

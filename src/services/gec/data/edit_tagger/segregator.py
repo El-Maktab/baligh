@@ -1,6 +1,7 @@
 """Edit segregation utilities."""
 
-from data import dataclass
+from dataclasses import dataclass
+
 from src.services.gec.data.edit_tagger.common import Alignment
 from src.services.gec.data.edit_tagger.punctuation import is_punctuation
 
@@ -19,10 +20,16 @@ class EditSegregator:
 
     def segregate(self, text: str, edits: list[Alignment]) -> SegregatedEdits:
         """Segregate edits into punctuation and non-punctuation."""
-        return SegregatedEdits(text, self.build_target_no_pnx(edits), edits)
+        punc_edits = [
+            edit for edit in edits if self._is_punctuation_edit(text, text, edit)
+        ]
+        non_punc_edits = [
+            edit for edit in edits if not self._is_punctuation_edit(text, text, edit)
+        ]
+        return SegregatedEdits(text, punc_edits, non_punc_edits)
 
     def _is_punctuation_edit(
-        original_text: str, target_text: str, edit: Alignment
+        self, original_text: str, target_text: str, edit: Alignment
     ) -> bool:
         original_text_edited = original_text[edit.source_start : edit.source_end]
         target_text_edited = target_text[edit.target_start : edit.target_end]
@@ -32,4 +39,4 @@ class EditSegregator:
 
     def build_target_no_pnx(self, edits: list[Alignment]) -> list[Alignment]:
         """Build target text without punctuation edits."""
-        return [edit for edit in edits if not self._is_punctuation_edit(edit)]
+        return [edit for edit in edits if not self._is_punctuation_edit("", "", edit)]

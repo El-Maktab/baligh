@@ -13,25 +13,25 @@ class Extractor:
         tags = list[str]()
         for a in alignment:
             if a.operation == EditOperation.KEEP:
-                tags.append("k")
+                tags.append("K")
             elif a.operation == EditOperation.REPLACE:
                 label = a.label
                 if label is None:
                     raise ValueError("Label cannot be None for REPLACE operation")
-                tags.append(f"r_[{label}]")
+                tags.append(f"R_[{label}]")
 
             elif a.operation == EditOperation.INSERT:
                 label = a.label
                 if label is None:
                     raise ValueError("Label cannot be None for INSERT operation")
-                tags.append(f"i_[{label}]")
+                tags.append(f"I_[{label}]")
 
             elif a.operation == EditOperation.DELETE:
-                tags.append("d")
+                tags.append("D")
             elif a.operation == EditOperation.MERGE:
-                tags.append("m")
+                tags.append("M")
             elif a.operation == EditOperation.SPLIT:
-                tags.append("s")
+                tags.append("S")
             else:
                 raise ValueError(f"Unknown operation: {a.operation}")
         return tags
