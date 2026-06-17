@@ -42,3 +42,4 @@ env/
 # Data/Resources
 #############################
 /src/services/ged/features/subsystems/lexicon/dictionary
+/src/services/ged/data

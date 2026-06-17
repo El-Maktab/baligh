@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon pre-commit run
+.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets pre-commit
 
 # Default target
 help:
@@ -6,17 +6,18 @@ help:
 	@echo "============================"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make install       Install all dependencies"
-	@echo "  make camel-data    Download CAMeL Tools data (morphology & disambiguation)"
-	@echo "  make ged-dict      Download dictionaries from our drive"
-	@echo "  make ged-lexicon   Build processed GED lexicon trie resources"
+	@echo "  make install         Install all dependencies"
+	@echo "  make camel-data      Download CAMeL Tools data (morphology & disambiguation)"
+	@echo "  make ged-dict        Download dictionaries from our drive"
+	@echo "  make ged-lexicon     Build processed GED lexicon trie resources"
+	@echo "  make ged-ml-datasets Download GED ML datasets"
 	@echo ""
 	@echo "Quality Checks:"
-	@echo "  make format        Format code with ruff"
-	@echo "  make lint          Lint code with ruff"
-	@echo "  make type-check    Type check with mypy"
-	@echo "  make test          Run tests with pytest"
-	@echo "  make all           Run format, lint, type-check, and tests"
+	@echo "  make format          Format code with ruff"
+	@echo "  make lint            Lint code with ruff"
+	@echo "  make type-check      Type check with mypy"
+	@echo "  make test            Run tests with pytest"
+	@echo "  make all             Run format, lint, type-check, and tests"
 	@echo ""
 	@echo "Other:"
 	@echo "  make clean         Remove temporary files and caches"
@@ -40,6 +41,12 @@ ged-dict:
 	@echo "Downloading GED dictionaries..."
 	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
 	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
+
+# Download GED ml datasets
+ged-ml-datasets:
+	@echo "Downloading GED ML datasets..."
+	uv run --with gdown gdown -O src/services/ged/data/ml/qalb14/ 1QnhPR4LCfT2oG92VtnWHZWSuaPrcUVoM
+	unzip -o ./src/services/ged/data/ml/qalb14/baligh-ged-qalb14-wo-camelira-coarse-v0.1.0.zip -d ./src/services/ged/data/ml/qalb14/
 
 # Build processed GED lexicon tries
 ged-lexicon:
