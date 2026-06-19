@@ -12,6 +12,9 @@ from __future__ import annotations
 import re
 import unicodedata
 
+from pyarabic.named_const import JAR_LIST, NOUN_NASEB_LIST, RAFE3_LIST
+from src.core.schemas import Token
+
 # ################################################################################
 # character sets
 # ################################################################################
@@ -50,10 +53,40 @@ ARABIC_PUNCTUATION: frozenset[str] = frozenset("،؟؛")
 # All punctuation we care about
 ALL_PUNCTUATION: frozenset[str] = ARABIC_PUNCTUATION | frozenset(".!?,;:")
 
-# Common clitic prefixes that may precede a stem
-# حروف متصلة
-# والكتاب - فقال - بالقلم
-_CLITIC_PREFIXES: frozenset[str] = frozenset("وفبلك")
+
+#############################################################################
+# Clitic lookup tables.
+# Prefix clitics are listed longest-first so that multi-character clitics
+# (ex. "ال") are matched before single-character ones (ex. "ل").
+#############################################################################
+
+# Maps clitic string -> tag, ordered longest-first within each group.
+PREFIX_CLITICS: list[tuple[str, str]] = [
+    ("ال", "DET"),
+    ("و", "CONJ"),
+    ("ف", "CONJ"),
+    ("ب", "PREP"),
+    ("ل", "PREP"),
+    ("ك", "PREP"),
+]
+
+# Maps clitic string -> tag, ordered longest-first so multi-char suffixes
+# are matched before single-char ones.
+# Note: "ت" is included because Farasa consistently splits it as a
+# separate +segment. "تم" and "تن" are intentionally omitted -
+# Farasa never splits them, so they never appear
+# as a standalone segment in the +output.
+SUFFIX_CLITICS: list[tuple[str, str]] = [
+    ("ها", "PRON"),
+    ("هم", "PRON"),
+    ("هن", "PRON"),
+    ("كم", "PRON"),
+    ("نا", "PRON"),
+    ("ه", "PRON"),
+    ("ك", "PRON"),
+    ("ت", "PRON"),
+    ("ي", "PRON"),
+]
 
 # Alif variants
 # وصل
@@ -82,6 +115,9 @@ BARE_ALIF = "ا"
 # PART أداة
 # CONJ أداة ربط
 HAMZA_REQUIRED_POS: frozenset[str] = frozenset({"PREP", "PART", "CONJ"})
+
+# function word list (prepositions, pronouns, accusative particles)
+FUNCTION_WORDS: frozenset[str] = frozenset(RAFE3_LIST | JAR_LIST | NOUN_NASEB_LIST)
 
 
 # ################################################################################
@@ -145,6 +181,51 @@ def is_arabic_word(text: str) -> bool:
     return bool(key) and bool(_ARABIC_LETTERS_RE.fullmatch(key))
 
 
+def extract_affixes(token: Token) -> tuple[str, str, str]:
+    """Extract prefix string, stem string, and suffix string from a Token.
+
+    Uses the token's affix_structure to deterministically split the
+    surface form into its prefix, stem, and suffix components.
+
+    Args:
+        token: A word Token.
+
+    Returns:
+        A tuple of (prefix, stem, suffix).
+    """
+    form = strip_diacritics(token.form)
+    if token.affix_structure is None:
+        return "", form, ""
+
+    parts = token.affix_structure.split("+")
+    if "STEM" not in parts:
+        return "", form, ""
+
+    prefix_len = 0
+    suffix_len = 0
+
+    for part in parts:
+        if part == "STEM":
+            break
+        for surface, tag in PREFIX_CLITICS:
+            if part == tag and form[prefix_len:].startswith(surface):
+                prefix_len += len(surface)
+                break
+
+    suffix_parts = [p for p in parts[parts.index("STEM") + 1 :] if p]
+    for part in reversed(suffix_parts):
+        for surface, tag in SUFFIX_CLITICS:
+            if part == tag and form.endswith(surface):
+                suffix_len += len(surface)
+                break
+
+    stem_end = len(form) - suffix_len if suffix_len else len(form)
+    prefix = form[:prefix_len]
+    stem = form[prefix_len:stem_end]
+    suffix = form[stem_end:]
+    return prefix, stem, suffix
+
+
 def first_significant_char(form: str, affix_structure: str | None = None) -> str:
     """Return the first character of the stem, skipping known clitic prefixes.
 
@@ -178,7 +259,7 @@ def first_significant_char(form: str, affix_structure: str | None = None) -> str
 
     # Fallback strip clitic prefixes
     idx = 0
-    while idx < len(clean) - 1 and clean[idx] in _CLITIC_PREFIXES:
+    while idx < len(clean) - 1 and clean[idx] in PREFIX_CLITICS:
         idx += 1
     return clean[idx]
 

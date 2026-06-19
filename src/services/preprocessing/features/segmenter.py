@@ -29,6 +29,7 @@ import threading
 from typing import TYPE_CHECKING
 
 from src.core.schemas import Token
+from src.core.utils.arabic import PREFIX_CLITICS, SUFFIX_CLITICS
 
 # Used for type checking only so that the FarasaSegmenter type is defined
 if TYPE_CHECKING:
@@ -60,37 +61,6 @@ def _get_segmenter() -> "FarasaSegmenter":
 
                 _segmenter = FarasaSegmenter(interactive=True)
     return _segmenter
-
-
-#############################################################################
-# Clitic lookup tables.
-# Prefix clitics are listed longest-first so that multi-character clitics
-# (ex. "ال") are matched before single-character ones (ex. "ل").
-#############################################################################
-
-# Maps clitic string -> tag, ordered longest-first within each group.
-_PREFIX_CLITICS: list[tuple[str, str]] = [
-    ("ال", "DET"),
-    ("و", "CONJ"),
-    ("ف", "CONJ"),
-    ("ب", "PREP"),
-    ("ل", "PREP"),
-    ("ك", "PREP"),
-]
-
-# Maps clitic string -> tag, ordered longest-first so multi-char suffixes
-# are matched before single-char ones.
-_SUFFIX_CLITICS: list[tuple[str, str]] = [
-    ("ها", "PRON"),
-    ("هم", "PRON"),
-    ("هن", "PRON"),
-    ("كم", "PRON"),
-    ("نا", "PRON"),
-    ("ه", "PRON"),
-    ("ك", "PRON"),
-    ("ت", "PRON"),
-    ("ي", "PRON"),
-]
 
 
 #############################################################################
@@ -127,7 +97,7 @@ def _build_affix_structure(farasa_word: str) -> str | None:
     while left <= right:
         seg = segments[left]
         matched = False
-        for clitic, tag in _PREFIX_CLITICS:
+        for clitic, tag in PREFIX_CLITICS:
             if seg == clitic:
                 tags.append(tag)
                 left += 1
@@ -141,7 +111,7 @@ def _build_affix_structure(farasa_word: str) -> str | None:
     while right >= left:
         seg = segments[right]
         matched = False
-        for clitic, tag in _SUFFIX_CLITICS:
+        for clitic, tag in SUFFIX_CLITICS:
             if seg == clitic:
                 suffix_tags.append(tag)
                 right -= 1
@@ -266,11 +236,11 @@ def _align_tokens(
 #############################################################################
 
 _PREFIX_TAG_TO_CLITICS: dict[str, list[str]] = {}
-for clitic, tag in _PREFIX_CLITICS:
+for clitic, tag in PREFIX_CLITICS:
     _PREFIX_TAG_TO_CLITICS.setdefault(tag, []).append(clitic)
 
 _SUFFIX_TAG_TO_CLITICS: dict[str, list[str]] = {}
-for clitic, tag in _SUFFIX_CLITICS:
+for clitic, tag in SUFFIX_CLITICS:
     _SUFFIX_TAG_TO_CLITICS.setdefault(tag, []).append(clitic)
 
 

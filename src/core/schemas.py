@@ -39,6 +39,15 @@ class Token(BaseModel):
     affix_structure: str | None = None
     is_oov: bool = False
 
+    def __init__(self, *args, **kwargs):
+        """Initialize the Token."""
+        super().__init__(*args, **kwargs)
+        self.index = kwargs.get("index", 0)
+        self.form = kwargs.get("form", "")
+        self.span = kwargs.get("span", (0, len(self.form)))
+        self.norm_span = kwargs.get("norm_span", self.span)
+        self.affix_structure = kwargs.get("affix_structure")
+
 
 class MorphAnalysis(BaseModel):
     """Morphological analysis candidate for a token.

@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon pre-commit run
 
 # Default target
 help:
@@ -21,6 +21,7 @@ help:
 	@echo "Other:"
 	@echo "  make clean         Remove temporary files and caches"
 	@echo "  make pre-commit    Run pre-commit hooks on all files"
+	@echo "  make run           Run a Python script (usage: make run SCRIPT=src/...)
 	@echo ""
 
 # Install dependencies
@@ -50,10 +51,15 @@ format:
 	@echo "Formatting code with ruff..."
 	uv run ruff format .
 
-# Lint code
+# Check linting
 lint:
 	@echo "Linting code with ruff..."
 	uv run ruff check .
+
+# Lint code
+lint-fix:
+	@echo "Linting code with ruff..."
+	uv run ruff check --fix .
 
 # Type check
 type-check:
@@ -87,6 +93,11 @@ clean:
 pre-commit:
 	@echo "Running pre-commit hooks..."
 	uv run pre-commit run --all-files
+
+# Run a Python script with project root on PYTHONPATH
+run:
+	@echo "Running $(SCRIPT)..."
+	PYTHONPATH=. uv run python $(SCRIPT)
 
 # Format check (without fixing) - useful for CI
 format-check:

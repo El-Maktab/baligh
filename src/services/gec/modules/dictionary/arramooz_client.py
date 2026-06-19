@@ -1,75 +1,169 @@
-"""Client for interacting with the Arramooz dictionary SQLite database.
+"""Client for interacting with the Arramooz dictionary SQLite databases."""
 
-Utilizes arramooz-pysqlite package.
-"""
-
-import asyncio
+import sqlite3
+from pathlib import Path
 from typing import Any
 
-import arramooz.arabicdictionary
+from loguru import logger
+from pyarabic.araby import normalize_hamza
+
+from src.core.utils.arabic import FUNCTION_WORDS
+
+_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "dictionary"
+_DICT_DB = _DATA_DIR / "arabicdictionary.sqlite"
+_FREQ_DB = _DATA_DIR / "wordfreq.sqlite"
+
+
+def _open_db(path: Path) -> sqlite3.Connection:
+    """Open a read-only SQLite connection with Row factory."""
+    uri = f"file:{path}?mode=ro"
+    conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 class ArramoozClient:
-    """Wrapper around the arramooz-pysqlite dictionary.
+    """Direct-SQLite client for the Arramooz dictionary databases.
 
-    Provides async methods for vocabulary checks and feature lookups
-    by executing synchronous SQLite queries in separate threads.
+    Provides methods for vocabulary checks, feature lookups,
+    and word-frequency retrieval.
     """
 
-    def __init__(self):
-        """Initializes the Arramooz dictionary wrappers for nouns and verbs."""
-        # ArabicDictionary opens SQLite connections internally and indexes
-        # on initialization.
-        self.nouns_dict = arramooz.arabicdictionary.ArabicDictionary("nouns")
-        self.verbs_dict = arramooz.arabicdictionary.ArabicDictionary("verbs")
+    def __init__(self) -> None:
+        """Initializes SQLite connections to the dictionary and frequency DBs."""
+        self._dict_conn = _open_db(_DICT_DB)
+        self._freq_conn: sqlite3.Connection | None = None
+        logger.info("ArramoozClient initialized | dict_db={}", _DICT_DB)
 
-    def _lookup_sync(self, word: str) -> list[dict[str, Any]]:
-        """Synchronously queries nouns and verbs tables for the given word.
+    # ------------------------------------------------------------------
+    # Dictionary lookups
+    # ------------------------------------------------------------------
+
+    def _lookup(self, word: str) -> list[dict[str, Any]]:
+        """Queries nouns and verbs tables for the given word.
 
         Args:
-            word: The normalized Arabic word to search for.
+            word: The Arabic word to search for.
 
         Returns:
-            list: Combined list of matching entry dictionaries, each tagged
-                with their source table.
+            Combined list of matching entry dictionaries.
         """
-        results = []
+        normalized = normalize_hamza(word)
+        results: list[dict[str, Any]] = []
+        cursor = self._dict_conn.cursor()
 
-        noun_results = self.nouns_dict.lookup(word)
-        if noun_results:
-            for row in noun_results:
-                row_dict = dict(row)
-                row_dict["table"] = "nouns"
-                results.append(row_dict)
-
-        verb_results = self.verbs_dict.lookup(word)
-        if verb_results:
-            for row in verb_results:
-                row_dict = dict(row)
-                row_dict["table"] = "verbs"
-                results.append(row_dict)
+        for table in ("nouns", "verbs"):
+            try:
+                cursor.execute(
+                    f"SELECT * FROM {table} WHERE normalized = ?",
+                    (normalized,),
+                )
+                for row in cursor.fetchall():
+                    row_dict = dict(row)
+                    row_dict["table"] = table
+                    results.append(row_dict)
+            except sqlite3.OperationalError:
+                logger.exception("Error querying table {}", table)
 
         return results
 
-    async def check_word_exists(self, word: str) -> bool:
-        """Asynchronously checks if a word exists in either nouns or verbs database.
+    def check_word_exists(self, word: str) -> bool:
+        """Checks if a word exists in either nouns or verbs database.
+
+        Also checks against the built-in function word list
+        (prepositions, pronouns, accusative particles) from pyarabic.
 
         Args:
             word: The Arabic word to check.
 
         Returns:
-            bool: True if the word is in the dictionary, False otherwise.
+            True if the word is in the dictionary or function word list.
         """
-        results = await asyncio.to_thread(self._lookup_sync, word)
+        if word in FUNCTION_WORDS:
+            return True
+        results = self._lookup(word)
         return len(results) > 0
 
-    async def get_word_features(self, word: str) -> list[dict[str, Any]]:
-        """Asynchronously retrieves morphological features for a word.
+    def get_word_features(self, word: str) -> list[dict[str, Any]]:
+        """Retrieves morphological features for a word.
 
         Args:
             word: The Arabic word to look up.
 
         Returns:
-            list[dict]: Feature dictionaries found in either nouns or verbs tables.
+            Feature dictionaries found in either nouns or verbs tables.
         """
-        return await asyncio.to_thread(self._lookup_sync, word)
+        return self._lookup(word)
+
+    def get_all_normalized_words(self) -> list[str]:
+        """Queries distinct normalized words from both nouns and verbs tables.
+
+        Also includes Arabic function words (prepositions, pronouns,
+        accusative particles) from pyarabic so they are part of the
+        vocabulary used for OOV checks and candidate generation.
+
+        Returns:
+            A combined list of unique normalized words.
+        """
+        words: set[str] = set()
+        cursor = self._dict_conn.cursor()
+
+        for table in ("nouns", "verbs"):
+            try:
+                cursor.execute(f"SELECT DISTINCT normalized FROM {table}")
+                for row in cursor.fetchall():
+                    val = row["normalized"]
+                    if val:
+                        words.add(val)
+            except sqlite3.OperationalError:
+                logger.exception("Error fetching words from {}", table)
+
+        words.update(FUNCTION_WORDS)
+
+        logger.info("Fetched {} normalized words from dictionary", len(words))
+        return list(words)
+
+    # ------------------------------------------------------------------
+    # Word frequency lookups
+    # ------------------------------------------------------------------
+
+    def _ensure_freq_db(self) -> sqlite3.Connection:
+        """Lazily open the word-frequency database on first use."""
+        if self._freq_conn is None:
+            logger.debug("Lazily opening frequency DB | path={}", _FREQ_DB)
+            self._freq_conn = _open_db(_FREQ_DB)
+        return self._freq_conn
+
+    def get_word_frequency(self, word: str) -> int:
+        """Return the corpus frequency for *word* from the frequency DB.
+
+        Args:
+            word: The unvocalized Arabic word.
+
+        Returns:
+            The highest frequency value found, or 0.
+        """
+        conn = self._ensure_freq_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "SELECT MAX(freq) AS freq FROM wordfreq WHERE unvocalized = ?",
+                (word,),
+            )
+            row = cursor.fetchone()
+            if row and row["freq"] is not None:
+                return int(row["freq"])
+        except sqlite3.OperationalError:
+            logger.exception("Error querying word frequency for {!r}", word)
+        return 0
+
+    # ------------------------------------------------------------------
+    # Cleanup
+    # ------------------------------------------------------------------
+
+    def close(self) -> None:
+        """Close all open database connections."""
+        self._dict_conn.close()
+        if self._freq_conn is not None:
+            self._freq_conn.close()
+        logger.debug("ArramoozClient connections closed")

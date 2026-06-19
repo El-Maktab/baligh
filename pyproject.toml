@@ -7,7 +7,7 @@ dependencies = [
     "farasapy>=0.1.1",
     "pydantic>=2.13.4",
     "torch<2.3",
-    "arramooz-pysqlite",
+    "pyarabic",
     "sparqlwrapper",
     "pyyaml>=6.0",
     "loguru>=0.7.3",
@@ -20,7 +20,6 @@ dev = [
   "ruff>=0.11.0",
   "mypy>=1.15.0",
   "pytest>=8.3.5",
-  "pytest-asyncio",
   "ipykernel>=7.2.0",
   "types-PyYAML>=6.0",
 ]
@@ -49,7 +48,7 @@ module = [
     "camel_tools.*",
     "farasa.*",
     "marisa_trie",
-    "arramooz.*"
+    "pyarabic.*",
 ]
 ignore_missing_imports = true
 

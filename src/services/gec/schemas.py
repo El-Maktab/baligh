@@ -4,6 +4,7 @@ This module defines the request/response contracts and candidate edits
 as specified in docs/contracts/gec-contract.md.
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
 
 from pydantic import BaseModel
@@ -87,7 +88,7 @@ class ModuleResult(BaseModel):
 
     module_name: ModuleName
     status: ModuleStatus
-    candidate_edits: list[GECUnionCandidateEdit]
+    candidate_edits: Sequence[GECUnionCandidateEdit]
 
 
 class GECInput(BaseModel):
