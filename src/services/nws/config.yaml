@@ -1,0 +1,13 @@
+context_window_size: 5
+top_k_default: 5
+
+cache:
+  idioms_path: data/idioms.yaml
+  phrases_path: data/phrases.yaml
+  user_lru_maxsize: 1000
+
+wac:
+  trie_path: data/processed/wac_trie.bin
+
+nwp:
+  model_path: models/nwp_model.bin
