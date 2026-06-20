@@ -1,0 +1,748 @@
+- key: اثبتت الدراسه
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: اجرت الدراسه
+  suggestions:
+  - word: مقارنه
+    score: 1.0
+- key: اجرت الدراسه مقارنه
+  suggestions:
+  - word: بين
+    score: 1.0
+- key: استغفر الله
+  suggestions:
+  - word: العظيم
+    score: 1.0
+- key: استغفر الله العظيم
+  suggestions:
+  - word: واتوب
+    score: 1.0
+- key: استغفر الله العظيم واتوب
+  suggestions:
+  - word: اليه
+    score: 1.0
+- key: الامر الذي
+  suggestions:
+  - word: يؤدي
+    score: 1.0
+- key: الامر الذي يؤدي
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: الحمد لله
+  suggestions:
+  - word: رب
+    score: 1.0
+- key: الحمد لله رب
+  suggestions:
+  - word: العالمين
+    score: 1.0
+- key: الرحمن الرحيم
+  suggestions:
+  - word: مالك
+    score: 1.0
+- key: الرحمن الرحيم مالك
+  suggestions:
+  - word: يوم
+    score: 1.0
+- key: الرحمن الرحيم مالك يوم
+  suggestions:
+  - word: الدين
+    score: 1.0
+- key: السلام عليكم
+  suggestions:
+  - word: ورحمه
+    score: 1.0
+- key: السلام عليكم ورحمه
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: السلام عليكم ورحمه الله
+  suggestions:
+  - word: وبركاته
+    score: 1.0
+- key: الله اكبر
+  suggestions:
+  - word: ولله
+    score: 1.0
+- key: الله اكبر ولله
+  suggestions:
+  - word: الحمد
+    score: 1.0
+- key: اللهم اغفر
+  suggestions:
+  - word: لنا
+    score: 1.0
+- key: اللهم اغفر لنا
+  suggestions:
+  - word: ذنوبنا
+    score: 1.0
+- key: اللهم صل
+  suggestions:
+  - word: علي
+    score: 1.0
+- key: اللهم صل علي
+  suggestions:
+  - word: سيدنا
+    score: 1.0
+- key: اللهم صل علي سيدنا
+  suggestions:
+  - word: محمد
+    score: 1.0
+- key: ان شاء
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: ان شاء الله
+  suggestions:
+  - word: تعالي
+    score: 1.0
+- key: انا لله
+  suggestions:
+  - word: وانا
+    score: 1.0
+- key: انا لله وانا
+  suggestions:
+  - word: اليه
+    score: 1.0
+- key: انا لله وانا اليه
+  suggestions:
+  - word: راجعون
+    score: 1.0
+- key: اهدنا الصراط
+  suggestions:
+  - word: المستقيم
+    score: 1.0
+- key: اهلا وسهلا
+  suggestions:
+  - word: ومرحبا
+    score: 1.0
+- key: اهلا وسهلا ومرحبا
+  suggestions:
+  - word: بكم
+    score: 1.0
+- key: اود ان
+  suggestions:
+  - word: استهل
+    score: 1.0
+- key: اود ان استهل
+  suggestions:
+  - word: حديثي
+    score: 1.0
+- key: اود ان استهل حديثي
+  suggestions:
+  - word: ب
+    score: 1.0
+- key: اياك نعبد
+  suggestions:
+  - word: واياك
+    score: 1.0
+- key: اياك نعبد واياك
+  suggestions:
+  - word: نستعين
+    score: 1.0
+- key: ايها الحضور
+  suggestions:
+  - word: الكريم
+    score: 1.0
+- key: ايها الساده
+  suggestions:
+  - word: والسيدات
+    score: 1.0
+- key: ايها الساده والسيدات
+  suggestions:
+  - word: الكرام
+    score: 1.0
+- key: بارك الله
+  suggestions:
+  - word: فيك
+    score: 1.0
+- key: بارك الله فيك
+  suggestions:
+  - word: وفي
+    score: 1.0
+- key: بارك الله فيك وفي
+  suggestions:
+  - word: عمرك
+    score: 1.0
+- key: بسم الله
+  suggestions:
+  - word: الرحمن
+    score: 1.0
+- key: بسم الله الرحمن
+  suggestions:
+  - word: الرحيم
+    score: 1.0
+- key: بصرف النظر
+  suggestions:
+  - word: عن
+    score: 1.0
+- key: بناء علي
+  suggestions:
+  - word: ما
+    score: 1.0
+- key: بناء علي ما
+  suggestions:
+  - word: سبق
+    score: 1.0
+- key: تجدر الاشاره
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: تجدر الاشاره الي
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: تفضلوا بالدخول
+  suggestions:
+  - word: والجلوس
+    score: 1.0
+- key: تهدف هذه
+  suggestions:
+  - word: الدراسه
+    score: 1.0
+- key: تهدف هذه الدراسه
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: توصلت الدراسه
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: توصلت الدراسه الي
+  suggestions:
+  - word: نتائج
+    score: 1.0
+- key: جزاك الله
+  suggestions:
+  - word: خيرا
+    score: 1.0
+- key: جزاك الله خيرا
+  suggestions:
+  - word: واحسن
+    score: 1.0
+- key: جزاك الله خيرا واحسن
+  suggestions:
+  - word: اليك
+    score: 1.0
+- key: حياكم الله
+  suggestions:
+  - word: وبياكم
+    score: 1.0
+- key: خلاصه القول
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ربنا اتنا
+  suggestions:
+  - word: في
+    score: 1.0
+- key: ربنا اتنا في
+  suggestions:
+  - word: الدنيا
+    score: 1.0
+- key: ربنا اتنا في الدنيا
+  suggestions:
+  - word: حسنه
+    score: 1.0
+- key: ربنا لا
+  suggestions:
+  - word: تؤاخذنا
+    score: 1.0
+- key: ربنا لا تؤاخذنا
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ربنا لا تؤاخذنا ان
+  suggestions:
+  - word: نسينا
+    score: 1.0
+- key: رحمه الله
+  suggestions:
+  - word: عليه
+    score: 1.0
+- key: رحمه الله عليه
+  suggestions:
+  - word: رحمه
+    score: 1.0
+- key: رحمه الله عليه رحمه
+  suggestions:
+  - word: واسعه
+    score: 1.0
+- key: رضي الله
+  suggestions:
+  - word: عنه
+    score: 1.0
+- key: رضي الله عنه
+  suggestions:
+  - word: وارضاه
+    score: 1.0
+- key: سبحان الله
+  suggestions:
+  - word: وبحمده
+    score: 1.0
+- key: سبحان الله وبحمده
+  suggestions:
+  - word: سبحان
+    score: 1.0
+- key: سبحان الله وبحمده سبحان
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: سبحان الله وبحمده سبحان الله
+  suggestions:
+  - word: العظيم
+    score: 1.0
+- key: صراط الذين
+  suggestions:
+  - word: انعمت
+    score: 1.0
+- key: صراط الذين انعمت
+  suggestions:
+  - word: عليهم
+    score: 1.0
+- key: صلي الله
+  suggestions:
+  - word: عليه
+    score: 1.0
+- key: صلي الله عليه
+  suggestions:
+  - word: وسلم
+    score: 1.0
+- key: علي الرغم
+  suggestions:
+  - word: من
+    score: 1.0
+- key: علي الرغم من
+  suggestions:
+  - word: ذلك
+    score: 1.0
+- key: علي صعيد
+  suggestions:
+  - word: اخر
+    score: 1.0
+- key: في ضوء
+  suggestions:
+  - word: ما
+    score: 1.0
+- key: في ضوء ما
+  suggestions:
+  - word: سبق
+    score: 1.0
+- key: في ضوء ما سبق
+  suggestions:
+  - word: ذكره
+    score: 1.0
+- key: في ما
+  suggestions:
+  - word: يخص
+    score: 1.0
+- key: في ما يخص
+  suggestions:
+  - word: موضوع
+    score: 1.0
+- key: في واقع
+  suggestions:
+  - word: الامر
+    score: 1.0
+- key: كما يتضح
+  suggestions:
+  - word: من
+    score: 1.0
+- key: لا اله
+  suggestions:
+  - word: الا
+    score: 1.0
+- key: لا اله الا
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: لا اله الا الله
+  suggestions:
+  - word: محمد
+    score: 1.0
+- key: لا اله الا الله محمد
+  suggestions:
+  - word: رسول
+    score: 1.0
+- key: لا بد
+  suggestions:
+  - word: من
+    score: 1.0
+- key: لا بد من
+  suggestions:
+  - word: الاشاره
+    score: 1.0
+- key: لا بد من الاشاره
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: لا حول
+  suggestions:
+  - word: ولا
+    score: 1.0
+- key: لا حول ولا
+  suggestions:
+  - word: قوه
+    score: 1.0
+- key: لا حول ولا قوه
+  suggestions:
+  - word: الا
+    score: 1.0
+- key: لا حول ولا قوه الا
+  suggestions:
+  - word: بالله
+    score: 1.0
+- key: ما شاء
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: ما شاء الله
+  suggestions:
+  - word: لا
+    score: 1.0
+- key: ما شاء الله لا
+  suggestions:
+  - word: قوه
+    score: 1.0
+- key: ما شاء الله لا قوه
+  suggestions:
+  - word: الا
+    score: 1.0
+- key: مما سبق
+  suggestions:
+  - word: يتضح
+    score: 1.0
+- key: مما سبق يتضح
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: من الجدير
+  suggestions:
+  - word: بالذكر
+    score: 1.0
+- key: من الجدير بالذكر
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: من الضروري
+  suggestions:
+  - word: التاكيد
+    score: 1.0
+- key: من الضروري التاكيد
+  suggestions:
+  - word: علي
+    score: 1.0
+- key: من المعلوم
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: من هذا
+  suggestions:
+  - word: المنطلق
+    score: 1.0
+- key: واتوجه بالشكر
+  suggestions:
+  - word: الجزيل
+    score: 1.0
+- key: واتوجه بالشكر الجزيل
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: واخيرا وليس
+  suggestions:
+  - word: اخرا
+    score: 1.0
+- key: وادعو الله
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: وادعو الله ان
+  suggestions:
+  - word: يوفقنا
+    score: 1.0
+- key: وادعو الله ان يوفقنا
+  suggestions:
+  - word: جميعا
+    score: 1.0
+- key: وبشكل عام
+  suggestions:
+  - word: يمكن
+    score: 1.0
+- key: وبشكل عام يمكن
+  suggestions:
+  - word: القول
+    score: 1.0
+- key: وبناء علي
+  suggestions:
+  - word: ذلك
+    score: 1.0
+- key: وتاسيسا علي
+  suggestions:
+  - word: ما
+    score: 1.0
+- key: وتاسيسا علي ما
+  suggestions:
+  - word: سبق
+    score: 1.0
+- key: وتجدر الاشاره
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: وتشير الدراسات
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: وتشير الدراسات الي
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: وذهب بعض
+  suggestions:
+  - word: العلماء
+    score: 1.0
+- key: وذهب بعض العلماء
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: وعلي الجانب
+  suggestions:
+  - word: الاخر
+    score: 1.0
+- key: وعلي صعيد
+  suggestions:
+  - word: اخر
+    score: 1.0
+- key: وعليكم السلام
+  suggestions:
+  - word: ورحمه
+    score: 1.0
+- key: وعليكم السلام ورحمه
+  suggestions:
+  - word: الله
+    score: 1.0
+- key: وعليكم السلام ورحمه الله
+  suggestions:
+  - word: وبركاته
+    score: 1.0
+- key: وفقا لما
+  suggestions:
+  - word: تقدم
+    score: 1.0
+- key: وفي اطار
+  suggestions:
+  - word: هذا
+    score: 1.0
+- key: وفي اطار هذا
+  suggestions:
+  - word: البحث
+    score: 1.0
+- key: وفي الاخره
+  suggestions:
+  - word: حسنه
+    score: 1.0
+- key: وفي الاخره حسنه
+  suggestions:
+  - word: وقنا
+    score: 1.0
+- key: وفي الاخره حسنه وقنا
+  suggestions:
+  - word: عذاب
+    score: 1.0
+- key: وفي الاخره حسنه وقنا عذاب
+  suggestions:
+  - word: النار
+    score: 1.0
+- key: وفي الختام
+  suggestions:
+  - word: نقول
+    score: 1.0
+- key: وفي السياق
+  suggestions:
+  - word: ذاته
+    score: 1.0
+- key: وفي حدود
+  suggestions:
+  - word: علم
+    score: 1.0
+- key: وفي حدود علم
+  suggestions:
+  - word: الباحث
+    score: 1.0
+- key: وفي نهايه
+  suggestions:
+  - word: المطاف
+    score: 1.0
+- key: وفي هذه
+  suggestions:
+  - word: المناسبه
+    score: 1.0
+- key: وفي هذه المناسبه
+  suggestions:
+  - word: الكريمه
+    score: 1.0
+- key: وفيما يتعلق
+  suggestions:
+  - word: ب
+    score: 1.0
+- key: وقد اتفق
+  suggestions:
+  - word: العلماء
+    score: 1.0
+- key: وقد اتفق العلماء
+  suggestions:
+  - word: علي
+    score: 1.0
+- key: وقد استنتج
+  suggestions:
+  - word: الباحث
+    score: 1.0
+- key: وقد استنتج الباحث
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: وقد خلصت
+  suggestions:
+  - word: الدراسه
+    score: 1.0
+- key: وقد خلصت الدراسه
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: ولا شك
+  suggestions:
+  - word: في
+    score: 1.0
+- key: ولا شك في
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ولا يسعني
+  suggestions:
+  - word: في
+    score: 1.0
+- key: ولا يسعني في
+  suggestions:
+  - word: هذا
+    score: 1.0
+- key: ولا يسعني في هذا
+  suggestions:
+  - word: المقام
+    score: 1.0
+- key: ولا يفوتنا
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ولا يفوتنا ان
+  suggestions:
+  - word: نذكر
+    score: 1.0
+- key: وما توفيقي
+  suggestions:
+  - word: الا
+    score: 1.0
+- key: وما توفيقي الا
+  suggestions:
+  - word: بالله
+    score: 1.0
+- key: ومن ابرز
+  suggestions:
+  - word: نتائج
+    score: 1.0
+- key: ومن ابرز نتائج
+  suggestions:
+  - word: الدراسه
+    score: 1.0
+- key: ومن المعروف
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ومن ثم
+  suggestions:
+  - word: فان
+    score: 1.0
+- key: ومن جهه
+  suggestions:
+  - word: اخري
+    score: 1.0
+- key: ونامل ان
+  suggestions:
+  - word: يكون
+    score: 1.0
+- key: ونامل ان يكون
+  suggestions:
+  - word: لهذا
+    score: 1.0
+- key: ونامل ان يكون لهذا
+  suggestions:
+  - word: اللقاء
+    score: 1.0
+- key: ونتطلع في
+  suggestions:
+  - word: المستقبل
+    score: 1.0
+- key: ونتطلع في المستقبل
+  suggestions:
+  - word: الي
+    score: 1.0
+- key: ويختلف العلماء
+  suggestions:
+  - word: في
+    score: 1.0
+- key: ويختلف العلماء في
+  suggestions:
+  - word: هذه
+    score: 1.0
+- key: ويختلف العلماء في هذه
+  suggestions:
+  - word: المساله
+    score: 1.0
+- key: ويري الباحثون
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: ويمكن القول
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: يتضح مما
+  suggestions:
+  - word: سبق
+    score: 1.0
+- key: يتضح مما سبق
+  suggestions:
+  - word: ان
+    score: 1.0
+- key: يتناول هذا
+  suggestions:
+  - word: البحث
+    score: 1.0
+- key: يسعدني ان
+  suggestions:
+  - word: اقدم
+    score: 1.0
+- key: يسعدني ان اقدم
+  suggestions:
+  - word: لكم
+    score: 1.0
+- key: يشرفني ان
+  suggestions:
+  - word: اتحدث
+    score: 1.0
+- key: يشرفني ان اتحدث
+  suggestions:
+  - word: اليكم
+    score: 1.0
+- key: يعتبر هذا
+  suggestions:
+  - word: الموضوع
+    score: 1.0
+- key: يعتبر هذا الموضوع
+  suggestions:
+  - word: من
+    score: 1.0
+- key: يعتبر هذا الموضوع من
+  suggestions:
+  - word: اهم
+    score: 1.0
