@@ -106,6 +106,40 @@ def test_idioms_cache_hit(tmp_path):
     assert result[0].score == 0.99
 
 
+def test_idioms_cache_suffix_scan_hit(tmp_path):
+    """IdiomsCache fires when the stored key is a suffix of the full context key."""
+    entries = [
+        {
+            "key": "ضرب عصفورين",
+            "suggestions": [{"word": "بحجر", "score": 0.99}],
+        }
+    ]
+    path = tmp_path / "idioms.yaml"
+    _write_yaml(path, entries)
+
+    cache = IdiomsCache(path)
+    # The runtime key contains 3 preceding words before the stored 2-word key.
+    result = cache.lookup("قال لي صديقي ضرب عصفورين")
+
+    assert result is not None
+    assert result[0].word == "بحجر"
+
+
+def test_idioms_cache_suffix_scan_miss(tmp_path):
+    """IdiomsCache returns None when no suffix of the key matches any entry."""
+    entries = [
+        {
+            "key": "ضرب عصفورين",
+            "suggestions": [{"word": "بحجر", "score": 0.99}],
+        }
+    ]
+    path = tmp_path / "idioms.yaml"
+    _write_yaml(path, entries)
+
+    cache = IdiomsCache(path)
+    assert cache.lookup("لا يوجد تطابق هنا أبدا") is None
+
+
 def test_idioms_cache_source_tag(tmp_path):
     """Source tag should be idiom_cache."""
     cache = IdiomsCache(tmp_path / "empty.yaml")
@@ -132,6 +166,26 @@ def test_phrases_cache_hit(tmp_path):
 
     assert result is not None
     assert result[0].word == "الرحيم"
+    assert result[0].source == NWSSource.PHRASE_CACHE
+
+
+def test_phrases_cache_suffix_scan_hit(tmp_path):
+    """PhrasesCache fires when the stored key is a suffix of the full context key."""
+    entries = [
+        {
+            "key": "السلام عليكم",
+            "suggestions": [{"word": "ورحمه", "score": 1.0}],
+        }
+    ]
+    path = tmp_path / "phrases.yaml"
+    _write_yaml(path, entries)
+
+    cache = PhrasesCache(path)
+    # Simulates: user typed 3 preceding words then 'السلام عليكم'
+    result = cache.lookup("وابدا كلامي السلام عليكم")
+
+    assert result is not None
+    assert result[0].word == "ورحمه"
     assert result[0].source == NWSSource.PHRASE_CACHE
 
 
