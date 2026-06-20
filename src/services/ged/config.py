@@ -84,12 +84,26 @@ class LexiconConfig(BaseModel):
         return _resolve_path(self.patterns_path)
 
 
+class MLConfig(BaseModel):
+    """ML GED model configuration."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    bundle_dir: Path
+
+    @property
+    def resolved_bundle_dir(self) -> Path:
+        """Return the model path relative to the GED root."""
+        return _resolve_path(self.bundle_dir)
+
+
 class GEDConfig(BaseModel):
     """Top-level GED service configuration."""
 
     model_config = ConfigDict(extra="forbid")
 
     lexicon: LexiconConfig
+    ml: MLConfig
 
 
 @lru_cache(maxsize=4)
