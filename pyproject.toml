@@ -12,6 +12,9 @@ dependencies = [
     "pyyaml>=6.0",
     "loguru>=0.7.3",
     "marisa-trie>=1.2.1",
+    "joblib>=1.5.0",
+    "scikit-learn>=1.7.0",
+    "sklearn-crfsuite>=0.5.0",
 ]
 
 [dependency-groups]
@@ -22,8 +25,6 @@ dev = [
   "pytest>=8.3.5",
   "ipykernel>=7.2.0",
   "pandas>=2.3.0",
-  "scikit-learn>=1.7.0",
-  "sklearn-crfsuite>=0.5.0",
   "types-PyYAML>=6.0",
 ]
 
@@ -50,8 +51,10 @@ files = ["src", "tests"]
 module = [
     "camel_tools.*",
     "farasa.*",
+    "joblib",
     "marisa_trie",
     "pyarabic.*",
+    "sklearn_crfsuite.*",
 ]
 ignore_missing_imports = true
 

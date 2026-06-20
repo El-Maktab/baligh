@@ -11,3 +11,5 @@ lexicon:
     metadata: metadata.json
   spelling_suspicion:
     enabled: true
+ml:
+  bundle_dir: ../../../artifacts/ged/ml/crf-surface-v1/v0.1.0
