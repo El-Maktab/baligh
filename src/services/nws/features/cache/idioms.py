@@ -70,12 +70,23 @@ class IdiomsCache(BaseCacheLayer):
                 self._cache[key] = suggestions
 
     def lookup(self, key: str) -> list[Suggestion] | None:
-        """Return suggestions if the key matches a known idiom context.
+        """Return suggestions via suffix-scan against the known idiom context.
+
+        Iterativly searchs for the key given in the cache, starting by the full key
+        length (all words in key), then progressively reduces the key length till
+        either we find the key in cache and return the result, or we exit.
 
         Args:
             key: Normalized cache key string.
 
         Returns:
-            A list of Suggestion objects, or None if no match.
+            A list of Suggestion objects from the first matching suffix,
+            or None if all suffixes miss.
         """
-        return self._cache.get(key)
+        words = key.split()
+        for start in range(len(words)):
+            suffix = " ".join(words[start:])
+            result = self._cache.get(suffix)
+            if result is not None:
+                return result
+        return None
