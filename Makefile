@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets ged-ml-model-download pre-commit
 
 # Default target
 help:
@@ -6,23 +6,24 @@ help:
 	@echo "============================"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make install         Install all dependencies"
-	@echo "  make camel-data      Download CAMeL Tools data (morphology & disambiguation)"
-	@echo "  make ged-dict        Download dictionaries from our drive"
-	@echo "  make ged-lexicon     Build processed GED lexicon trie resources"
-	@echo "  make ged-ml-datasets Download GED ML datasets"
+	@echo "  make install               Install all dependencies"
+	@echo "  make camel-data            Download CAMeL Tools data (morphology & disambiguation)"
+	@echo "  make ged-dict              Download dictionaries from our drive"
+	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
+	@echo "  make ged-ml-datasets       Download GED ML datasets"
+	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
 	@echo ""
 	@echo "Quality Checks:"
-	@echo "  make format          Format code with ruff"
-	@echo "  make lint            Lint code with ruff"
-	@echo "  make type-check      Type check with mypy"
-	@echo "  make test            Run tests with pytest"
-	@echo "  make all             Run format, lint, type-check, and tests"
+	@echo "  make format                Format code with ruff"
+	@echo "  make lint                  Lint code with ruff"
+	@echo "  make type-check            Type check with mypy"
+	@echo "  make test                  Run tests with pytest"
+	@echo "  make all                   Run format, lint, type-check, and tests"
 	@echo ""
 	@echo "Other:"
-	@echo "  make clean         Remove temporary files and caches"
-	@echo "  make pre-commit    Run pre-commit hooks on all files"
-	@echo "  make run           Run a Python script (usage: make run SCRIPT=src/...)
+	@echo "  make clean                 Remove temporary files and caches"
+	@echo "  make pre-commit            Run pre-commit hooks on all files"
+	@echo "  make run                   Run a Python script (usage: make run SCRIPT=src/...)"
 	@echo ""
 
 # Install dependencies
@@ -47,6 +48,12 @@ ged-ml-datasets:
 	@echo "Downloading GED ML datasets..."
 	uv run --with gdown gdown -O src/services/ged/data/ml/qalb14/ 1QnhPR4LCfT2oG92VtnWHZWSuaPrcUVoM
 	unzip -o ./src/services/ged/data/ml/qalb14/baligh-ged-qalb14-wo-camelira-coarse-v0.1.0.zip -d ./src/services/ged/data/ml/qalb14/
+
+# Download the pinned model bundle.
+ged-ml-model-download:
+	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-surface" \
+		--repo-type model \
+		--local-dir "artifacts/ged/ml/crf-surface-v1/v0.1.0"
 
 # Build processed GED lexicon tries
 ged-lexicon:
