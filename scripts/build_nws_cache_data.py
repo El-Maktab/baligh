@@ -181,6 +181,7 @@ def _is_valid_proverb(words: list[str]) -> bool:
 # Key generation
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _generate_key_pairs(
     words: list[str],
 ) -> list[tuple[str, str]]:
@@ -213,10 +214,10 @@ def _generate_key_pairs(
     return pairs
 
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # HTTP helpers
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _fetch_json(url: str, *, retries: int = 3, pause: float = 1.5) -> dict | None:
     """Fetch a URL and return parsed JSON, with simple retry logic."""
@@ -227,7 +228,9 @@ def _fetch_json(url: str, *, retries: int = 3, pause: float = 1.5) -> dict | Non
                 raw = resp.read().decode("utf-8")
             return json.loads(raw)  # type: ignore[return-value]
         except (URLError, json.JSONDecodeError) as exc:
-            logging.warning("Attempt %d/%d failed for %s: %s", attempt, retries, url, exc)
+            logging.warning(
+                "Attempt %d/%d failed for %s: %s", attempt, retries, url, exc
+            )
             if attempt < retries:
                 time.sleep(pause * attempt)
     return None
@@ -244,8 +247,7 @@ def _fetch_wikiquote_wikitext(page_title: str) -> str:
     """Return wikitext for a single Wikiquote page."""
     encoded_title = quote(page_title, safe="")
     url = (
-        f"{_WIKIQUOTE_API}"
-        f"?action=parse&page={encoded_title}&prop=wikitext&format=json"
+        f"{_WIKIQUOTE_API}?action=parse&page={encoded_title}&prop=wikitext&format=json"
     )
     data = _fetch_json(url)
     if not data:
@@ -296,6 +298,7 @@ def fetch_wikiquote_proverbs(pages: list[str]) -> list[list[str]]:
 # ─────────────────────────────────────────────────────────────────────────────
 # Source: Jawaher dataset (HuggingFace datasets-server API)
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _fetch_jawaher_batch(offset: int) -> list[dict]:
     """Fetch one page of Jawaher rows from the HuggingFace datasets-server API."""
@@ -375,7 +378,6 @@ HAND_CURATED_PHRASES: list[list[str]] = [
     "اللهم اغفر لنا ذنوبنا".split(),
     "إنا لله وإنا إليه راجعون".split(),
     "رحمة الله عليه رحمة واسعة".split(),
-
     # ── تعبيرات يومية رسمية ──────────────────────────────────────────────────
     "في ما يخص موضوع".split(),
     "وفقا لما تقدم".split(),
@@ -397,7 +399,6 @@ HAND_CURATED_PHRASES: list[list[str]] = [
     "من الضروري التأكيد على".split(),
     "يعتبر هذا الموضوع من أهم".split(),
     "ويمكن القول إن".split(),
-
     # ── تعبيرات أكاديمية ─────────────────────────────────────────────────────
     "تهدف هذه الدراسة إلى".split(),
     "يتناول هذا البحث".split(),
@@ -414,7 +415,6 @@ HAND_CURATED_PHRASES: list[list[str]] = [
     "ويختلف العلماء في هذه المسألة".split(),
     "ومن أبرز نتائج الدراسة".split(),
     "وفي حدود علم الباحث".split(),
-
     # ── صياغات خطابية ──────────────────────────────────────────────────────
     "أيها السادة والسيدات الكرام".split(),
     "أيها الحضور الكريم".split(),
@@ -428,7 +428,6 @@ HAND_CURATED_PHRASES: list[list[str]] = [
     "ونتطلع في المستقبل إلى".split(),
     "ونأمل أن يكون لهذا اللقاء".split(),
     "وأدعو الله أن يوفقنا جميعا".split(),
-
     # ── تعبيرات شائعة ───────────────────────────────────────────────────────
     "في واقع الأمر".split(),
     "من هذا المنطلق".split(),
@@ -456,6 +455,7 @@ HAND_CURATED_PHRASES: list[list[str]] = [
 # YAML entry building
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _build_cache_entries(
     all_proverbs: list[list[str]],
     *,
@@ -477,7 +477,7 @@ def _build_cache_entries(
         List of ``{"key": str, "suggestions": [{"word": str, "score": float}]}``
         dicts, sorted alphabetically by key.
     """
-    seen_keys: dict[str, str] = {}   # key → suggestion (first wins)
+    seen_keys: dict[str, str] = {}  # key → suggestion (first wins)
     conflict_count = 0
 
     for words in all_proverbs:
@@ -487,7 +487,9 @@ def _build_cache_entries(
                     conflict_count += 1
                     logging.debug(
                         "Key conflict: '%s' already maps to '%s', ignoring '%s'",
-                        key, seen_keys[key], suggestion,
+                        key,
+                        seen_keys[key],
+                        suggestion,
                     )
             else:
                 seen_keys[key] = suggestion
@@ -498,7 +500,8 @@ def _build_cache_entries(
 
     logging.info(
         "Total unique keys: %d | Conflicts skipped: %d",
-        len(seen_keys), conflict_count,
+        len(seen_keys),
+        conflict_count,
     )
 
     entries = [
@@ -511,6 +514,7 @@ def _build_cache_entries(
 # ─────────────────────────────────────────────────────────────────────────────
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -538,7 +542,8 @@ def _parse_args() -> argparse.Namespace:
         help="Skip the Jawaher HuggingFace fetch step.",
     )
     parser.add_argument(
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         action="store_true",
         help="Enable DEBUG logging.",
     )
@@ -567,7 +572,9 @@ def _write_yaml(path: Path, entries: list[dict], *, dry_run: bool) -> None:
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def main() -> int:
+    """Main function of build script."""
     args = _parse_args()
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -601,12 +608,11 @@ def main() -> int:
             deduped_idioms.append(words)
     logging.info(
         "Idiom proverbs after deduplication: %d (removed %d duplicates)",
-        len(deduped_idioms), len(idiom_proverbs) - len(deduped_idioms),
+        len(deduped_idioms),
+        len(idiom_proverbs) - len(deduped_idioms),
     )
 
-    idiom_entries = _build_cache_entries(
-        deduped_idioms, score=1.0, limit=args.limit
-    )
+    idiom_entries = _build_cache_entries(deduped_idioms, score=1.0, limit=args.limit)
     _write_yaml(IDIOMS_OUT, idiom_entries, dry_run=args.dry_run)
 
     # ── Tier 2: phrases ───────────────────────────────────────────────────────

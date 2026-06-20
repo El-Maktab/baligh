@@ -13,7 +13,7 @@ class BaseCacheLayer(ABC):
     """Abstract base class for a single NWS cache tier.
 
     Each concrete tier (idioms, phrases, user LRU) must implement
-    the *lookup* method. The `update` method is optional as only 
+    the *lookup* method. The `update` method is optional as only
     Tier 3 cache needs it.
     """
 
@@ -43,3 +43,4 @@ class BaseCacheLayer(ABC):
             key: Normalized cache key string.
             suggestions: Ranked list of suggestions to store.
         """
+        raise NotImplementedError()

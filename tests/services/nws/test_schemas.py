@@ -6,7 +6,6 @@ Authors:
 
 import pytest
 from pydantic import ValidationError
-
 from src.core.schemas import MorphAnalysis, Token
 from src.services.nws.schemas import NWSInput, NWSOutput, NWSSource, Suggestion
 
@@ -52,7 +51,7 @@ def test_nws_input_defaults():
 
 
 def test_nws_input_validation():
-    """Verify that NWSInput model validates correctly with custom and invalid options."""
+    """Verify that NWSInput model validates correctly with custom and invalid opts."""
     tokens = [Token(index=0, form="ذهب", span=(0, 3), norm_span=(0, 3))]
     morph_features = [[MorphAnalysis(token_index=0, pos="VERB")]]
 

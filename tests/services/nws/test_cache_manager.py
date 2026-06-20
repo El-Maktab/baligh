@@ -6,9 +6,7 @@ Authors:
 
 from pathlib import Path
 
-import pytest
 import yaml
-
 from src.core.schemas import Token
 from src.services.nws.features.cache.idioms import IdiomsCache
 from src.services.nws.features.cache.manager import CacheManager
@@ -16,16 +14,18 @@ from src.services.nws.features.cache.phrases import PhrasesCache
 from src.services.nws.features.cache.user_lru import UserLRUCache
 from src.services.nws.schemas import NWSSource, Suggestion
 
-
 #############################################################################
 # Helpers
 #############################################################################
+
 
 def _make_token(form: str, index: int = 0) -> Token:
     return Token(index=index, form=form, span=(0, len(form)), norm_span=(0, len(form)))
 
 
-def _make_suggestion(word: str, rank: int = 0, source: NWSSource = NWSSource.MODEL) -> Suggestion:
+def _make_suggestion(
+    word: str, rank: int = 0, source: NWSSource = NWSSource.MODEL
+) -> Suggestion:
     return Suggestion(rank=rank, word=word, score=0.9, source=source)
 
 
@@ -37,6 +37,7 @@ def _write_yaml(path: Path, entries: list) -> None:
 #############################################################################
 # UserLRUCache tests
 #############################################################################
+
 
 def test_user_lru_miss():
     """Lookup on empty cache returns None."""
@@ -78,6 +79,7 @@ def test_user_lru_source_tag():
 #############################################################################
 # IdiomsCache tests
 #############################################################################
+
 
 def test_idioms_cache_miss_on_missing_file(tmp_path):
     """IdiomsCache on a non-existent file returns None for all lookups."""
@@ -150,6 +152,7 @@ def test_idioms_cache_source_tag(tmp_path):
 # PhrasesCache tests
 #############################################################################
 
+
 def test_phrases_cache_hit(tmp_path):
     """PhrasesCache correctly loads and returns suggestions from YAML."""
     entries = [
@@ -199,6 +202,7 @@ def test_phrases_cache_source_tag(tmp_path):
 # CacheManager.build_key tests
 #############################################################################
 
+
 def _make_manager(tmp_path: Path, window: int = 5) -> CacheManager:
     return CacheManager(
         tier1=IdiomsCache(tmp_path / "idioms.yaml"),
@@ -240,6 +244,7 @@ def test_build_key_window_limits_tokens(tmp_path):
 #############################################################################
 # CacheManager lookup / update integration tests
 #############################################################################
+
 
 def test_cache_manager_tier1_hit(tmp_path):
     """Tier 1 (idioms) hit short-circuits before Tier 2 and 3."""
