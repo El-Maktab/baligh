@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets ged-ml-model-download pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate pre-commit
 
 # Default target
 help:
@@ -12,6 +12,8 @@ help:
 	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
 	@echo "  make ged-ml-datasets       Download GED ML datasets"
 	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
+	@echo "  make ged-evaluate          Evaluate all GED detectors"
+	@echo "  make ged-eval-datasets     Download GED evaluation datasets from our drive"
 	@echo ""
 	@echo "Quality Checks:"
 	@echo "  make format                Format code with ruff"
@@ -54,6 +56,16 @@ ged-ml-model-download:
 	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-surface" \
 		--repo-type model \
 		--local-dir "artifacts/ged/ml/crf-surface-v1/v0.1.0"
+
+# Download GED evaluation datasets
+ged-eval-datasets:
+	@echo "Downloading GED evaluation datasets..."
+	uv run --with gdown gdown -O src/services/ged/data/evaluation/ 1xy-FKY6mKAztAex7e1r0m9wTUda3yY63
+	unzip -o ./src/services/ged/data/evaluation/baligh-ged-eval-datasets-v0.1.0.zip -d ./src/services/ged/data/evaluation/
+
+# Evaluate the three GED detectors and their fused output.
+ged-evaluate:
+	uv run python -m src.services.ged.evaluation
 
 # Build processed GED lexicon tries
 ged-lexicon:

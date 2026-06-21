@@ -227,6 +227,8 @@ class LexiconDetector(BaseDetector):
         morph_features: list[list[MorphAnalysis]],
     ) -> bool:
         """Return True if morphology produced a plausible analysis."""
+        if token.is_oov:
+            return False
         if token.index >= len(morph_features):
             return False
 
