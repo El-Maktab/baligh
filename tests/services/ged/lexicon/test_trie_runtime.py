@@ -95,6 +95,20 @@ def test_plausible_morphology_suppresses_spelling_suspicion():
     assert spans == []
 
 
+def test_oov_token_is_flagged_despite_fallback_morphology():
+    """An OOV token should not be protected by a fallback morphological tag."""
+    detector = _detector(_store(words=[]))
+    token = make_token("المدرثه", (0, 7), 0)
+    token.is_oov = True
+    morph_features = [[make_morph(0, "NOUN_PROP", lemma="المدرثه")]]
+
+    spans = detector.detect("المدرثه", "المدرثه", [token], morph_features)
+
+    assert len(spans) == 1
+    assert spans[0].category == ErrorCategory.ORTHOGRAPHY
+    assert spans[0].subtype == "spelling"
+
+
 def test_punctuation_and_non_arabic_tokens_are_skipped():
     """Non-Arabic and punctuation tokens should never emit spelling spans."""
     detector = _detector(_store(words=[]))
