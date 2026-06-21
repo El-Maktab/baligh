@@ -157,12 +157,14 @@ def _canonicalize_for_alignment(text: str) -> str:
     Used for the SequenceMatcher can perfectly align characters regardless of
     Farasa's internal changes (ex. converting 'اكرم' to 'أكرم').
     """
-    text = re.sub(r"[أإآ]", "ا", text)      # TODO: cover more alif variations
+    text = re.sub(r"[أإآ]", "ا", text)  # TODO: cover more alif variations
     text = text.replace("ة", "ه").replace("ى", "ي")
     return text
 
 
-def _build_character_mapping(farasa_clean: str, normalized_prefix: str) -> dict[int, int]:
+def _build_character_mapping(
+    farasa_clean: str, normalized_prefix: str
+) -> dict[int, int]:
     """Builds a character index map between Farasa output and normalized text."""
     clean_canon = _canonicalize_for_alignment(farasa_clean)
     norm_canon = _canonicalize_for_alignment(normalized_prefix)
@@ -172,22 +174,26 @@ def _build_character_mapping(farasa_clean: str, normalized_prefix: str) -> dict[
     for match in matcher.get_matching_blocks():
         for i in range(match.size):
             clean_to_norm[match.a + i] = match.b + i
-            
+
     return clean_to_norm
 
 
-def _get_farasa_spans(farasa_words: list[str], clean_to_norm: dict[int, int]) -> list[dict]:
+def _get_farasa_spans(
+    farasa_words: list[str], clean_to_norm: dict[int, int]
+) -> list[dict]:
     """Calculates mapped boundaries for each Farasa word."""
     clean_cursor = 0
     spans = []
-    
+
     for farasa_word in farasa_words:
         fword_clean = farasa_word.replace("+", "")
         start_clean = clean_cursor
         end_clean = clean_cursor + len(fword_clean)
 
         mapped_indices = [
-            clean_to_norm[i] for i in range(start_clean, end_clean) if i in clean_to_norm
+            clean_to_norm[i]
+            for i in range(start_clean, end_clean)
+            if i in clean_to_norm
         ]
 
         if mapped_indices:
@@ -197,12 +203,14 @@ def _get_farasa_spans(farasa_words: list[str], clean_to_norm: dict[int, int]) ->
             norm_start = -1
             norm_end = -1
 
-        spans.append({
-            "word": farasa_word,
-            "norm_start": norm_start,
-            "norm_end": norm_end,
-            "start_clean": start_clean,
-        })
+        spans.append(
+            {
+                "word": farasa_word,
+                "norm_start": norm_start,
+                "norm_end": norm_end,
+                "start_clean": start_clean,
+            }
+        )
         clean_cursor = end_clean + 1  # +1 for the space
 
     return spans
@@ -232,14 +240,14 @@ def _reconstruct_farasa_segmentation(
                     recon.append(char)
                 clean_idx += 1
         recon_parts.append("".join(recon))
-        
+
     farasa_seg = " ".join(recon_parts)
-    
+
     if len(grouped_farasa) == 1:
         affix_structure = _build_affix_structure(farasa_seg)
     else:
         affix_structure = None
-        
+
     return farasa_seg, affix_structure
 
 
@@ -325,7 +333,8 @@ for clitic, tag in SUFFIX_CLITICS:
 def break_token(token: Token) -> list[tuple[str, str]] | None:
     """Reconstructs the clitic/stem breakdown for a token from its farasa_segmentation.
 
-    uses the farasa_segmentation and affix_structure to break the token to it's segmented parts.
+    uses the farasa_segmentation and affix_structure to break the token to it's
+    segmented parts.
 
     Args:
         token: A Token produced by the segmentation stage.
@@ -343,13 +352,13 @@ def break_token(token: Token) -> list[tuple[str, str]] | None:
     segments = token.farasa_segmentation.split("+")
 
     stem_idx = tags.index("STEM")
-    
+
     prefix_clitics = segments[:stem_idx]
-    
+
     num_suffixes = len(tags) - stem_idx - 1
     if num_suffixes > 0:
         suffix_clitics = segments[-num_suffixes:]
-        stem_str = "".join(segments[stem_idx : -num_suffixes])
+        stem_str = "".join(segments[stem_idx:-num_suffixes])
     else:
         suffix_clitics = []
         stem_str = "".join(segments[stem_idx:])
@@ -357,12 +366,12 @@ def break_token(token: Token) -> list[tuple[str, str]] | None:
     components = []
     for i in range(stem_idx):
         components.append((tags[i], prefix_clitics[i]))
-        
+
     components.append(("STEM", stem_str))
-    
+
     for i in range(num_suffixes):
         components.append((tags[stem_idx + 1 + i], suffix_clitics[i]))
-        
+
     return components
 
 
