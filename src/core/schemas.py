@@ -30,6 +30,8 @@ class Token(BaseModel):
             non-Arabic tokens.
         is_oov: stands for Out-Of-Vocabulary, which means that the word is invalid
             and matches no word in dictionary.
+        farasa_segmentation: The raw +-joined string produced by Segmenter for this
+            token (ex. "ل+ال+حج").
     """
 
     index: int
@@ -37,6 +39,7 @@ class Token(BaseModel):
     span: tuple[int, int]
     norm_span: tuple[int, int]
     affix_structure: str | None = None
+    farasa_segmentation: str | None = None
     is_oov: bool = False
 
     def __init__(self, *args, **kwargs):
@@ -47,6 +50,7 @@ class Token(BaseModel):
         self.span = kwargs.get("span", (0, len(self.form)))
         self.norm_span = kwargs.get("norm_span", self.span)
         self.affix_structure = kwargs.get("affix_structure")
+        self.farasa_segmentation = kwargs.get("farasa_segmentation", None)
 
 
 class MorphAnalysis(BaseModel):
