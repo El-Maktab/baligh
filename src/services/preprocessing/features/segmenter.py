@@ -25,6 +25,8 @@ Authors:
     - Akram Hany
 """
 
+import difflib
+import re
 import threading
 from typing import TYPE_CHECKING
 
@@ -149,84 +151,168 @@ def _build_affix_structure(farasa_word: str) -> str | None:
     return "+".join(tags)
 
 
+def _canonicalize_for_alignment(text: str) -> str:
+    """Removes or normalizes characters that Farasa implicitly corrects.
+
+    Used for the SequenceMatcher can perfectly align characters regardless of
+    Farasa's internal changes (ex. converting 'اكرم' to 'أكرم').
+    """
+    text = re.sub(r"[أإآ]", "ا", text)  # TODO: cover more alif variations
+    text = text.replace("ة", "ه").replace("ى", "ي")
+    return text
+
+
+def _build_character_mapping(
+    farasa_clean: str, normalized_prefix: str
+) -> dict[int, int]:
+    """Builds a character index map between Farasa output and normalized text."""
+    clean_canon = _canonicalize_for_alignment(farasa_clean)
+    norm_canon = _canonicalize_for_alignment(normalized_prefix)
+
+    matcher = difflib.SequenceMatcher(None, clean_canon, norm_canon)
+    clean_to_norm: dict[int, int] = {}
+    for match in matcher.get_matching_blocks():
+        for i in range(match.size):
+            clean_to_norm[match.a + i] = match.b + i
+
+    return clean_to_norm
+
+
+def _get_farasa_spans(
+    farasa_words: list[str], clean_to_norm: dict[int, int]
+) -> list[dict]:
+    """Calculates mapped boundaries for each Farasa word."""
+    clean_cursor = 0
+    spans = []
+
+    for farasa_word in farasa_words:
+        fword_clean = farasa_word.replace("+", "")
+        start_clean = clean_cursor
+        end_clean = clean_cursor + len(fword_clean)
+
+        mapped_indices = [
+            clean_to_norm[i]
+            for i in range(start_clean, end_clean)
+            if i in clean_to_norm
+        ]
+
+        if mapped_indices:
+            norm_start = min(mapped_indices)
+            norm_end = max(mapped_indices) + 1
+        else:
+            norm_start = -1
+            norm_end = -1
+
+        spans.append(
+            {
+                "word": farasa_word,
+                "norm_start": norm_start,
+                "norm_end": norm_end,
+                "start_clean": start_clean,
+            }
+        )
+        clean_cursor = end_clean + 1  # +1 for the space
+
+    return spans
+
+
+def _reconstruct_farasa_segmentation(
+    grouped_farasa: list[dict],
+    clean_to_norm: dict[int, int],
+    normalized_prefix: str,
+    form: str,
+) -> tuple[str, str | None]:
+    """Reconstructs farasa_segmentation using exact user characters."""
+    if not grouped_farasa:
+        return form, None
+
+    recon_parts = []
+    for fw in grouped_farasa:
+        recon = []
+        clean_idx = fw["start_clean"]
+        for char in fw["word"]:
+            if char == "+":
+                recon.append("+")
+            else:
+                if clean_idx in clean_to_norm:
+                    recon.append(normalized_prefix[clean_to_norm[clean_idx]])
+                else:
+                    recon.append(char)
+                clean_idx += 1
+        recon_parts.append("".join(recon))
+
+    farasa_seg = " ".join(recon_parts)
+
+    if len(grouped_farasa) == 1:
+        affix_structure = _build_affix_structure(farasa_seg)
+    else:
+        affix_structure = None
+
+    return farasa_seg, affix_structure
+
+
 def _align_tokens(
     farasa_output: str,
     normalized_prefix: str,
     norm_to_orig_map: list[int],
+    regex_matches: list[re.Match],
 ) -> list[Token]:
-    """Aligns Farasa output tokens to character spans in normalized and original text.
+    """Aligns Farasa output tokens to regex-extracted token spans.
 
-    Farasa returns a string where words are separated by single spaces and
-    clitics within a word are joined by +.  This function reconstructs the
-    surface form of each word (by removing + separators) and then walks
-    through normalized_prefix sequentially to find where each word starts
-    and ends.
+    Maps character indices from Farasa's cleaned output back to the
+    normalized_prefix to bypass inserted/dropped characters. It reconstructs
+    the farasa_segmentation string by fetching exact user characters, which
+    perserve spelling errors that Farasa silently corrected.
 
     Args:
         farasa_output: The raw string returned by FarasaSegmenter.segment().
-        normalized_prefix: The normalized completed-prefix text that was passed
-            to Farasa.
-        norm_to_orig_map: Mapping produced by normalize_with_mapping where
-            norm_to_orig_map[i] is the index of normalized_prefix[i]
-            in the original raw text. The list has one extra sentinel element
-            at the end equal to len(original_text).
+        normalized_prefix: The original normalized text.
+        norm_to_orig_map: Character index mapping from normalized to raw text.
+        regex_matches: Pre-computed token boundaries via regex.
 
     Returns:
-        A list of Token objects with correct form, span, norm_span,
-        and affix_structure.
+        A list of Token objects representing exactly the regex matches, populated
+        with the corresponding Farasa affix structure and segmentation.
     """
     tokens: list[Token] = []
     token_index = 0
-    norm_cursor = 0  # current position in normalized_prefix
 
-    # Farasa word chunks are space-separated.
     farasa_words = farasa_output.split(" ")
+    farasa_clean = farasa_output.replace("+", "")
 
-    for farasa_word in farasa_words:
-        if not farasa_word:
-            continue
+    clean_to_norm = _build_character_mapping(farasa_clean, normalized_prefix)
+    farasa_word_spans = _get_farasa_spans(farasa_words, clean_to_norm)
 
-        # the surface form is the word with "+" removed.
-        surface = farasa_word.replace("+", "")
-        surface_len = len(surface)
+    # Group Farasa words into the rigid regex matches
+    for match in regex_matches:
+        match_start, match_end = match.span()
+        form = normalized_prefix[match_start:match_end]
 
-        # skip whitespace in the normalized text (it would always be one space).
-        while (
-            norm_cursor < len(normalized_prefix)
-            and normalized_prefix[norm_cursor].isspace()
-        ):
-            norm_cursor += 1
+        grouped_farasa = []
+        for f in farasa_word_spans:
+            if f["norm_start"] != -1:
+                # If the mapped farasa word overlaps with this regex match
+                if max(match_start, f["norm_start"]) < min(match_end, f["norm_end"]):
+                    grouped_farasa.append(f)
 
-        if norm_cursor >= len(normalized_prefix):
-            break
+        farasa_seg, affix_structure = _reconstruct_farasa_segmentation(
+            grouped_farasa, clean_to_norm, normalized_prefix, form
+        )
 
-        norm_start = norm_cursor
-        norm_end = norm_cursor + surface_len
-
-        # the form is taken directly from the normalized text.
-        form = normalized_prefix[norm_start:norm_end]
-
-        # translate norm_span -> orig_span via the mapping.
-        orig_start = norm_to_orig_map[norm_start]
-        # norm_to_orig_map has len(normalized_prefix)+1 entries, index norm_end
-        # gives the original index just past the last character (we have an extra entry
-        # in norm_to_orig_map at the end so that if norm_end is after the last element).
-        orig_end = norm_to_orig_map[norm_end]
-
-        affix_structure = _build_affix_structure(farasa_word)
+        orig_start = norm_to_orig_map[match_start]
+        orig_end = norm_to_orig_map[match_end]
 
         tokens.append(
             Token(
                 index=token_index,
                 form=form,
                 span=(orig_start, orig_end),
-                norm_span=(norm_start, norm_end),
+                norm_span=(match_start, match_end),
                 affix_structure=affix_structure,
+                farasa_segmentation=farasa_seg,
             )
         )
-
         token_index += 1
-        norm_cursor = norm_end
 
     return tokens
 
@@ -245,9 +331,10 @@ for clitic, tag in SUFFIX_CLITICS:
 
 
 def break_token(token: Token) -> list[tuple[str, str]] | None:
-    """Reconstructs the clitic/stem breakdown for a token from its affix_structure.
+    """Reconstructs the clitic/stem breakdown for a token from its farasa_segmentation.
 
-    use the affix_structure to break the token to it's segmented parts.
+    uses the farasa_segmentation and affix_structure to break the token to it's
+    segmented parts.
 
     Args:
         token: A Token produced by the segmentation stage.
@@ -255,49 +342,35 @@ def break_token(token: Token) -> list[tuple[str, str]] | None:
     Returns:
         A list of (tag, substring) pairs in left-to-right order, where each
         pair contains a component label (ex. CONJ, DET, STEM, PRON) and the
-        corresponding part from token.form. Returns None when
-        affix_structure is None.
+        corresponding part from token.farasa_segmentation. Returns None when
+        affix_structure or farasa_segmentation is None.
     """
-    if token.affix_structure is None:
+    if token.farasa_segmentation is None or token.affix_structure is None:
         return None
 
     tags = token.affix_structure.split("+")
-    form = token.form
+    segments = token.farasa_segmentation.split("+")
 
-    # We are sure that STEM must exist if affix_structure is not none
     stem_idx = tags.index("STEM")
-    prefix_tags = tags[:stem_idx]
-    suffix_tags = tags[stem_idx + 1 :]
 
-    components: list[tuple[str, str]] = []
-    left = 0
-    right = len(form)
+    prefix_clitics = segments[:stem_idx]
 
-    for tag in prefix_tags:
-        matched = False
-        for clitic in _PREFIX_TAG_TO_CLITICS.get(tag, []):
-            if form[left:].startswith(clitic):
-                components.append((tag, clitic))
-                left += len(clitic)
-                matched = True
-                break
-        if not matched:
-            return None
+    num_suffixes = len(tags) - stem_idx - 1
+    if num_suffixes > 0:
+        suffix_clitics = segments[-num_suffixes:]
+        stem_str = "".join(segments[stem_idx:-num_suffixes])
+    else:
+        suffix_clitics = []
+        stem_str = "".join(segments[stem_idx:])
 
-    suffix_components: list[tuple[str, str]] = []
-    for tag in reversed(suffix_tags):
-        matched = False
-        for clitic in _SUFFIX_TAG_TO_CLITICS.get(tag, []):
-            if form[:right].endswith(clitic):
-                suffix_components.append((tag, clitic))
-                right -= len(clitic)
-                matched = True
-                break
-        if not matched:
-            return None
+    components = []
+    for i in range(stem_idx):
+        components.append((tags[i], prefix_clitics[i]))
 
-    components.append(("STEM", form[left:right]))
-    components.extend(reversed(suffix_components))
+    components.append(("STEM", stem_str))
+
+    for i in range(num_suffixes):
+        components.append((tags[stem_idx + 1 + i], suffix_clitics[i]))
 
     return components
 
@@ -324,10 +397,11 @@ def segment(completed_prefix: str, norm_to_orig_map: list[int]) -> list[Token]:
         an empty list when completed_prefix is empty or contains only
         whitespace.
     """
-    if not completed_prefix.strip():
+    matches = list(re.finditer(r"\w+|[^\w\s]", completed_prefix))
+    if not matches:
         return []
 
     seg = _get_segmenter()
     farasa_output: str = seg.segment(completed_prefix)
 
-    return _align_tokens(farasa_output, completed_prefix, norm_to_orig_map)
+    return _align_tokens(farasa_output, completed_prefix, norm_to_orig_map, matches)

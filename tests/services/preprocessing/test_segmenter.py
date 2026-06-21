@@ -181,12 +181,93 @@ def test_segment_token_indices_are_sequential():
         assert token.index == expected_idx
 
 
+def test_segment_implicit_corrections():
+    """Ensure Farasa's internal spelling corrections don't overwrite user input."""
+    # Farasa internally corrects "اكرم" -> "أكرم" and "مدرسه" -> "مدرسة"
+    text = "اكرم في مدرسه"
+    normalized, mapping = normalize_with_mapping(text)
+    tokens = segment(normalized, mapping)
+
+    assert tokens[0].form == "اكرم"
+    assert tokens[0].farasa_segmentation == "اكرم"  # Preserved missing hamza
+
+    assert tokens[2].form == "مدرسه"
+    assert (
+        tokens[2].farasa_segmentation == "مدرس+ه"
+    )  # Preserved haa instead of taa marbuta
+
+
+def test_segment_numbers_attached():
+    """Ensure words attached to numbers are kept as a single token."""
+    text = "اكرم100"
+    normalized, mapping = normalize_with_mapping(text)
+    tokens = segment(normalized, mapping)
+
+    assert len(tokens) == 1
+    assert tokens[0].form == "اكرم100"
+    assert tokens[0].farasa_segmentation == "اكرم 100"  # Joined parts
+    assert tokens[0].affix_structure is None  # Invalid joined word
+
+
+def test_segment_integration_original_issue():
+    """Ensure the original issues reported in chat are perfectly solved."""
+    text = "هذا امير اكرم100 لالله لله للحج."
+    normalized, mapping = normalize_with_mapping(text)
+    tokens = segment(normalized, mapping)
+
+    assert len(tokens) == 7
+
+    # "هذا" is unchanged
+    assert tokens[0].form == "هذا"
+    assert tokens[0].farasa_segmentation == "هذا"
+
+    # "امير" remains "امير" despite Farasa correcting to "أمير"
+    assert tokens[1].form == "امير"
+    assert tokens[1].farasa_segmentation == "امير"
+
+    # "اكرم100" remains merged and invalid
+    assert tokens[2].form == "اكرم100"
+    assert tokens[2].farasa_segmentation == "اكرم 100"
+    assert tokens[2].affix_structure is None
+
+    # "لالله"
+    assert tokens[3].form == "لالله"
+    assert tokens[3].farasa_segmentation == "ل+الله"
+
+    # "لله"
+    assert tokens[4].form == "لله"
+    assert tokens[4].farasa_segmentation == "ل+الله"
+
+    # "للحج" accurately maps user characters over Farasa's "ل+ال+حج"
+    assert tokens[5].form == "للحج"
+    assert tokens[5].farasa_segmentation == "ل+ال+حج"
+    assert tokens[5].affix_structure == "PREP+DET+STEM"
+
+    # Punctuation
+    assert tokens[6].form == "."
+    assert tokens[6].farasa_segmentation == "."
+    assert tokens[6].affix_structure is None
+
+
+def test_text_contains_Alif():
+    """Test input with alif in words."""
+    text = "اكرم"
+    normalized, mapping = normalize_with_mapping(text)
+    tokens = segment(normalized, mapping)
+
+    assert len(tokens) == 1
+    assert tokens[0].form == "اكرم"
+    assert tokens[0].farasa_segmentation == "اكرم"
+
+
 #############################################################################
 # Unit tests for break_token()
 #############################################################################
 
 
-def _make_token(form: str, affix_structure: str | None) -> object:
+def _make_token(
+    form: str, affix_structure: str | None, farasa_segmentation: str | None = None
+) -> object:
     """Creates a token."""
     from src.core.schemas import Token
 
@@ -196,22 +277,23 @@ def _make_token(form: str, affix_structure: str | None) -> object:
         span=(0, len(form)),
         norm_span=(0, len(form)),
         affix_structure=affix_structure,
+        farasa_segmentation=farasa_segmentation,
     )
 
 
 def test_decompose_none_affix_structure():
     """Test that decompose return none when affix_structure is none."""
-    assert break_token(_make_token("،", None)) is None
+    assert break_token(_make_token("،", None, None)) is None
 
 
 def test_decompose_stem_only():
     """Test decompose with stem only."""
-    assert break_token(_make_token("ذهب", "STEM")) == [("STEM", "ذهب")]
+    assert break_token(_make_token("ذهب", "STEM", "ذهب")) == [("STEM", "ذهب")]
 
 
 def test_decompose_det_stem():
     """Test decompose with det + stem."""
-    assert break_token(_make_token("الطلاب", "DET+STEM")) == [
+    assert break_token(_make_token("الطلاب", "DET+STEM", "ال+طلاب")) == [
         ("DET", "ال"),
         ("STEM", "طلاب"),
     ]
@@ -219,13 +301,15 @@ def test_decompose_det_stem():
 
 def test_decompose_conj_prep_det_stem():
     """Test decompose with CONJ + PREP + DET + STEM."""
-    result = break_token(_make_token("وبالمدرسة", "CONJ+PREP+DET+STEM"))
+    result = break_token(
+        _make_token("وبالمدرسة", "CONJ+PREP+DET+STEM", "و+ب+ال+مدرس+ة")
+    )
     assert result == [("CONJ", "و"), ("PREP", "ب"), ("DET", "ال"), ("STEM", "مدرسة")]
 
 
 def test_decompose_stem_pron():
     """Test decompose with STEM + PRON."""
-    assert break_token(_make_token("كتبها", "STEM+PRON")) == [
+    assert break_token(_make_token("كتبها", "STEM+PRON", "كتب+ها")) == [
         ("STEM", "كتب"),
         ("PRON", "ها"),
     ]
@@ -233,18 +317,18 @@ def test_decompose_stem_pron():
 
 def test_decompose_conj_stem_pron():
     """Test decompose with CONJ + STEM + PRON."""
-    result = break_token(_make_token("وكتبها", "CONJ+STEM+PRON"))
+    result = break_token(_make_token("وكتبها", "CONJ+STEM+PRON", "و+كتب+ها"))
     assert result == [("CONJ", "و"), ("STEM", "كتب"), ("PRON", "ها")]
 
 
 def test_decompose_repeated_pron_suffix():
     """Test decompose with STEM + PRON + PRON."""
-    result = break_token(_make_token("ضربتهم", "STEM+PRON+PRON"))
+    result = break_token(_make_token("ضربتهم", "STEM+PRON+PRON", "ضرب+ت+هم"))
     assert result == [("STEM", "ضرب"), ("PRON", "ت"), ("PRON", "هم")]
 
 
-def test_decompose_result_concatenates_to_form():
-    """Test decompose with CONJ + PREP + DET + STEM."""
-    token = _make_token("وبالمدرسة", "CONJ+PREP+DET+STEM")
+def test_decompose_result_concatenates_to_farasa_segmentation():
+    """Test decompose with concatenates to farasa_segmentation without '+'."""
+    token = _make_token("وبالمدرسة", "CONJ+PREP+DET+STEM", "و+ب+ال+مدرس+ة")
     result = break_token(token)
-    assert "".join(v for _, v in result) == token.form
+    assert "".join(v for _, v in result) == token.farasa_segmentation.replace("+", "")
