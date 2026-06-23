@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict-download ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate pre-commit
 
 # Default target
 help:
@@ -8,12 +8,14 @@ help:
 	@echo "Setup:"
 	@echo "  make install               Install all dependencies"
 	@echo "  make camel-data            Download CAMeL Tools data (morphology & disambiguation)"
-	@echo "  make ged-dict              Download dictionaries from our drive"
+	@echo "  make ged-dict-download     Download dictionaries from our drive"
 	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
-	@echo "  make ged-ml-datasets       Download GED ML datasets"
 	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
+	@echo ""
+	@echo "GED commands:"
 	@echo "  make ged-evaluate          Evaluate all GED detectors"
 	@echo "  make ged-eval-datasets     Download GED evaluation datasets from our drive"
+	@echo "  make ged-ml-datasets       Download GED ML datasets"
 	@echo ""
 	@echo "Quality Checks:"
 	@echo "  make format                Format code with ruff"
@@ -40,7 +42,7 @@ camel-data:
 	uv run camel_data -i disambig-mle-calima-msa-r13
 
 # Download GED dictionaries
-ged-dict:
+ged-dict-download:
 	@echo "Downloading GED dictionaries..."
 	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
 	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
