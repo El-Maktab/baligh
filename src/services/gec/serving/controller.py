@@ -1,21 +1,36 @@
 """GECController: Orchestrates Ontology, Dictionary, and Tagger."""
-from src.services.gec.serving.module import GECModule
-from src.services.gec.schemas import GECInput, GECOutput, ModuleResult
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from src.services.gec.schemas import GECInput, ModuleResult
 
 class GECController:
-    def __init__(
-        self,
-        tagger: GECModule,
-        ontology: GECModule,
-        dictionary: GECModule,
-    ):
-        self.modules = [
-            tagger,
-            ontology,
-            dictionary,
-        ]
-    
-    def correct(self, request: GECInput) -> GECOutput:
-        results : list[ModuleResult] = [m.run(request) for m in self.modules]
-        return GECOutput(results)
+    def __init__(self, tagger, ontology, dictionary):
+        self.modules = {
+            "TAG": tagger,
+            "ONTOLOGY": ontology,
+            "DICTIONARY": dictionary,
+        }
+
+    def run(self, request: GECInput) -> list[ModuleResult]:
+        results: list[ModuleResult] = []
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            future_to_name = {
+                executor.submit(module.run, request): name
+                for name, module in self.modules.items()
+            }
+
+            for future in as_completed(future_to_name):
+                module_name = future_to_name[future]
+
+                try:
+                    result = future.result()
+                except Exception:
+                    result = ModuleResult(
+                        module_name=module_name,
+                        status="ERROR",
+                        candidate_edits=[],
+                    )
+
+                results.append(result)
+        return results
