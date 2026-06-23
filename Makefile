@@ -55,9 +55,9 @@ ged-ml-datasets:
 
 # Download the pinned model bundle.
 ged-ml-model-download:
-	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-surface" \
+	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-morph" \
 		--repo-type model \
-		--local-dir "artifacts/ged/ml/crf-surface-v1/v0.1.0"
+		--local-dir "artifacts/ged/ml/crf-surface-morph-v2/v0.2.0"
 
 # Download GED evaluation datasets
 ged-eval-datasets:

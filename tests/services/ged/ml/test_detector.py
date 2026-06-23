@@ -1,7 +1,7 @@
 """Tests for the machine-learned GED detector."""
 
 from sklearn_crfsuite import CRF
-from src.core.schemas import Token
+from src.core.schemas import MorphAnalysis, Token
 from src.services.ged.features.subsystems.ml.detector import MLDetector
 from src.services.ged.schemas import ErrorCategory, ErrorSource, ProvenanceTier
 
@@ -28,10 +28,14 @@ def _token(index: int, form: str, span: tuple[int, int]) -> Token:
 
 def _detector(marginals: list[dict[str, float]]) -> MLDetector:
     manifest = {
-        "features": {"version": "surface_v1"},
+        "features": {"version": "surface_morph_v2"},
         "inference": {"error_threshold": 0.35},
     }
     return MLDetector(model=FakeCRF(marginals), manifest=manifest)
+
+
+def _analysis(index: int, pos: str) -> list[MorphAnalysis]:
+    return [MorphAnalysis(token_index=index, pos=pos, is_disambiguated=True)]
 
 
 def test_detector_thresholds_predictions_and_uses_real_offsets() -> None:
@@ -44,7 +48,9 @@ def test_detector_thresholds_predictions_and_uses_real_offsets() -> None:
         ]
     )
 
-    spans = detector.detect("", "", tokens, [])
+    spans = detector.detect(
+        "", "", tokens, [_analysis(0, "NOUN"), _analysis(1, "NOUN")]
+    )
 
     assert len(spans) == 1
     assert spans[0].span == (3, 7)
@@ -73,7 +79,17 @@ def test_detector_groups_merges_but_keeps_splits_separate() -> None:
         ]
     )
 
-    spans = detector.detect("", "", tokens, [])
+    spans = detector.detect(
+        "",
+        "",
+        tokens,
+        [
+            _analysis(0, "PREP"),
+            _analysis(1, "PART"),
+            _analysis(2, "NOUN"),
+            _analysis(3, "NOUN"),
+        ],
+    )
 
     assert [(span.span, span.token_refs, span.category) for span in spans] == [
         ((0, 5), [0, 1], ErrorCategory.MERGE),
@@ -87,4 +103,7 @@ def test_detector_suppresses_unknown_predictions() -> None:
     """Report-only UNK predictions do not leak into the public schema."""
     detector = _detector([{"UNK": 0.9}])
 
-    assert detector.detect("", "", [_token(0, "شيء", (0, 3))], []) == []
+    assert (
+        detector.detect("", "", [_token(0, "شيء", (0, 3))], [_analysis(0, "NOUN")])
+        == []
+    )

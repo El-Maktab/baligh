@@ -10,7 +10,7 @@ from src.services.ged.features.subsystems.base import BaseDetector
 from src.services.ged.features.subsystems.ml.artifact import load_bundle
 from src.services.ged.features.subsystems.ml.features import (
     FEATURE_SET_VERSION,
-    sentence_surface_v1_features,
+    sentence_features,
 )
 from src.services.ged.schemas import (
     ErrorCategory,
@@ -26,7 +26,7 @@ UNKNOWN = "UNK"
 class MLDetector(BaseDetector):
     """Detect token errors with the ML sequence labeler.
 
-    Checks that the feature version matches the used model
+    Checks that the runtime feature extractor matches the loaded model bundle.
     """
 
     def __init__(
@@ -64,13 +64,13 @@ class MLDetector(BaseDetector):
         text: str,  # noqa: ARG002
         normalized_text: str,  # noqa: ARG002
         tokens: list[Token],
-        morph_features: list[list[MorphAnalysis]],  # noqa: ARG002
+        morph_features: list[list[MorphAnalysis]],
     ) -> list[ErrorSpan]:
         """Predict labels and convert accepted errors to source spans."""
         if not tokens:
             return []
 
-        features = sentence_surface_v1_features([token.form for token in tokens])
+        features = sentence_features(tokens, morph_features)
         marginals = self.model.predict_marginals([features])[0]
         if len(marginals) != len(tokens):
             raise ValueError("Model returned a different number of token predictions.")
