@@ -16,6 +16,18 @@ htmlcov/
 
 
 #############################
+# FRONTEND
+#############################
+node_modules/
+dist/
+playwright-report/
+test-results/
+*.tsbuildinfo
+.env.local
+.env.*.local
+
+
+#############################
 # UV
 #############################
 .uv/
