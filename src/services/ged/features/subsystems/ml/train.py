@@ -521,7 +521,12 @@ def train_and_export(
         float(best_row["threshold"]),
     )[0]
 
-    manifest = {
+    smoke_test: dict[str, Any] = {
+        "tokens": [token.form for token in smoke_input.tokens],
+        "predictions": smoke_predictions,
+    }
+
+    manifest: dict[str, Any] = {
         "artifact_schema_version": 1,
         "artifact_version": artifact_version,
         "model": {
@@ -558,10 +563,7 @@ def train_and_export(
             "python": platform.python_version(),
             "packages": installed_runtime_versions(),
         },
-        "smoke_test": {
-            "tokens": [token.form for token in smoke_input.tokens],
-            "predictions": smoke_predictions,
-        },
+        "smoke_test": smoke_test,
     }
     if (artifact_dir / "model.joblib").exists():
         (artifact_dir / "model.joblib").unlink()
@@ -577,7 +579,7 @@ def train_and_export(
         manifest=manifest,
         label_mapping=LABEL_TO_CATEGORY,
         threshold_sweep=threshold_sweep,
-        smoke_test=manifest["smoke_test"],
+        smoke_test=smoke_test,
         readme=readme,
     )
     _log(
