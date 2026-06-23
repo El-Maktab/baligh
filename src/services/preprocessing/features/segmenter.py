@@ -229,10 +229,10 @@ def _reconstruct_farasa_segmentation(
         return form, None
 
     recon_parts = []
-    
+
     # We track the last norm_idx we processed to catch any dropped characters
     last_norm_idx = match_start - 1
-    
+
     for fw in grouped_farasa:
         recon = []
         clean_idx = fw["start_clean"]
@@ -241,24 +241,26 @@ def _reconstruct_farasa_segmentation(
                 # Look ahead to find the next mapped clean_idx
                 lookahead_clean_idx = clean_idx
                 next_norm_idx = None
-                for lookahead_char in fw["word"][i+1:]:
+                for lookahead_char in fw["word"][i + 1 :]:
                     if lookahead_char != "+":
                         next_norm_idx = clean_to_norm.get(lookahead_clean_idx)
                         if next_norm_idx is not None:
                             break
                         lookahead_clean_idx += 1
-                
-                # If we found a mapped character ahead, catch up any dropped characters BEFORE inserting +
-                # This ensures diacritics like Fatha stay attached to the letter they modify
+
+                # If we found a mapped character ahead, catch up any dropped characters
+                # This ensures diacritics like Fatha stay attached to the letter they
+                # modify
                 if next_norm_idx is not None and next_norm_idx > last_norm_idx + 1:
                     recon.append(normalized_prefix[last_norm_idx + 1 : next_norm_idx])
                     last_norm_idx = next_norm_idx - 1
-                
+
                 recon.append("+")
             else:
                 norm_idx = clean_to_norm.get(clean_idx)
                 if norm_idx is not None:
-                    # If we skipped some characters in the original string (e.g. dropped diacritics), append them now
+                    # If we skipped some characters in the original string
+                    # (ex. dropped diacritics), append them now
                     if norm_idx > last_norm_idx + 1:
                         recon.append(normalized_prefix[last_norm_idx + 1 : norm_idx])
                     recon.append(normalized_prefix[norm_idx])
@@ -267,7 +269,7 @@ def _reconstruct_farasa_segmentation(
                     recon.append(char)
                 clean_idx += 1
         recon_parts.append("".join(recon))
-        
+
     # After the last word, if there are still characters left in this match, append them
     if last_norm_idx < match_end - 1:
         if recon_parts:
@@ -328,7 +330,12 @@ def _align_tokens(
                     grouped_farasa.append(f)
 
         farasa_seg, affix_structure = _reconstruct_farasa_segmentation(
-            grouped_farasa, clean_to_norm, normalized_prefix, form, match_start, match_end
+            grouped_farasa,
+            clean_to_norm,
+            normalized_prefix,
+            form,
+            match_start,
+            match_end,
         )
 
         orig_start = norm_to_orig_map[match_start]
@@ -429,7 +436,11 @@ def segment(completed_prefix: str, norm_to_orig_map: list[int]) -> list[Token]:
         an empty list when completed_prefix is empty or contains only
         whitespace.
     """
-    matches = list(re.finditer(r"[\w\u064B-\u065F\u0670]+|[^\w\s\u064B-\u065F\u0670]", completed_prefix))
+    matches = list(
+        re.finditer(
+            r"[\w\u064B-\u065F\u0670]+|[^\w\s\u064B-\u065F\u0670]", completed_prefix
+        )
+    )
     if not matches:
         return []
 

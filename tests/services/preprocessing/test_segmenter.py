@@ -248,23 +248,25 @@ def test_segment_integration_original_issue():
     assert tokens[6].farasa_segmentation == "."
     assert tokens[6].affix_structure is None
 
+
 def test_segment_with_tashkeel():
     """Ensure Arabic diacritics (tashkeel) do not break word boundaries."""
     text = "ذهب أمير الى المنَزل."
     normalized, mapping = normalize_with_mapping(text)
     tokens = segment(normalized, mapping)
-    
+
     assert len(tokens) == 5
     assert tokens[3].form == "المنَزل"
     assert tokens[3].farasa_segmentation == "ال+منَزل"
     assert tokens[4].form == "."
+
 
 def test_segment_dropped_tashkeel_with_clitics():
     """Ensure dropped tashkeel by Farasa is safely attached before the + boundary."""
     text = "لَأكلها."
     normalized, mapping = normalize_with_mapping(text)
     tokens = segment(normalized, mapping)
-    
+
     assert len(tokens) == 2
     assert tokens[0].form == "لَأكلها"
     assert tokens[0].farasa_segmentation == "لَ+أكل+ها"
