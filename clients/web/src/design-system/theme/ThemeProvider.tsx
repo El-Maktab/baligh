@@ -7,55 +7,29 @@ import {
 } from "./theme-context";
 
 const STORAGE_KEY = "baligh-theme";
-const THEME_QUERY = "(prefers-color-scheme: dark)";
-
 function readStoredPreference(): ThemePreference {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "light" || stored === "dark" ? stored : "system";
+    return stored === "dark" ? "dark" : "light";
   } catch {
-    return "system";
+    return "light";
   }
-}
-
-function resolveTheme(preference: ThemePreference): ResolvedTheme {
-  if (preference !== "system") {
-    return preference;
-  }
-
-  return window.matchMedia(THEME_QUERY).matches ? "dark" : "light";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreferenceState] =
     useState<ThemePreference>(readStoredPreference);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
-    resolveTheme(preference),
-  );
+  const resolvedTheme: ResolvedTheme = preference;
 
   useEffect(() => {
-    const media = window.matchMedia(THEME_QUERY);
-
-    const applyTheme = () => {
-      const nextTheme = resolveTheme(preference);
-      setResolvedTheme(nextTheme);
-      document.documentElement.dataset.theme = nextTheme;
-      document.documentElement.style.colorScheme = nextTheme;
-    };
-
-    applyTheme();
-    media.addEventListener("change", applyTheme);
-    return () => media.removeEventListener("change", applyTheme);
+    document.documentElement.dataset.theme = preference;
+    document.documentElement.style.colorScheme = preference;
   }, [preference]);
 
   const setPreference = (nextPreference: ThemePreference) => {
     setPreferenceState(nextPreference);
     try {
-      if (nextPreference === "system") {
-        localStorage.removeItem(STORAGE_KEY);
-      } else {
-        localStorage.setItem(STORAGE_KEY, nextPreference);
-      }
+      localStorage.setItem(STORAGE_KEY, nextPreference);
     } catch {
       // Theme state remains functional when storage is unavailable.
     }

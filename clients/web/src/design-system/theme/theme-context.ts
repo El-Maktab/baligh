@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
-export type ThemePreference = "light" | "dark" | "system";
-export type ResolvedTheme = Exclude<ThemePreference, "system">;
+export type ThemePreference = "light" | "dark";
+export type ResolvedTheme = ThemePreference;
 
 export type ThemeContextValue = {
   preference: ThemePreference;

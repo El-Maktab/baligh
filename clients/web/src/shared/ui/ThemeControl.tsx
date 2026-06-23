@@ -1,4 +1,4 @@
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "react-aria-components";
 
 import { useTheme, type ThemePreference } from "../../design-system";
@@ -10,7 +10,6 @@ const choices: Array<{
 }> = [
   { value: "light", label: "الوضع الفاتح", icon: Sun },
   { value: "dark", label: "الوضع الداكن", icon: Moon },
-  { value: "system", label: "إعداد الجهاز", icon: Laptop },
 ];
 
 export function ThemeControl() {

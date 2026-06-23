@@ -21,6 +21,7 @@ import { BalighWordmark, motionPresets } from "../../design-system";
 import { ArabicConfettiButton } from "../../shared/ui/ArabicConfettiButton";
 import { ThemeControl } from "../../shared/ui/ThemeControl";
 import "./home.css";
+import { LandingCursor } from "./LandingCursor";
 
 const features = [
   {
@@ -97,8 +98,8 @@ function HeroFocus() {
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (reduceMotion) return;
     const bounds = event.currentTarget.getBoundingClientRect();
-    pointerX.set((event.clientX - bounds.left - bounds.width / 2) / 7);
-    pointerY.set((event.clientY - bounds.top - bounds.height / 2) / 7);
+    pointerX.set((event.clientX - bounds.left - bounds.width / 2) / 12);
+    pointerY.set((event.clientY - bounds.top - bounds.height / 2) / 12);
   };
 
   return (
@@ -129,16 +130,23 @@ function HeroFocus() {
       ].map(([letter, className, delay]) => (
         <motion.span
           key={letter}
-          className={`hero-letter ${className}`}
+          className={`hero-letter-shell ${className}`}
           style={{ x: springX, y: springY }}
-          animate={
-            reduceMotion ? undefined : { y: [0, -9, 0], rotate: [-1, 2, -1] }
-          }
-          whileHover={{ scale: 1.08, rotate: 5 }}
-          whileTap={{ scale: 0.94 }}
-          transition={{ duration: 4.5, delay: Number(delay), repeat: Infinity }}
         >
-          {letter}
+          <motion.span
+            className="hero-letter"
+            animate={
+              reduceMotion ? undefined : { y: [0, -6, 0], rotate: [-1, 1, -1] }
+            }
+            transition={{
+              duration: 5.5,
+              delay: Number(delay),
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            {letter}
+          </motion.span>
         </motion.span>
       ))}
     </div>
@@ -148,20 +156,17 @@ function HeroFocus() {
 export function HomePage() {
   const reduceMotion = useReducedMotion();
 
-  const scrollToFeatures = () => {
-    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <main className="landing-page">
+      <LandingCursor />
       <section className="landing-section landing-hero" id="home">
         <header className="landing-header">
           <BalighWordmark className="landing-logo" />
           <nav className="landing-nav" aria-label="التنقل الرئيسي">
-            <a href="#features">تسجيل الدخول</a>
-            <a className="guest-link" href="#features">
+            <button type="button">تسجيل الدخول</button>
+            <button className="guest-link" type="button">
               دخول كضيف
-            </a>
+            </button>
             <ThemeControl />
           </nav>
         </header>
@@ -175,22 +180,25 @@ export function HomePage() {
           >
             <h1>
               مساعدك الذكي
-              <span>للكتابة العربية</span>
-              بأسلوب <strong>بليغ</strong>
+              <span className="hero-line">للكتابة العربية</span>
             </h1>
+            <div className="hero-logo-line" aria-label="بأسلوب بليغ">
+              <span>بأسلوب</span>
+              <BalighWordmark className="hero-inline-logo" />
+            </div>
             <p>
               ارتقِ بمستوى كتاباتك العربية مع أدوات تحليل نحوي وإملائي دقيقة،
               مدعومة بالذكاء الاصطناعي لتحسين الأسلوب والمفردات لحظياً.
             </p>
             <div className="hero-actions">
-              <ArabicConfettiButton onPress={scrollToFeatures}>
+              <ArabicConfettiButton>
                 <PencilLine aria-hidden="true" />
                 ابدأ الكتابة الآن
               </ArabicConfettiButton>
-              <a className="secondary-cta" href="#features">
+              <button className="secondary-cta" type="button">
                 <CirclePlay aria-hidden="true" />
                 شاهد كيف يعمل
-              </a>
+              </button>
             </div>
           </motion.div>
 

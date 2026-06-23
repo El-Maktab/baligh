@@ -55,8 +55,13 @@ test("landing interactions and viewport sections are active", async ({
   await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
 
   await expect(page.locator(".hero-letter")).toHaveCount(3);
-  await page.getByRole("button", { name: "ابدأ الكتابة الآن" }).hover();
+  const primaryButton = page.getByRole("button", { name: "ابدأ الكتابة الآن" });
+  await primaryButton.hover();
   await expect(page.locator(".arabic-confetti__letter")).toHaveCount(13);
+  await primaryButton.click();
+  await page.getByRole("button", { name: "شاهد كيف يعمل" }).click();
+  await page.getByRole("button", { name: "دخول كضيف" }).click();
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(2);
 });
 
 test("preview showcase documents foundations and mixed text", async ({
