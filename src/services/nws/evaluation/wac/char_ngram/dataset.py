@@ -38,12 +38,21 @@ def get_eval_stream(
     else:
         logger.info(f"Skipping shuffle for {dataset_name} to guarantee instant startup.")
     
-    if split_type == "train":
-        dataset = dataset.take(100_000)
-    elif split_type == "val":
-        dataset = dataset.skip(100_000).take(20_000)
-    elif split_type == "test":
-        dataset = dataset.skip(120_000).take(20_000)
+    if dataset_name == "CALM/arwiki":
+        if split_type == "train":
+            dataset = dataset.take(100_000)
+        elif split_type == "val":
+            dataset = dataset.skip(100_000).take(20_000)
+        elif split_type == "test":
+            dataset = dataset.skip(120_000).take(20_000)
+    elif dataset_name == "mohres/The_Arabic_E-Book_Corpus":
+        # For the books dataset, there are only ~1,745 rows (books).
+        if split_type == "train":
+            dataset = dataset.take(1_500)
+        elif split_type == "val":
+            dataset = dataset.skip(1_500).take(100)
+        elif split_type == "test":
+            dataset = dataset.skip(1_600).take(145)
     else:
         raise ValueError(f"Unknown split_type: {split_type}")
         
