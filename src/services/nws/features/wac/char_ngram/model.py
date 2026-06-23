@@ -89,13 +89,24 @@ class CharNGramLM:
             
         return log_prob
 
-    def predict_top_k(self, context: list[str], k: int) -> list[tuple[str, float]]:
-        """Generate the top-k next words from scratch.
+    def predict(self, prefix: str, top_k: int = 5) -> list[str]:
+        """Generate the top-k word completions for a given prefix.
         
-        This relies on a Beam Search decoder.
+        This relies on the GED LexiconTrieStore to provide valid candidates,
+        and then scores them using the character n-gram model.
         """
-        # User requested to wait on NWP implementation for now.
-        raise NotImplementedError(
-            "NWP word generation via beam search is not yet implemented. "
-            "Use score_word() for WAC reranking."
-        )
+        # Late import to prevent circular dependencies or heavy upfront loading
+        from src.services.ged.features.subsystems.lexicon.trie_store import load_processed_lexicon
+        
+        trie = load_processed_lexicon()
+        candidates = trie.get_completions(prefix)
+        
+        scored_candidates = []
+        for cand in candidates:
+            # We score the full candidate given an empty context (or just a space)
+            # WAC candidates are usually scored independently
+            score = self.score_word(cand, [" "])
+            scored_candidates.append((cand, score))
+            
+        scored_candidates.sort(key=lambda x: x[1], reverse=True)
+        return [cand for cand, score in scored_candidates[:top_k]]
