@@ -42,8 +42,8 @@ camel-data:
 # Download GED dictionaries
 ged-dict:
 	@echo "Downloading GED dictionaries..."
-	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
-	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
+	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
 
 # Download GED ml datasets
 ged-ml-datasets:

@@ -16,9 +16,8 @@ from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 
 from .registry import rule_registry
 
-# ############################################################################
-# Rule: OT_HAMZA_PREP
-# ############################################################################
+_HAMZA_REQUIRED_POS_CURRENT = HAMZA_REQUIRED_POS | frozenset({"CONJ_SUB"})
+_HAMZA_LEMMAS = frozenset({"أَنَّ", "إِنَّ", "إِن"})
 
 
 @rule_registry.register(
@@ -27,8 +26,8 @@ from .registry import rule_registry
     subtype="hamza",
     tier=ProvenanceTier.TIER_1_RULE_DERIVED,
     explanation=(
-        "حرف الجر أو الربط يبدأ بهمزة قطع (إ/أ) لا بألف مجردة (ا)؛ "
-        "مثل: إلى، إن، أن , لا: الى، ان، ان"
+        "حروف الجر والربط وبعض الأدوات التي أصلها بهمزة قطع "
+        "تكتب بالهمزة لا بالألف المجردة، مثل: إلى، أو، إذا، أن، إن."
     ),
 )
 def check_hamza_prep(
@@ -53,12 +52,12 @@ def check_hamza_prep(
         if not candidates:
             continue
 
-        morph = candidates[0]  # disambiguated candidate
-        if morph.pos not in HAMZA_REQUIRED_POS:
+        morph = candidates[0]
+        stem_first = first_significant_char(token.form, token.affix_structure)
+        if stem_first != BARE_ALIF:
             continue
 
-        stem_first = first_significant_char(token.form, token.affix_structure)
-        if stem_first == BARE_ALIF:
+        if morph.pos in _HAMZA_REQUIRED_POS_CURRENT or morph.lemma in _HAMZA_LEMMAS:
             hits.append((token.span[0], token.span[1], token.index))
 
     return hits

@@ -29,16 +29,13 @@ from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 # ###########################################################################
 
 
-class YamlPatternSchema(BaseModel):
-    """Validated pattern block for a single-token YAML rule.
-
-    All fields are optional except match. Every supplied condition is
-    ANDed together.
-    """
+class YamlTokenSpecSchema(BaseModel):
+    """Validated token matcher used by token and sequence YAML rules."""
 
     model_config = ConfigDict(extra="forbid")
 
-    match: Literal["token"] = "token"
+    form: str | None = None
+    form_in: list[str] | None = None
     pos: str | None = None
     pos_not: str | None = None
     lemma_in: list[str] | None = None
@@ -46,6 +43,63 @@ class YamlPatternSchema(BaseModel):
     form_ends_with: str | None = None
     gender: str | None = None
     number: str | None = None
+    case: str | None = None
+    definiteness: str | None = None
+    person: str | None = None
+    tense: str | None = None
+    mood: str | None = None
+
+
+class YamlPatternSchema(YamlTokenSpecSchema):
+    """Validated pattern block for token and sequence YAML rules."""
+
+    match: Literal["token", "sequence"] = "token"
+    tokens: list[YamlTokenSpecSchema] | None = None
+    flag_token: int | None = None
+    skip_punc: bool = False
+
+    def model_post_init(self, __context) -> None:
+        """Validate fields that depend on the selected match mode."""
+        token_fields = (
+            "form",
+            "form_in",
+            "pos",
+            "pos_not",
+            "lemma_in",
+            "form_regex",
+            "form_ends_with",
+            "gender",
+            "number",
+            "case",
+            "definiteness",
+            "person",
+            "tense",
+            "mood",
+        )
+
+        if self.match == "token":
+            if self.tokens is not None:
+                raise ValueError("tokens is only allowed when match=sequence")
+            if self.flag_token is not None:
+                raise ValueError("flag_token is only allowed when match=sequence")
+            if self.skip_punc:
+                raise ValueError("skip_punc is only allowed when match=sequence")
+            return
+
+        if self.tokens is None or len(self.tokens) < 2:
+            raise ValueError("sequence rules require at least 2 token specs")
+
+        if self.flag_token is None:
+            raise ValueError("sequence rules require flag_token")
+
+        if self.flag_token < 0 or self.flag_token >= len(self.tokens):
+            raise ValueError("flag_token must point to a valid sequence token")
+
+        for field_name in token_fields:
+            if getattr(self, field_name) is not None:
+                raise ValueError(
+                    "top-level token fields are not allowed when match=sequence"
+                )
 
 
 class YamlRuleSchema(BaseModel):
@@ -66,11 +120,11 @@ class YamlRuleSchema(BaseModel):
 # ###########################################################################
 
 
-def _compile_token_pattern(pattern: YamlPatternSchema):
-    """Compile a validated YamlPatternSchema into a filter callable.
+def _compile_token_pattern(pattern: YamlTokenSpecSchema):
+    """Compile a validated token spec into a filter callable.
 
     Args:
-        pattern: pattern schema
+        pattern: token spec schema
 
     Returns:
         A callable (token: Token, morph: MorphAnalysis | None) -> bool
@@ -79,6 +133,12 @@ def _compile_token_pattern(pattern: YamlPatternSchema):
     form_regex = re.compile(pattern.form_regex) if pattern.form_regex else None
 
     def _matches(token: Token, morph: MorphAnalysis | None) -> bool:
+        if pattern.form is not None and token.form != pattern.form:
+            return False
+
+        if pattern.form_in is not None and token.form not in pattern.form_in:
+            return False
+
         if pattern.pos is not None and (morph is None or morph.pos != pattern.pos):
             return False
 
@@ -110,6 +170,27 @@ def _compile_token_pattern(pattern: YamlPatternSchema):
         ):
             return False
 
+        if pattern.case is not None and (morph is None or morph.case != pattern.case):
+            return False
+
+        if pattern.definiteness is not None and (
+            morph is None or morph.definiteness != pattern.definiteness
+        ):
+            return False
+
+        if pattern.person is not None and (
+            morph is None or morph.person != pattern.person
+        ):
+            return False
+
+        if pattern.tense is not None and (
+            morph is None or morph.tense != pattern.tense
+        ):
+            return False
+
+        if pattern.mood is not None and (morph is None or morph.mood != pattern.mood):
+            return False
+
         return True
 
     return _matches
@@ -136,19 +217,79 @@ def compile_yaml_rule(raw: dict):
     """
     rule = YamlRuleSchema.model_validate(raw)
 
-    matcher = _compile_token_pattern(rule.pattern)
+    def _first_morph(index: int, morph_features: list[list[MorphAnalysis]]):
+        return morph_features[index][0] if morph_features[index] else None
 
-    def rule_fn(
-        text: str,
-        tokens: list[Token],
-        morph_features: list[list[MorphAnalysis]],
-    ) -> list[tuple[int, int, int]]:
-        hits: list[tuple[int, int, int]] = []
-        for i, token in enumerate(tokens):
-            morph = morph_features[i][0] if morph_features[i] else None
-            if matcher(token, morph):
-                hits.append((token.span[0], token.span[1], token.index))
-        return hits
+    if rule.pattern.match == "token":
+        matcher = _compile_token_pattern(rule.pattern)
+
+        def rule_fn(
+            text: str,
+            tokens: list[Token],
+            morph_features: list[list[MorphAnalysis]],
+        ) -> list[tuple[int, int, int]]:
+            hits: list[tuple[int, int, int]] = []
+            for i, token in enumerate(tokens):
+                morph = _first_morph(i, morph_features)
+                if matcher(token, morph):
+                    hits.append((token.span[0], token.span[1], token.index))
+            return hits
+
+    else:
+        assert rule.pattern.tokens is not None
+        assert rule.pattern.flag_token is not None
+
+        matchers = [
+            _compile_token_pattern(token_spec) for token_spec in rule.pattern.tokens
+        ]
+        flag_token = rule.pattern.flag_token
+        skip_punc = rule.pattern.skip_punc
+
+        def rule_fn(
+            text: str,
+            tokens: list[Token],
+            morph_features: list[list[MorphAnalysis]],
+        ) -> list[tuple[int, int, int]]:
+            hits: list[tuple[int, int, int]] = []
+            n_tokens = len(tokens)
+
+            for start in range(n_tokens):
+                matched_indices: list[int] = []
+                current = start
+
+                for seq_index, matcher in enumerate(matchers):
+                    if seq_index > 0 and skip_punc:
+                        while current < n_tokens:
+                            morph = _first_morph(current, morph_features)
+                            if morph is None or morph.pos != "PUNC":
+                                break
+                            current += 1
+
+                    if current >= n_tokens:
+                        break
+
+                    token = tokens[current]
+                    morph = _first_morph(current, morph_features)
+                    if not matcher(token, morph):
+                        break
+
+                    matched_indices.append(current)
+                    current += 1
+
+                if len(matched_indices) != len(matchers):
+                    continue
+
+                flagged_index = matched_indices[flag_token]
+                flagged_token = tokens[flagged_index]
+                hits.append(
+                    (
+                        flagged_token.span[0],
+                        flagged_token.span[1],
+                        flagged_token.index,
+                    )
+                )
+
+            return hits
 
     rule_fn.__name__ = rule.id
 
