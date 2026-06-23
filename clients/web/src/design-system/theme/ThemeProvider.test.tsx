@@ -13,27 +13,27 @@ function ThemeProbe() {
       <output aria-label="preference">{preference}</output>
       <output aria-label="resolved theme">{resolvedTheme}</output>
       <Button onPress={() => setPreference("dark")}>dark</Button>
-      <Button onPress={() => setPreference("system")}>system</Button>
+      <Button onPress={() => setPreference("light")}>light</Button>
     </div>
   );
 }
 
 describe("ThemeProvider", () => {
-  it("uses the system preference when no override is stored", async () => {
+  it("uses light mode when no override is stored", async () => {
     render(
       <ThemeProvider>
         <ThemeProbe />
       </ThemeProvider>,
     );
 
-    expect(screen.getByLabelText("preference")).toHaveTextContent("system");
+    expect(screen.getByLabelText("preference")).toHaveTextContent("light");
     expect(screen.getByLabelText("resolved theme")).toHaveTextContent("light");
     await waitFor(() =>
       expect(document.documentElement).toHaveAttribute("data-theme", "light"),
     );
   });
 
-  it("persists explicit choices and removes the override for system mode", () => {
+  it("persists explicit light and dark choices", () => {
     render(
       <ThemeProvider>
         <ThemeProbe />
@@ -44,7 +44,8 @@ describe("ThemeProvider", () => {
     expect(localStorage.getItem("baligh-theme")).toBe("dark");
     expect(screen.getByLabelText("resolved theme")).toHaveTextContent("dark");
 
-    fireEvent.click(screen.getByRole("button", { name: "system" }));
-    expect(localStorage.getItem("baligh-theme")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "light" }));
+    expect(localStorage.getItem("baligh-theme")).toBe("light");
+    expect(screen.getByLabelText("resolved theme")).toHaveTextContent("light");
   });
 });

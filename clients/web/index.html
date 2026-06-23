@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logos/Logo_light.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#f4fbf6" />
     <meta
       name="description"
@@ -17,12 +18,7 @@
         } catch {
           // Storage may be unavailable in restricted browser contexts.
         }
-        const resolved =
-          stored === "light" || stored === "dark"
-            ? stored
-            : matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
+        const resolved = stored === "dark" ? "dark" : "light";
         document.documentElement.dataset.theme = resolved;
         document.documentElement.style.colorScheme = resolved;
       })();
