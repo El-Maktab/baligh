@@ -21,11 +21,17 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from src.services.ged.features.subsystems.rule_based import (
+    RuleBasedDetector,  # noqa: F401
+)
 from src.services.ged.features.subsystems.rule_based.loader import (
     compile_yaml_rule,
     load_yaml_rules,
 )
-from src.services.ged.features.subsystems.rule_based.registry import RuleRegistry
+from src.services.ged.features.subsystems.rule_based.registry import (
+    RuleRegistry,
+    rule_registry,
+)
 from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 
 from tests.services.ged.rule_based.conftest import make_morph, make_token
@@ -173,6 +179,22 @@ class TestPatternFields:
         morph = _M(0, "VERB")
         assert _run(self._rule(pattern), form, [tok], [[morph]]) == expected
 
+    def test_form_condition(self):
+        """Exact form matching should only fire on the configured surface."""
+        tok = _T("انه", (0, 3), 0)
+        morph = _M(0, "PART", lemma="إِنَّ")
+        assert _run(self._rule({"form": "انه"}), tok.form, [tok], [[morph]]) == [
+            (0, 3, 0)
+        ]
+
+    def test_form_in_condition(self):
+        """Exact-form lists should behave like a whitelist."""
+        tok = _T("عن", (0, 2), 0)
+        morph = _M(0, "PREP")
+        assert _run(
+            self._rule({"form_in": ["عن", "من"]}), tok.form, [tok], [[morph]]
+        ) == [(0, 2, 0)]
+
     @pytest.mark.parametrize(
         "form,pattern,expected",
         [
@@ -211,6 +233,51 @@ class TestPatternFields:
         tok = _T(form, (0, len(form)), 0)
         morph = _M(0, "NOUN", **morph_kwargs)
         assert _run(self._rule(pattern), form, [tok], [[morph]]) == expected
+
+    @pytest.mark.parametrize(
+        "morph_kwargs,pattern,expected",
+        [
+            (
+                {
+                    "case": "nominative",
+                    "definiteness": "definite",
+                    "person": "third",
+                    "tense": "present",
+                    "mood": "indicative",
+                },
+                {
+                    "case": "nominative",
+                    "definiteness": "definite",
+                    "person": "third",
+                    "tense": "present",
+                    "mood": "indicative",
+                },
+                [(0, 4, 0)],
+            ),
+            (
+                {
+                    "case": "accusative",
+                    "definiteness": "definite",
+                    "person": "third",
+                    "tense": "present",
+                    "mood": "indicative",
+                },
+                {
+                    "case": "nominative",
+                    "definiteness": "definite",
+                    "person": "third",
+                    "tense": "present",
+                    "mood": "indicative",
+                },
+                [],
+            ),
+        ],
+    )
+    def test_extended_morph_fields(self, morph_kwargs, pattern, expected):
+        """Case, definiteness, person, tense, and mood should all be matchable."""
+        tok = _T("يفعل", (0, 4), 0)
+        morph = _M(0, "VERB", **morph_kwargs)
+        assert _run(self._rule(pattern), tok.form, [tok], [[morph]]) == expected
 
     @pytest.mark.parametrize(
         "form,lemma,pattern,expected",
@@ -315,6 +382,143 @@ class TestLoadYamlRules:
         )
         reg = RuleRegistry()
         count = load_yaml_rules(rules_dir, reg)
-        # We ship at least the 2 orthography seed rules (OT_ALIF_MAQSURA_PREP,
-        # OT_TA_MARBUTA_NOUN) plus the placeholder in punctuation.yaml.
-        assert count >= 2
+        rule_ids = {entry.rule_id for entry in reg.list_rules()}
+
+        assert count >= 50
+        assert "OT_ALIF_MAQSURA_ALA" in rule_ids
+        assert "SY_LAM_JUSSIVE" in rule_ids
+        assert "OT_HAMZA_PREP" not in rule_ids
+        assert "OT_HAMZA_ANNA" not in rule_ids
+        assert "OT_ALIF_MAQSURA_PREP" not in rule_ids
+
+
+class TestSequencePatterns:
+    """Sequence mode should validate cleanly and match left-to-right windows."""
+
+    _BASE_RULE = {
+        "id": "SEQ_X",
+        "category": "SY",
+        "subtype": "sequence_test",
+        "tier": "tier_1_rule_derived",
+        "explanation": "x",
+    }
+
+    def _rule(self, pattern: dict) -> dict:
+        return {**self._BASE_RULE, "pattern": {"match": "sequence", **pattern}}
+
+    def test_valid_sequence_rule(self):
+        """A well-formed sequence rule should compile and flag the selected token."""
+        raw_rule = self._rule(
+            {
+                "tokens": [{"form": "لم"}, {"pos": "VERB", "mood": "indicative"}],
+                "flag_token": 1,
+            }
+        )
+        tokens = [_T("لم", (0, 2), 0), _T("يجري", (3, 7), 1)]
+        morphs = [[_M(0, "PART")], [_M(1, "VERB", tense="present", mood="indicative")]]
+
+        assert _run(raw_rule, "لم يجري", tokens, morphs) == [(3, 7, 1)]
+
+    def test_invalid_flag_token_raises(self):
+        """flag_token must point at one of the declared sequence token specs."""
+        with pytest.raises(ValidationError, match="flag_token"):
+            compile_yaml_rule(
+                self._rule(
+                    {
+                        "tokens": [{"form": "لم"}, {"pos": "VERB"}],
+                        "flag_token": 2,
+                    }
+                )
+            )
+
+    def test_invalid_tokens_length_raises(self):
+        """Sequence rules require at least two token specs."""
+        with pytest.raises(ValidationError, match="at least 2"):
+            compile_yaml_rule(self._rule({"tokens": [{"form": "لم"}], "flag_token": 0}))
+
+    def test_sequence_schema_rejects_top_level_token_fields(self):
+        """Sequence rules should keep token matchers inside the tokens list."""
+        with pytest.raises(ValidationError, match="top-level token fields"):
+            compile_yaml_rule(
+                {
+                    **self._BASE_RULE,
+                    "pattern": {
+                        "match": "sequence",
+                        "form": "لم",
+                        "tokens": [{"form": "لم"}, {"pos": "VERB"}],
+                        "flag_token": 1,
+                    },
+                }
+            )
+
+    def test_sequence_matching_without_punctuation_skipping(self):
+        """Default sequence matching should fail across punctuation boundaries."""
+        raw_rule = self._rule(
+            {
+                "tokens": [{"form": "عن"}, {"form": "ما"}, {"pos": "VERB"}],
+                "flag_token": 0,
+            }
+        )
+        tokens = [
+            _T("عن", (0, 2), 0),
+            _T("،", (2, 3), 1),
+            _T("ما", (4, 6), 2),
+            _T("أصابك", (7, 12), 3),
+        ]
+        morphs = [
+            [_M(0, "PREP")],
+            [_M(1, "PUNC")],
+            [_M(2, "PART")],
+            [_M(3, "VERB", tense="past")],
+        ]
+
+        assert _run(raw_rule, "عن ، ما أصابك", tokens, morphs) == []
+
+    def test_sequence_matching_with_punctuation_skipping(self):
+        """Sequence rules can optionally skip punctuation between matched tokens."""
+        raw_rule = self._rule(
+            {
+                "tokens": [{"form": "عن"}, {"form": "ما"}, {"pos": "VERB"}],
+                "flag_token": 0,
+                "skip_punc": True,
+            }
+        )
+        tokens = [
+            _T("عن", (0, 2), 0),
+            _T("،", (2, 3), 1),
+            _T("ما", (4, 6), 2),
+            _T("أصابك", (7, 12), 3),
+        ]
+        morphs = [
+            [_M(0, "PREP")],
+            [_M(1, "PUNC")],
+            [_M(2, "PART")],
+            [_M(3, "VERB", tense="past")],
+        ]
+
+        assert _run(raw_rule, "عن ، ما أصابك", tokens, morphs) == [(0, 2, 0)]
+
+
+def test_rule_registry_has_no_duplicate_ids():
+    """The live registry should not contain duplicate rule ids."""
+    rule_ids = [entry.rule_id for entry in rule_registry.list_rules()]
+    assert len(rule_ids) == len(set(rule_ids))
+
+
+def test_retired_legacy_ids_are_absent_from_live_registry():
+    """Only the broad hamza rule should remain live among the legacy ids."""
+    rule_ids = {entry.rule_id for entry in rule_registry.list_rules()}
+    assert "OT_HAMZA_PREP" in rule_ids
+    assert "OT_HAMZA_ANNA" not in rule_ids
+    assert "OT_ALIF_MAQSURA_PREP" not in rule_ids
+
+
+def test_run_all_generic_hamza_rule_produces_a_single_hit():
+    """The restored broad hamza rule should emit one span for a simple token."""
+    tok = _T("الى", (0, 3), 0)
+    morph = _M(0, "PREP", lemma="إِلَى")
+
+    spans = rule_registry.run_all(tok.form, [tok], [[morph]])
+
+    hits = [span for span in spans if span.span == (0, 3)]
+    assert len(hits) == 1

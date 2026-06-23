@@ -2,6 +2,7 @@
 
 Covers:
 - PC_SPACE_BEFORE_PUNC (Python procedural, punctuation.py)
+- Latin punctuation variants in Arabic context
 
 Authors:
     Amir Anwar
@@ -108,3 +109,55 @@ class TestSpaceBeforePunc:
         spans = _run("ذهب ،", [word, punc], [[_M(0, "VERB")], [_M(1, "PUNC")]])
         assert spans[0].explanation_text
         assert spans[0].explanation_eligible is True
+
+
+@pytest.mark.parametrize(
+    ("rule_id", "mark", "left", "right", "span"),
+    [
+        ("PC_LATIN_COMMA_ARABIC", ",", "قال", "ثم", (4, 5)),
+        ("PC_LATIN_QUESTION_ARABIC", "?", "هذا", "", (4, 5)),
+        ("PC_LATIN_SEMICOLON_ARABIC", ";", "قال", "ثم", (4, 5)),
+    ],
+)
+def test_latin_punctuation_variant_flagged(rule_id, mark, left, right, span):
+    """Latin punctuation marks should be flagged in Arabic context."""
+    text = f"{left} {mark}" + (f" {right}" if right else "")
+    tokens = [
+        _T(left, (0, len(left)), 0),
+        _T(mark, (len(left) + 1, len(left) + 2), 1),
+    ]
+    morphs = [[_M(0, "VERB")], [_M(1, "PUNC")]]
+
+    if right:
+        tokens.append(_T(right, (len(left) + 3, len(text)), 2))
+        morphs.append([_M(2, "CONJ")])
+
+    spans = rule_registry.run_one(rule_id, text, tokens, morphs)
+
+    assert len(spans) == 1
+    assert spans[0].span == span
+    assert spans[0].category == ErrorCategory.PUNCTUATION
+    assert spans[0].subtype == "variant"
+
+
+@pytest.mark.parametrize(
+    "rule_id,mark",
+    [
+        ("PC_LATIN_COMMA_ARABIC", ","),
+        ("PC_LATIN_QUESTION_ARABIC", "?"),
+        ("PC_LATIN_SEMICOLON_ARABIC", ";"),
+    ],
+)
+def test_latin_punctuation_variant_requires_arabic_context(rule_id, mark):
+    """The variant rules stay silent when adjacent text is not Arabic."""
+    text = f"item {mark} next"
+    tokens = [
+        _T("item", (0, 4), 0),
+        _T(mark, (5, 6), 1),
+        _T("next", (7, 11), 2),
+    ]
+    morphs = [[_M(0, "NOUN")], [_M(1, "PUNC")], [_M(2, "NOUN")]]
+
+    spans = rule_registry.run_one(rule_id, text, tokens, morphs)
+
+    assert spans == []

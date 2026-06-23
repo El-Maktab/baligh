@@ -1,0 +1,221 @@
+# Syntax declarative rules for the GED rule-based detector.
+
+- id: SY_DEM_HADHANI_FEM
+  category: SY
+  subtype: demonstrative_dual_gender
+  tier: tier_1_rule_derived
+  explanation: "الصواب «هاتان» مع الاسم المثنى المؤنث لا «هذان»."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هذان"
+      - pos: NOUN
+        gender: feminine
+        number: dual
+    flag_token: 0
+
+- id: SY_DEM_HATANI_MASC
+  category: SY
+  subtype: demonstrative_dual_gender
+  tier: tier_1_rule_derived
+  explanation: "الصواب «هذان» مع الاسم المثنى المذكر لا «هاتان»."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هاتان"
+      - pos: NOUN
+        gender: masculine
+        number: dual
+    flag_token: 0
+
+- id: SY_DEM_HADHAYNI_FEM
+  category: SY
+  subtype: demonstrative_dual_gender
+  tier: tier_1_rule_derived
+  explanation: "الصواب «هاتين» مع الاسم المثنى المؤنث لا «هذين»."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هذين"
+      - pos: NOUN
+        gender: feminine
+        number: dual
+    flag_token: 0
+
+- id: SY_DEM_HATAYNI_MASC
+  category: SY
+  subtype: demonstrative_dual_gender
+  tier: tier_1_rule_derived
+  explanation: "الصواب «هذين» مع الاسم المثنى المذكر لا «هاتين»."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هاتين"
+      - pos: NOUN
+        gender: masculine
+        number: dual
+    flag_token: 0
+
+- id: SY_DEM_HADHANI_CASE_OBLIQUE_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "إذا جاء بعد «هذان» اسم مثنى مذكر غير مرفوع فهناك خلل في المطابقة الإعرابية."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هذان"
+      - pos: NOUN
+        gender: masculine
+        number: dual
+        case: accusative
+    flag_token: 1
+
+- id: SY_DEM_HADHAYNI_CASE_NOM_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "إذا جاء بعد «هذين» اسم مثنى مذكر مرفوع فهناك خلل في المطابقة الإعرابية."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هذين"
+      - pos: NOUN
+        gender: masculine
+        number: dual
+        case: nominative
+    flag_token: 1
+
+- id: SY_DEM_PREP_HADHAYNI_CASE_NOM_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "بعد حرف الجر يكون الاسم بعد «هذين» مجرورًا لا مرفوعًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form_regex: "^(?:[وف])?[بلك]هذين$"
+        pos: PRON_DEM
+      - pos: NOUN
+        gender: masculine
+        number: dual
+        case: nominative
+    flag_token: 1
+
+- id: SY_DEM_HATANI_CASE_OBLIQUE_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "إذا جاء بعد «هاتان» اسم مثنى مؤنث غير مرفوع فهناك خلل في المطابقة الإعرابية."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هاتان"
+      - pos: NOUN
+        gender: feminine
+        number: dual
+        case: accusative
+    flag_token: 1
+
+- id: SY_DEM_HATAYNI_CASE_NOM_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "إذا جاء بعد «هاتين» اسم مثنى مؤنث مرفوع فهناك خلل في المطابقة الإعرابية."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "هاتين"
+      - pos: NOUN
+        gender: feminine
+        number: dual
+        case: nominative
+    flag_token: 1
+
+- id: SY_DEM_PREP_HATAYNI_CASE_NOM_NOUN
+  category: SY
+  subtype: demonstrative_dual_case
+  tier: tier_1_rule_derived
+  explanation: "بعد حرف الجر يكون الاسم بعد «هاتين» مجرورًا لا مرفوعًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form_regex: "^(?:[وف])?[بلك]هاتين$"
+        pos: PRON_DEM
+      - pos: NOUN
+        gender: feminine
+        number: dual
+        case: nominative
+    flag_token: 1
+
+- id: SY_LAM_JUSSIVE
+  category: SY
+  subtype: jussive_operator
+  tier: tier_1_rule_derived
+  explanation: "الفعل المضارع بعد «لم» يجب أن يكون مجزومًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "لم"
+      - pos: VERB
+        tense: present
+        form_regex: "(?:ي|ون)$"
+    flag_token: 1
+
+- id: SY_LAMMA_JUSSIVE
+  category: SY
+  subtype: jussive_operator
+  tier: tier_1_rule_derived
+  explanation: "الفعل المضارع بعد «لما» يجب أن يكون مجزومًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "لما"
+      - pos: VERB
+        tense: present
+        form_regex: "(?:ي|ون)$"
+    flag_token: 1
+
+- id: SY_LA_NAHIYA_JUSSIVE
+  category: SY
+  subtype: jussive_operator
+  tier: tier_1_rule_derived
+  explanation: "الفعل المضارع بعد «لا» الناهية يجب أن يكون مجزومًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "لا"
+      - pos: VERB
+        tense: present
+        person: second
+        mood: indicative
+    flag_token: 1
+
+- id: SY_LA_NAFIYA_NOT_JUSSIVE
+  category: SY
+  subtype: jussive_operator
+  tier: tier_1_rule_derived
+  explanation: "«لا» النافية لا تجزم الفعل المضارع."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "لا"
+      - pos: VERB
+        tense: present
+        person: third
+        form_regex: "وا$"
+    flag_token: 1
+
+- id: SY_INNA_SISTERS_DUAL_ACCUSATIVE
+  category: SY
+  subtype: inna_sisters_case
+  tier: tier_1_rule_derived
+  explanation: "أخوات إن تنصب الاسم، والمثنى بعدها يكون منصوبًا بالياء لا مرفوعًا."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["إن", "كأن", "لعل", "لكن", "ليت", "أن"]
+      - pos: NOUN
+        number: dual
+        case: nominative
+    flag_token: 1

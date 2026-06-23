@@ -1,50 +1,76 @@
 # Orthographic declarative rules for the GED rule-based detector.
-#
-# To add a future rule, append a new list entry following the same schema.
 
-- id: OT_ALIF_MAQSURA_PREP
+- id: OT_ALIF_MAQSURA_ALA
   category: OT
   subtype: alif_maqsura
   tier: tier_1_rule_derived
-  explanation: "حرف الجر ينتهي بألف مقصورة (ى) لا ياء (ي)، مثل: على، إلى، حتى"
+  explanation: "الصواب «على» لا «علي»."
   pattern:
     match: token
-    pos: PREP
-    lemma_in:
-      - "عَلَى"
-      - "إِلَى"
-      - "حَتَّى"
-    form_ends_with: "ي"
+    form: "علي"
+    lemma_in: ["عَلَى"]
+
+- id: OT_ALIF_MAQSURA_HATTA
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "الصواب «حتى» لا «حتي»."
+  pattern:
+    match: token
+    form: "حتي"
+    lemma_in: ["حَتَّى"]
+
+- id: OT_TANWIN_NASB_ON_ALIF
+  category: OT
+  subtype: tanwin
+  tier: tier_1_rule_derived
+  explanation: "تنوين النصب يُكتب على الحرف الذي قبل الألف لا على الألف نفسها."
+  pattern:
+    match: token
+    form_regex: "اً$"
+
+- id: OT_IDGHAM_AN_MA
+  category: OT
+  subtype: idgham
+  tier: tier_1_rule_derived
+  explanation: "الأفصح إدغام «عن ما» في «عمّا» عندما تليها جملة فعلية."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["عن", "وعن"]
+      - form: "ما"
+      - pos: VERB
+    flag_token: 0
+
+- id: OT_IDGHAM_MIN_MA
+  category: OT
+  subtype: idgham
+  tier: tier_1_rule_derived
+  explanation: "الأفصح إدغام «من ما» في «ممّا» عندما تليها جملة فعلية."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["من", "ومن"]
+      - form: "ما"
+      - pos: VERB
+    flag_token: 0
 
 - id: OT_TA_MARBUTA_NOUN
   category: OT
   subtype: ta_marbuta
   tier: tier_1_rule_derived
-  explanation: "الاسم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)"
+  explanation: "الاسم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)."
   pattern:
     match: token
     pos: NOUN
     gender: feminine
     form_ends_with: "ه"
 
-- id: OT_HAMZA_ANNA
-  category: OT
-  subtype: hamza
-  tier: tier_1_rule_derived
-  explanation: "أداتا التوكيد والنصب «أن/إن» تُكتبان بهمزة قطع لا بألف مجردة، مثل: أن، إنه، أنه"
-  pattern:
-    match: token
-    lemma_in:
-      - "أَنَّ"
-      - "إِنَّ"
-      - "إِن"
-    form_regex: "^ا"
-
 - id: OT_TA_MARBUTA_ADJ
   category: OT
   subtype: ta_marbuta
   tier: tier_1_rule_derived
-  explanation: "الصفة المؤنثة تُكتب بتاء مربوطة (ة) لا هاء (ه)"
+  explanation: "الصفة المؤنثة تُكتب بتاء مربوطة (ة) لا هاء (ه)."
   pattern:
     match: token
     pos: ADJ
@@ -55,7 +81,7 @@
   category: OT
   subtype: ta_marbuta
   tier: tier_1_rule_derived
-  explanation: "الاسم العلم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)، مثل: مكة، فاطمة"
+  explanation: "الاسم العلم المؤنث يُكتب بتاء مربوطة (ة) لا هاء (ه)، مثل: مكة، فاطمة."
   pattern:
     match: token
     pos: NOUN_PROP
