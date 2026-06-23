@@ -29,6 +29,8 @@ class DatasetExporter:
                     "tokens": example.tokens,
                     "labels": example.labels,
                 }
+                if example.labels_star is not None:
+                    record["labels_star"] = example.labels_star
 
                 file.write(
                     json.dumps(

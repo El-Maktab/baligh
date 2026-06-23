@@ -15,8 +15,8 @@ from src.services.gec.config import (
 )
 from src.services.gec.features.vocabulary import LabelVocabularyBuilder
 from src.services.gec.modules.edit_tagger.segregator import EditSegregator
-from src.services.gec.features.common import build_dataset_builder
-from src.services.gec.modules.edit_tagger.dataset_builder import DatasetBuilder
+from src.services.gec.features.common import build_feature_builder
+from src.services.gec.features.feature_builder import FeatureBuilder
 from src.services.gec.features.pruner import LabelPruner
 from src.services.gec.features.exporter import DatasetExporter
 
@@ -30,7 +30,7 @@ def save_json(
 
 
 def build_train() -> None:
-    builder: DatasetBuilder = build_dataset_builder()
+    builder: FeatureBuilder = build_feature_builder()
 
     examples = builder.build_pipeline(
         TRAIN_SENT_PATH,

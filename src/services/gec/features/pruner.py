@@ -64,6 +64,10 @@ class LabelPruner:
                 ProjectedExample(
                     subwords=example.subwords,
                     labels=pruned_labels,
+                    labels_star=[
+                        self.default_label if label in rare_labels else label
+                        for label in example.labels_star
+                    ] if example.labels_star is not None else None,
                 )
             )
         

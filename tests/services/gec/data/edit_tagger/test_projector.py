@@ -279,6 +279,8 @@ class TestCompressProjection:
         assert result.subwords == subwords
         assert result.labels[0] == "K"
         assert result.labels[1] == "R_[x]"
+        assert result.labels_star[0] == "K"
+        assert result.labels_star[1] == "R_[x]"
 
     def test_empty_projections(self):
         """Test compress_projection with empty projections."""
@@ -293,3 +295,4 @@ class TestCompressProjection:
         assert isinstance(result, ProjectedExample)
         assert result.subwords == subwords
         assert result.labels == ["", ""]
+        assert result.labels_star == ["", ""]

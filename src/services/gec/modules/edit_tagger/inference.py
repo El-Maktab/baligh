@@ -41,3 +41,4 @@ class GECInferencePipeline:
             self.label_vocab.id2label[idx]
             for idx in pred_ids.tolist()
         ]
+        return labels

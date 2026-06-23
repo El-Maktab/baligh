@@ -3,114 +3,188 @@
 from src.services.gec.modules.edit_tagger.compressor import Compressor
 
 
-class TestCompressTags:
-    """Tests for Compressor.compress_tags."""
+class TestCompressTagsCount:
+    """Tests for Compressor.compress_tags (count/old variant)."""
 
     def test_empty(self):
-        """Test that compressing an empty tag list returns an empty string."""
         compressor = Compressor()
-        assert compressor.compress_tags([]) == ""
+        assert compressor.compress_tags([]) == ("", "")
 
     def test_single_tag(self):
-        """Test that compressing a single tag returns it unchanged."""
         compressor = Compressor()
-        assert compressor.compress_tags(["K"]) == "K"
+        assert compressor.compress_tags(["K"]) == ("K", "K")
 
     def test_all_keep(self):
-        """Test that consecutive KEEP tags are compressed with a count."""
         compressor = Compressor()
-        assert compressor.compress_tags(["K", "K", "K"]) == "K3"
+        assert compressor.compress_tags(["K", "K", "K"]) == ("K3", "K*")
 
     def test_all_delete(self):
-        """Test that consecutive DELETE tags are compressed with a count."""
         compressor = Compressor()
-        assert compressor.compress_tags(["D", "D"]) == "D2"
+        assert compressor.compress_tags(["D", "D"]) == ("D2", "D*")
 
     def test_keep_and_replace(self):
-        """Test that KEEP runs and REPLACE tags are concatenated correctly."""
         compressor = Compressor()
-        assert compressor.compress_tags(["K", "K", "R_[hello]"]) == "K2R_[hello]"
+        assert compressor.compress_tags(["K", "K", "R_[hello]"]) == ("K2R_[hello]", "K*R_[hello]")
 
     def test_replace_sequence(self):
-        """Test that consecutive REPLACE tags merge their labels."""
         compressor = Compressor()
-        result = compressor.compress_tags(["R_[a]", "R_[b]"])
-        assert "R" in result
+        count_result, star_result = compressor.compress_tags(["R_[a]", "R_[b]"])
+        assert "R" in count_result
 
     def test_insert_sequence(self):
-        """Test that consecutive INSERT tags merge their labels."""
         compressor = Compressor()
-        result = compressor.compress_tags(["I_[x]", "I_[y]"])
-        assert "I" in result
+        count_result, star_result = compressor.compress_tags(["I_[x]", "I_[y]"])
+        assert "I" in count_result
 
     def test_single_insert(self):
-        """Test that a single INSERT tag is returned unchanged."""
         compressor = Compressor()
-        assert compressor.compress_tags(["I_[word]"]) == "I_[word]"
+        assert compressor.compress_tags(["I_[word]"]) == ("I_[word]", "I_[word]")
 
     def test_single_replace(self):
-        """Test that a single REPLACE tag is returned unchanged."""
         compressor = Compressor()
-        assert compressor.compress_tags(["R_[word]"]) == "R_[word]"
+        assert compressor.compress_tags(["R_[word]"]) == ("R_[word]", "R_[word]")
 
     def test_mixed_operations(self):
-        """Test that a mix of tag types is compressed correctly."""
         compressor = Compressor()
-        result = compressor.compress_tags(["K", "K", "D", "K"])
-        assert result == "K2DK"
+        assert compressor.compress_tags(["K", "K", "D", "K"]) == ("K2DK", "K*DK")
 
     def test_merge_tags(self):
-        """Test that consecutive MERGE tags are compressed with a count."""
         compressor = Compressor()
-        assert compressor.compress_tags(["M", "M", "M"]) == "M3"
+        assert compressor.compress_tags(["M", "M", "M"]) == ("M3", "M*")
 
     def test_split_tags(self):
-        """Test that consecutive SPLIT tags are compressed with a count."""
         compressor = Compressor()
-        assert compressor.compress_tags(["S", "S"]) == "S2"
+        assert compressor.compress_tags(["S", "S"]) == ("S2", "S*")
 
     def test_complex_sequence(self):
-        """Test compression of a complex mixed sequence of tags."""
         compressor = Compressor()
-        result = compressor.compress_tags(["K", "K", "K", "D", "I_[x]", "K", "R_[a]"])
-        assert result == "K3DI_[x]KR_[a]"
+        assert compressor.compress_tags(["K", "K", "K", "D", "I_[x]", "K", "R_[a]"]) == ("K3DI_[x]KR_[a]", "K*DI_[x]KR_[a]")
 
 
-class TestFormatRun:
-    """Tests for Compressor._format_run."""
+class TestCompressTagsStar:
+    """Tests for Compressor.compress_tags (star/new variant)."""
+
+    def test_keep_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["K", "K", "K", "I_[ش]", "I_[س]", "I_[س]"])
+        assert star == "K*I_[شسس*]"
+
+    def test_delete_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["D", "D", "D"])
+        assert star == "D*"
+
+    def test_replace_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["R_[a]", "R_[b]", "R_[c]"])
+        assert star == "R_[abc*]"
+
+    def test_insert_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["I_[x]", "I_[y]"])
+        assert star == "I_[xy*]"
+
+    def test_single_insert_no_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["I_[z]"])
+        assert star == "I_[z]"
+
+    def test_single_replace_no_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["R_[z]"])
+        assert star == "R_[z]"
+
+    def test_single_keep_no_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["K"])
+        assert star == "K"
+
+    def test_merge_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["M", "M", "M", "M"])
+        assert star == "M*"
+
+    def test_split_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["S", "S"])
+        assert star == "S*"
+
+    def test_mixed_star(self):
+        compressor = Compressor()
+        _, star = compressor.compress_tags(["K", "K", "D", "I_[x]", "K"])
+        assert star == "K*DI_[x]K"
+
+    def test_both_variants_complex(self):
+        compressor = Compressor()
+        tags = ["K", "K", "K", "D", "D", "I_[a]", "I_[b]", "R_[c]", "K"]
+        count, star = compressor.compress_tags(tags)
+        assert count == "K3D2I_[ab]R_[c]K"
+        assert star == "K*D*I_[ab*]R_[c]K"
+
+
+class TestFormatRunCount:
+    """Tests for Compressor._format_run_count."""
 
     def test_keep_count_greater_than_one(self):
-        """Test that a KEEP run with count > 1 includes the count."""
         compressor = Compressor()
-        result = compressor._format_run("K", ["K", "K"], start=0, count=2)
+        result = compressor._format_run_count("K", ["K", "K"], start=0, count=2)
         assert result == "K2"
 
     def test_keep_count_one(self):
-        """Test that a KEEP run with count 1 omits the count."""
         compressor = Compressor()
-        result = compressor._format_run("K", ["K"], start=0, count=1)
+        result = compressor._format_run_count("K", ["K"], start=0, count=1)
         assert result == "K"
 
     def test_delete_count(self):
-        """Test that a DELETE run with count 3 includes the count."""
         compressor = Compressor()
-        result = compressor._format_run("D", ["D", "D", "D"], start=0, count=3)
+        result = compressor._format_run_count("D", ["D", "D", "D"], start=0, count=3)
         assert result == "D3"
 
     def test_replace_single(self):
-        """Test that a single REPLACE tag is returned unchanged."""
         compressor = Compressor()
-        result = compressor._format_run("R_[a]", ["R_[a]"], start=0, count=1)
+        result = compressor._format_run_count("R_[a]", ["R_[a]"], start=0, count=1)
         assert result == "R_[a]"
 
     def test_replace_multiple(self):
-        """Test that multiple REPLACE tags merge their labels."""
         compressor = Compressor()
-        result = compressor._format_run("R_[a]", ["R_[a]", "R_[b]"], start=0, count=2)
+        result = compressor._format_run_count("R_[a]", ["R_[a]", "R_[b]"], start=0, count=2)
         assert result == "R_[ab]"
 
     def test_insert_multiple(self):
-        """Test that multiple INSERT tags merge their labels."""
         compressor = Compressor()
-        result = compressor._format_run("I_[x]", ["I_[x]", "I_[y]"], start=0, count=2)
+        result = compressor._format_run_count("I_[x]", ["I_[x]", "I_[y]"], start=0, count=2)
         assert result == "I_[xy]"
+
+
+class TestFormatRunStar:
+    """Tests for Compressor._format_run_star."""
+
+    def test_keep_star(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("K", ["K", "K", "K"], start=0, count=3)
+        assert result == "K*"
+
+    def test_keep_single(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("K", ["K"], start=0, count=1)
+        assert result == "K"
+
+    def test_delete_star(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("D", ["D", "D"], start=0, count=2)
+        assert result == "D*"
+
+    def test_replace_single(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("R_[a]", ["R_[a]"], start=0, count=1)
+        assert result == "R_[a]"
+
+    def test_replace_multiple_star(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("R_[a]", ["R_[a]", "R_[b]"], start=0, count=2)
+        assert result == "R_[ab*]"
+
+    def test_insert_multiple_star(self):
+        compressor = Compressor()
+        result = compressor._format_run_star("I_[x]", ["I_[x]", "I_[y]"], start=0, count=2)
+        assert result == "I_[xy*]"

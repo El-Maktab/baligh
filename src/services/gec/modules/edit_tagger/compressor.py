@@ -14,13 +14,18 @@ class Compressor:
                 label_chars.append(match[1].strip("[]"))
         return "".join(label_chars)
 
-    def compress_tags(self, tags: list[str]) -> str:
-        """Compresses a tag string by merging consecutive identical tags."""
+    def compress_tags(self, tags: list[str]) -> tuple[str, str]:
+        """Compresses a tag string using both compression variants.
+
+        Returns:
+            A tuple of (count_compressed, star_compressed) strings.
+        """
         if not tags:
-            return ""
+            return ("", "")
 
         count = 1
-        compressed = []
+        compressed_count = []
+        compressed_star = []
         prev_tag = tags[0]
         start = 0
 
@@ -28,15 +33,25 @@ class Compressor:
             if tag[0] == prev_tag[0]:
                 count += 1
             else:
-                compressed.append(self._format_run(prev_tag, tags, start, count))
+                compressed_count.append(
+                    self._format_run_count(prev_tag, tags, start, count)
+                )
+                compressed_star.append(
+                    self._format_run_star(prev_tag, tags, start, count)
+                )
                 prev_tag = tag
                 start = i
                 count = 1
 
-        compressed.append(self._format_run(prev_tag, tags, start, count))
-        return "".join(compressed)
+        compressed_count.append(
+            self._format_run_count(prev_tag, tags, start, count)
+        )
+        compressed_star.append(
+            self._format_run_star(prev_tag, tags, start, count)
+        )
+        return ("".join(compressed_count), "".join(compressed_star))
 
-    def _format_run(self, prev_tag, tags, start, count):
+    def _format_run_count(self, prev_tag, tags, start, count):
         tag_type = prev_tag[0]
         if tag_type in ("I", "R"):
             if count > 1:
@@ -45,3 +60,13 @@ class Compressor:
             return prev_tag
         else:
             return f"{prev_tag}{count}" if count > 1 else prev_tag
+
+    def _format_run_star(self, prev_tag, tags, start, count):
+        tag_type = prev_tag[0]
+        if tag_type in ("I", "R"):
+            if count > 1:
+                labels = self._collect_labels(tags, start, count)
+                return f"{tag_type}_[{labels}*]"
+            return prev_tag
+        else:
+            return f"{tag_type}*" if count > 1 else prev_tag

@@ -68,14 +68,14 @@ class OntologyCandidateEdit(CandidateEdit):
 
     group: EditGroup
     is_independent: bool
+    group_explanation: str | None = None
 
 
 class DictionaryCandidateEdit(CandidateEdit):
     """Candidate edit proposed by the DICTIONARY module."""
 
     alternatives: list[str]
-
-
+    
 # Union type representing any subclass of CandidateEdit
 GECUnionCandidateEdit = (
     EditTaggerCandidateEdit | OntologyCandidateEdit | DictionaryCandidateEdit

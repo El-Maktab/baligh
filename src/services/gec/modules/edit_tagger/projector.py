@@ -182,19 +182,25 @@ class SubwordProjector:
     ) -> ProjectedExample:
         """Compress tags per subword."""
         compressed_tags = []
+        compressed_tags_star = []
 
         for projection in projections:
             tags = extractor.extract_tags(projection)
-            compressed_tags.append(
-                compressor.compress_tags(tags)
-            )
+            count_compressed, star_compressed = compressor.compress_tags(tags)
+            compressed_tags.append(count_compressed)
+            compressed_tags_star.append(star_compressed)
 
         return self.flatten(ProjectedExample(
             subwords=subwords,
             labels=compressed_tags,
+            labels_star=compressed_tags_star,
         ))
 
     def flatten(self, projected_examples: ProjectedExample) -> ProjectedExample:
         projection_list = projected_examples.subwords
         items = [item for sublist in projection_list for item in sublist]
-        return ProjectedExample(subwords=items, labels=projected_examples.labels)
+        return ProjectedExample(
+            subwords=items,
+            labels=projected_examples.labels,
+            labels_star=projected_examples.labels_star,
+        )

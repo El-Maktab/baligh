@@ -11,7 +11,7 @@ from src.services.gec.modules.edit_tagger.rewriter import Rewriter
 from src.services.gec.modules.edit_tagger.common import Alignment, ProjectedExample
 from src.services.gec.features.parser import ParallelCorpusParser
 
-class DatasetBuilder:
+class FeatureBuilder:
     """Builds projected training examples from a parallel corpus."""
     CHECKPOINT_SIZE = 5000
 

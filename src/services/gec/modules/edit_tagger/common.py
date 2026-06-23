@@ -10,6 +10,7 @@ from src.services.gec.schemas import EditOperation
 class ProjectedExample:
     subwords: list[str]
     labels: list[str]
+    labels_star: list[str] | None = None
 
 
 @dataclass
