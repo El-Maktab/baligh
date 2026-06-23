@@ -31,17 +31,15 @@ from src.services.ged.evaluation.policy import (
 from src.services.ged.features.subsystems.base import BaseDetector
 from src.services.ged.features.subsystems.ml.artifact import read_manifest
 from src.services.ged.fusion import resolve_overlaps
-from src.services.ged.schemas import ErrorCategory, ErrorSpan, MorphAnalysis, Token
+from src.services.ged.schemas import ErrorCategory, ErrorSpan
 from src.services.preprocessing import (
     PreprocessingInput,
     PreprocessingOutput,
     preprocess,
 )
-from src.services.preprocessing.features.analyzer import analyze
 
 FUSED = "fused"
 Preprocessor = Callable[[PreprocessingInput], PreprocessingOutput]
-MorphAnalyzer = Callable[[list[Token]], list[list[MorphAnalysis]]]
 
 
 class EvaluationError(RuntimeError):
@@ -75,7 +73,6 @@ def evaluate(config: EvaluationConfig) -> EvaluationReport:
         specs,
         detectors,
         preprocess,
-        analyze,
         manifest["artifact_version"],
     )
 
@@ -85,7 +82,6 @@ def _run(
     specs: Sequence[DatasetSpec],
     detectors: Sequence[BaseDetector],
     preprocessor: Preprocessor,
-    morph_analyzer: MorphAnalyzer,
     model_version: str,
 ) -> EvaluationReport:
     system_names = tuple(detector.name for detector in detectors) + (FUSED,)
@@ -93,7 +89,6 @@ def _run(
     aggregate_predictions: dict[str, list[set[str]]] = {
         name: [] for name in system_names
     }
-    aggregate_fallback_mask: list[bool] = []
     dataset_reports: dict[str, DatasetReport] = {}
     ignored_categories = frozenset(config.policy.ignored_score_categories)
     excluded_rule_subtypes = frozenset(config.policy.excluded_rule_subtypes)
@@ -109,18 +104,16 @@ def _run(
     for spec in specs:
         sentences = read_dataset(spec, config.limit)
         logger.info("Evaluating {} ({} sentences).", spec.name, len(sentences))
-        gold, predictions, mismatch_count, fallback_mask = _evaluate_sentences(
+        gold, predictions, discarded_sentences, discarded_tokens = _evaluate_sentences(
             spec.name,
             sentences,
             detectors,
             preprocessor,
-            morph_analyzer,
             excluded_rule_subtypes,
             allowed_rule_subtypes,
             excluded_rule_categories,
         )
         aggregate_gold.extend(gold)
-        aggregate_fallback_mask.extend(fallback_mask)
         systems: dict[str, MetricReport] = {}
         for name in system_names:
             aggregate_predictions[name].extend(predictions[name])
@@ -130,30 +123,26 @@ def _run(
                 ignored_categories,
             )
 
-        strata = _stratified_metrics(
-            gold,
-            predictions,
-            fallback_mask,
-            ignored_categories,
-        )
-
         stats = DatasetStats(
             sentences=len(sentences),
+            evaluated_sentences=len(sentences) - discarded_sentences,
+            discarded_sentences=discarded_sentences,
             tokens=len(gold),
             errors=sum(label != NO_ERROR for label in gold),
             unknown_errors=sum(label == UNKNOWN for label in gold),
-            preprocessing_fallback_tokens=mismatch_count,
+            discarded_tokens=discarded_tokens,
         )
         dataset_reports[spec.name] = DatasetReport(
             sha256=spec.sha256,
             stats=stats,
             systems=systems,
-            preprocessing_strata=strata,
         )
-        if mismatch_count:
+        if discarded_sentences:
             logger.warning(
-                "{} gold tokens required preprocessing fallback in {}.",
-                mismatch_count,
+                "{} sentences ({} tokens) were discarded in {} due to "
+                "preprocessing/tokenization mismatch.",
+                discarded_sentences,
+                discarded_tokens,
                 spec.name,
             )
         _log_metrics(spec.name, systems)
@@ -162,21 +151,12 @@ def _run(
         name: calculate_metrics(aggregate_gold, predictions, ignored_categories)
         for name, predictions in aggregate_predictions.items()
     }
-    aggregate_strata = _stratified_metrics(
-        aggregate_gold,
-        aggregate_predictions,
-        aggregate_fallback_mask,
-        ignored_categories,
-    )
     _log_metrics("aggregate", aggregate)
-    for stratum_name, systems in aggregate_strata.items():
-        _log_metrics(f"aggregate/{stratum_name}", systems)
     report = EvaluationReport(
         model_artifact_version=model_version,
         detector_names=system_names,
         datasets=dataset_reports,
         aggregate=aggregate,
-        aggregate_preprocessing_strata=aggregate_strata,
         metric_definitions={
             "binary": "Any non-UC gold label versus any predicted GED category.",
             "categories": (
@@ -185,10 +165,6 @@ def _run(
             ),
             "category_macro": "Unweighted mean over categories with gold support.",
             "false_positives_per_1000": "Binary false positives / tokens * 1000.",
-            "preprocessing_fallback_tokens": (
-                "Gold tokens reanalyzed directly because production preprocessing "
-                "changed token surfaces, boundaries, or failed."
-            ),
             "fusion": (
                 "ML baseline plus non-overlapping or confirming lexicon and "
                 "allowlisted rule spans; rules never override ML."
@@ -213,16 +189,16 @@ def _evaluate_sentences(
     sentences: Sequence[GoldSentence],
     detectors: Sequence[BaseDetector],
     preprocessor: Preprocessor,
-    morph_analyzer: MorphAnalyzer,
     excluded_rule_subtypes: frozenset[str],
     allowed_rule_subtypes: frozenset[str],
     excluded_rule_categories: frozenset[ErrorCategory],
-) -> tuple[list[str], dict[str, list[set[str]]], int, list[bool]]:
+) -> tuple[list[str], dict[str, list[set[str]]], int, int]:
+    """Run detectors over sentences that survive preprocessing/tokenization checks."""
     names = tuple(detector.name for detector in detectors) + (FUSED,)
     predictions: dict[str, list[set[str]]] = {name: [] for name in names}
     gold: list[str] = []
-    fallback_mask: list[bool] = []
-    mismatches = 0
+    discarded_sentences = 0
+    discarded_tokens = 0
 
     for sentence_number, sentence in enumerate(sentences, start=1):
         text = " ".join(sentence.tokens) + " "
@@ -230,22 +206,31 @@ def _evaluate_sentences(
             processed = preprocessor(PreprocessingInput(text=text))
         except Exception as error:
             logger.warning(
-                "{} sentence {} preprocessing failed; using gold tokens: {}",
+                "{} sentence {} preprocessing failed; discarding sentence: {}",
                 dataset_name,
                 sentence_number,
                 error,
             )
-            processed = _canonical_output(text, sentence.tokens, morph_analyzer)
-            sentence_mismatches = len(sentence.tokens)
-        else:
-            processed, sentence_mismatches = _use_gold_tokenization(
-                processed,
-                sentence.tokens,
-                morph_analyzer,
-            )
-        mismatches += sentence_mismatches
+            discarded_sentences += 1
+            discarded_tokens += len(sentence.tokens)
+            continue
 
-        fallback_mask.extend([sentence_mismatches > 0] * len(sentence.tokens))
+        exact = len(processed.tokens) == len(sentence.tokens) and all(
+            actual.form.strip() == gold_surface
+            for actual, gold_surface in zip(
+                processed.tokens, sentence.tokens, strict=True
+            )
+        )
+        if not exact:
+            logger.warning(
+                "{} sentence {} tokenization mismatch; discarding sentence.",
+                dataset_name,
+                sentence_number,
+            )
+            discarded_sentences += 1
+            discarded_tokens += len(sentence.tokens)
+            continue
+
         spans_by_system: dict[str, list[ErrorSpan]] = {}
         for detector in detectors:
             try:
@@ -274,79 +259,7 @@ def _evaluate_sentences(
         gold.extend(sentence.labels)
         for name, spans in spans_by_system.items():
             predictions[name].extend(project_spans(len(sentence.tokens), spans))
-    return gold, predictions, mismatches, fallback_mask
-
-
-def _stratified_metrics(
-    gold: Sequence[str],
-    predictions: Mapping[str, Sequence[set[str]]],
-    fallback_mask: Sequence[bool],
-    ignored_categories: frozenset[str],
-) -> dict[str, dict[str, MetricReport]]:
-    """Compare native preprocessing with token fallback."""
-    strata: dict[str, dict[str, MetricReport]] = {}
-    for name, selected_value in (
-        ("native_preprocessing", False),
-        ("gold_fallback", True),
-    ):
-        indexes = [
-            index
-            for index, is_fallback in enumerate(fallback_mask)
-            if is_fallback is selected_value
-        ]
-        stratum_gold = [gold[index] for index in indexes]
-        strata[name] = {
-            system_name: calculate_metrics(
-                stratum_gold,
-                [system_predictions[index] for index in indexes],
-                ignored_categories,
-            )
-            for system_name, system_predictions in predictions.items()
-        }
-    return strata
-
-
-def _use_gold_tokenization(
-    processed: PreprocessingOutput,
-    gold_tokens: Sequence[str],
-    morph_analyzer: MorphAnalyzer,
-) -> tuple[PreprocessingOutput, int]:
-    """Replace incompatible preprocessing tokens with canonical corpus tokens."""
-    exact = len(processed.tokens) == len(gold_tokens) and all(
-        actual.form.strip() == gold
-        for actual, gold in zip(processed.tokens, gold_tokens, strict=True)
-    )
-    if exact:
-        return processed, 0
-
-    canonical = _canonical_output(processed.text, gold_tokens, morph_analyzer)
-    mismatch_count = len(gold_tokens)
-    return canonical, mismatch_count
-
-
-def _canonical_output(
-    text: str,
-    gold_tokens: Sequence[str],
-    morph_analyzer: MorphAnalyzer,
-) -> PreprocessingOutput:
-    """Build detector input directly from an authoritative corpus sentence."""
-    canonical_tokens: list[Token] = []
-    cursor = 0
-    for index, gold_surface in enumerate(gold_tokens):
-        span = (cursor, cursor + len(gold_surface))
-        canonical_tokens.append(
-            Token(index=index, form=gold_surface, span=span, norm_span=span)
-        )
-        cursor += len(gold_surface) + 1
-    morph_features = morph_analyzer(canonical_tokens)
-    return PreprocessingOutput(
-        text=text,
-        normalized_text=text,
-        tokens=canonical_tokens,
-        morph_features=morph_features,
-        current_fragment=None,
-        mode="NWP",
-    )
+    return gold, predictions, discarded_sentences, discarded_tokens
 
 
 def _log_metrics(name: str, systems: Mapping[str, MetricReport]) -> None:
