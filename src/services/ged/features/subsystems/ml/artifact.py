@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,11 @@ DEFAULT_THRESHOLD = 0.35
 MANIFEST_NAME = "manifest.json"
 MODEL_NAME = "model.joblib"
 CHECKSUMS_NAME = "SHA256SUMS"
+LABEL_MAPPING_NAME = "label_mapping.json"
+README_NAME = "README.md"
+REQUIREMENTS_NAME = "requirements.txt"
+SMOKE_TEST_NAME = "smoke_test.json"
+THRESHOLD_SWEEP_NAME = "threshold_sweep.json"
 
 
 def sha256_file(path: Path) -> str:
@@ -71,6 +77,81 @@ def load_bundle(bundle_dir: Path, *, verify: bool = True) -> tuple[CRF, dict[str
     if list(model.classes_) != expected_classes:
         raise ValueError("Loaded model classes do not match manifest.json.")
     return model, manifest
+
+
+def installed_runtime_versions() -> dict[str, str]:
+    """Return the runtime versions needed to load the model bundle."""
+    packages = (
+        "camel-tools",
+        "joblib",
+        "numpy",
+        "python-crfsuite",
+        "scikit-learn",
+        "sklearn-crfsuite",
+    )
+    versions: dict[str, str] = {}
+    for package in packages:
+        try:
+            versions[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            continue
+    return versions
+
+
+def write_bundle(
+    bundle_dir: Path,
+    *,
+    model: CRF,
+    manifest: dict[str, Any],
+    label_mapping: dict[str, str],
+    threshold_sweep: list[dict[str, Any]],
+    smoke_test: dict[str, Any],
+    readme: str,
+) -> None:
+    """Write a complete trusted CRF bundle."""
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+
+    model_path = bundle_dir / MODEL_NAME
+    joblib.dump(model, model_path)
+
+    manifest["files"] = {
+        MODEL_NAME: {
+            "bytes": model_path.stat().st_size,
+            "sha256": sha256_file(model_path),
+        }
+    }
+
+    files_to_write: dict[str, str] = {
+        MANIFEST_NAME: json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        LABEL_MAPPING_NAME: json.dumps(label_mapping, ensure_ascii=False, indent=2)
+        + "\n",
+        THRESHOLD_SWEEP_NAME: json.dumps(threshold_sweep, ensure_ascii=False, indent=2)
+        + "\n",
+        SMOKE_TEST_NAME: json.dumps(smoke_test, ensure_ascii=False, indent=2) + "\n",
+        README_NAME: readme.strip() + "\n",
+        REQUIREMENTS_NAME: "".join(
+            f"{package}=={version}\n"
+            for package, version in installed_runtime_versions().items()
+        ),
+    }
+
+    for name, content in files_to_write.items():
+        (bundle_dir / name).write_text(content, encoding="utf-8")
+
+    checksum_names = (
+        MANIFEST_NAME,
+        MODEL_NAME,
+        LABEL_MAPPING_NAME,
+        THRESHOLD_SWEEP_NAME,
+        SMOKE_TEST_NAME,
+        README_NAME,
+        REQUIREMENTS_NAME,
+    )
+    checksums = [f"{sha256_file(bundle_dir / name)}  {name}" for name in checksum_names]
+    (bundle_dir / CHECKSUMS_NAME).write_text(
+        "\n".join(checksums) + "\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> None:

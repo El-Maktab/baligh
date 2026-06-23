@@ -12,4 +12,4 @@ lexicon:
   spelling_suspicion:
     enabled: true
 ml:
-  bundle_dir: ../../../artifacts/ged/ml/crf-surface-v1/v0.1.0
+  bundle_dir: ../../../artifacts/ged/ml/crf-surface-morph-v2/v0.2.0
