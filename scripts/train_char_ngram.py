@@ -34,6 +34,12 @@ logger = logging.getLogger(__name__)
 def main():
     parser = argparse.ArgumentParser(description="Train Character N-gram LM")
     parser.add_argument(
+        "--dataset",
+        type=str,
+        default="CALM/arwiki",
+        help="HuggingFace dataset to train on.",
+    )
+    parser.add_argument(
         "--max-chars",
         type=int,
         default=50_000_000,
@@ -64,8 +70,10 @@ def main():
     counter = NGramCounter(max_n=args.max_n)
 
     # 2. Stream dataset
-    logger.info("Loading CALM/arwiki dataset (streaming)...")
-    text_stream = get_eval_stream(split_type="train", limit_chars=args.max_chars)
+    logger.info(f"Loading {args.dataset} dataset (streaming)...")
+    text_stream = get_eval_stream(
+        dataset_name=args.dataset, split_type="train", limit_chars=args.max_chars
+    )
     
     chars_processed = 0
     pbar = tqdm(total=args.max_chars, desc="Processing characters")

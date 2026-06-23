@@ -18,27 +18,25 @@ def clean_text_for_lm(text: str) -> str:
     return norm.strip()
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 def get_eval_stream(
     dataset_name: str = "CALM/arwiki", 
     split_type: str = "train",
     limit_chars: int | None = None
 ) -> Iterator[str]:
-    """Get a streaming iterator over the dataset split.
+    """Get a streaming iterator over the dataset split."""
     
-    Implements Stage 1 from the evaluation pipeline:
-    - Shuffles the stream with a buffer of 10,000 to break topic clustering.
-    - Partitions the data safely into train/val/test using skip/take.
-    
-    Since we are working with a massive dataset (15.4M rows), we will use fixed
-    row counts for the splits:
-    - Train: First 100,000 rows
-    - Validation: Next 20,000 rows
-    - Test: Next 20,000 rows
-    """
+    logger.info(f"Connecting to HuggingFace to stream: {dataset_name}")
     dataset = load_dataset(dataset_name, split="train", streaming=True)
     
-    # Shuffle before splitting
-    dataset = dataset.shuffle(seed=42, buffer_size=10_000)
+    if dataset_name == "CALM/arwiki":
+        logger.info("Shuffling Wikipedia articles (buffer=10000)...")
+        dataset = dataset.shuffle(seed=42, buffer_size=10_000)
+    else:
+        logger.info(f"Skipping shuffle for {dataset_name} to guarantee instant startup.")
     
     if split_type == "train":
         dataset = dataset.take(100_000)
@@ -51,7 +49,8 @@ def get_eval_stream(
         
     chars_processed = 0
     for row in dataset:
-        raw_text = row.get("text", "")
+        # Different datasets use different column names for their main text
+        raw_text = row.get("text", row.get("content", row.get("document", "")))
         if not raw_text:
             continue
             

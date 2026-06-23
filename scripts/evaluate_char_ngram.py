@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate Char N-gram LM on Test Set")
+    parser.add_argument("--dataset", type=str, default="CALM/arwiki", help="HuggingFace dataset to evaluate against.")
     parser.add_argument("--model", type=str, default="src/services/nws/data/char_ngram_lm.msgpack.gz")
     parser.add_argument("--top-k", type=int, default=5, help="Top-K used for KSR and final metrics")
     parser.add_argument("--limit-chars", type=int, default=500_000, help="Chars to use from test set")
@@ -38,7 +39,7 @@ def main():
     model = CharNGramLM(load_model(model_path))
     
     logger.info("Loading Test dataset stream...")
-    test_stream = get_eval_stream(split_type="test", limit_chars=args.limit_chars)
+    test_stream = get_eval_stream(dataset_name=args.dataset, split_type="test", limit_chars=args.limit_chars)
     
     logger.info("Generating Format B (prefix, word) pairs...")
     test_pairs = []

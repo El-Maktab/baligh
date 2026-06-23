@@ -75,7 +75,11 @@ class CharNGramLM:
         max_context_len = self.max_n - 1
         current_ctx = tuple(context_chars[-max_context_len:]) if context_chars else tuple()
         
-        for char in word:
+        # We evaluate the word plus a trailing space to force the model to score the "Word Boundary".
+        # This heavily penalizes broken fragments (like "المستم") because they never appear followed by a space.
+        word_with_boundary = word + " "
+        
+        for char in word_with_boundary:
             p = self._get_char_prob(char, current_ctx)
             if p <= 0.0:
                 p = 1e-10
@@ -90,7 +94,8 @@ class CharNGramLM:
         # Use an alpha length penalty of 0.7 to balance the "Length Bias".
         # 1.0 strongly favors long words (Suffix Inflation).
         # 0.0 strongly favors short words (Fragment Bias).
-        return log_prob / (len(word) ** 0.7) if word else 0.0
+        # We normalize by the physical number of scored characters (len + 1 for the space).
+        return log_prob / (len(word_with_boundary) ** 0.7) if word else 0.0
 
     def predict(self, text: str, top_k: int = 5) -> list[str]:
         """Generate the top-k word completions for a given text context.
