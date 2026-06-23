@@ -87,25 +87,37 @@ class CharNGramLM:
                 new_ctx.pop(0)
             current_ctx = tuple(new_ctx)
             
-        return log_prob
+        # Use an alpha length penalty of 0.7 to balance the "Length Bias".
+        # 1.0 strongly favors long words (Suffix Inflation).
+        # 0.0 strongly favors short words (Fragment Bias).
+        return log_prob / (len(word) ** 0.7) if word else 0.0
 
-    def predict(self, prefix: str, top_k: int = 5) -> list[str]:
-        """Generate the top-k word completions for a given prefix.
+    def predict(self, text: str, top_k: int = 5) -> list[str]:
+        """Generate the top-k word completions for a given text context.
         
         This relies on the GED LexiconTrieStore to provide valid candidates,
-        and then scores them using the character n-gram model.
+        and then scores them using the character n-gram model using the preceding
+        characters as mathematical context.
         """
         # Late import to prevent circular dependencies or heavy upfront loading
         from src.services.ged.features.subsystems.lexicon.trie_store import load_processed_lexicon
         
+        # Extract the current word being typed (everything after the last space)
+        parts = text.split(" ")
+        current_word_prefix = parts[-1]
+        
+        # The context is everything before the current word, including the trailing space
+        # If there are no spaces, we simulate a word boundary with just a space
+        context_str = " ".join(parts[:-1]) + " " if len(parts) > 1 else " "
+        print(context_str)
+        
         trie = load_processed_lexicon()
-        candidates = trie.get_completions(prefix)
+        candidates = trie.get_completions(current_word_prefix)
         
         scored_candidates = []
         for cand in candidates:
-            # We score the full candidate given an empty context (or just a space)
-            # WAC candidates are usually scored independently
-            score = self.score_word(cand, [" "])
+            # Score the candidate using the actual preceding character context!
+            score = self.score_word(cand, list(context_str))
             scored_candidates.append((cand, score))
             
         scored_candidates.sort(key=lambda x: x[1], reverse=True)
