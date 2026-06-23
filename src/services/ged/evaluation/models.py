@@ -33,10 +33,12 @@ class DatasetStats(BaseModel):
     """Datasets stats."""
 
     sentences: int
+    evaluated_sentences: int
+    discarded_sentences: int
     tokens: int
     errors: int
     unknown_errors: int
-    preprocessing_fallback_tokens: int
+    discarded_tokens: int
 
 
 class BinaryMetrics(BaseModel):
@@ -79,17 +81,15 @@ class DatasetReport(BaseModel):
     sha256: str
     stats: DatasetStats
     systems: dict[str, MetricReport]
-    preprocessing_strata: dict[str, dict[str, MetricReport]]
 
 
 class EvaluationReport(BaseModel):
     """Machine readable, made to be analysed, result of a GED evaluation run."""
 
-    schema_version: int = 2
+    schema_version: int = 3
     model_artifact_version: str
     detector_names: tuple[str, ...]
     datasets: dict[str, DatasetReport]
     aggregate: dict[str, MetricReport]
-    aggregate_preprocessing_strata: dict[str, dict[str, MetricReport]]
     metric_definitions: dict[str, str]
     config: dict[str, object]
