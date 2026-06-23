@@ -3,53 +3,128 @@
 from dataclasses import dataclass
 
 from src.services.gec.modules.edit_tagger.common import Alignment
-from src.services.gec.modules.edit_tagger.common import ProjectedExample
-from src.services.gec.modules.edit_tagger.punctuation import is_punctuation, PUNCTUATION_SET
+from src.services.gec.modules.edit_tagger.punctuation import (
+    is_punctuation,
+    PUNCTUATION_SET,
+)
 
 
 @dataclass
 class SegregatedEdits:
-    """Container for segregated edits by type."""
+    """Container for segregated edits."""
 
-    text: str
+    source_text: str
+    target_text: str
     punctuation_edits: list[Alignment]
     non_punctuation_edits: list[Alignment]
 
-class SimpleSegregatedEdits:
-    punctuation_edits: list[str]
-    non_punctuation_edits: list[str]
 
 class EditSegregator:
-    """Segregates edits by punctuation type."""
-    def simple_segregate(self, edits: list[ProjectedExample]) -> SimpleSegregatedEdits :
-        punc_edits = []
-        no_punc_edits = []
+    """Segregates alignments into punctuation and non-punctuation edits."""
+
+    def segregate(
+        self,
+        source_tokens: list[str],
+        target_tokens: list[str],
+        edits: list[Alignment],
+    ) -> SegregatedEdits:
+        """
+        Split alignments into punctuation and non-punctuation edits.
+
+        Args:
+            source_tokens: tokenized source sentence
+            target_tokens: tokenized target sentence
+            edits: alignment list
+
+        Returns:
+            SegregatedEdits
+        """
+
+        punctuation_edits = []
+        non_punctuation_edits = []
+
         for edit in edits:
-            for label in edit.labels:
-                contains_punct = any(punct in label for punct in PUNCTUATION_SET)
-                if(contains_punct): punc_edits.append(label)
-                else: no_punc_edits.append(label)
-        return SimpleSegregatedEdits(punc_edits, no_punc_edits)
+            if self._is_punctuation_edit(
+                source_tokens,
+                target_tokens,
+                edit,
+            ):
+                punctuation_edits.append(edit)
+            else:
+                non_punctuation_edits.append(edit)
 
-    def segregate(self, text: str, edits: list[Alignment]) -> SegregatedEdits:
-        """Segregate edits into punctuation and non-punctuation."""
-        punc_edits = [
-            edit for edit in edits if self._is_punctuation_edit(text, text, edit)
-        ]
-        non_punc_edits = [
-            edit for edit in edits if not self._is_punctuation_edit(text, text, edit)
-        ]
-        return SegregatedEdits(text, punc_edits, non_punc_edits)
-
-    def _is_punctuation_edit(
-        self, original_text: str, target_text: str, edit: Alignment
-    ) -> bool:
-        original_text_edited = original_text[edit.source_start : edit.source_end]
-        target_text_edited = target_text[edit.target_start : edit.target_end]
-        return is_punctuation(original_text_edited) and is_punctuation(
-            target_text_edited
+        return SegregatedEdits(
+            source_text=" ".join(source_tokens),
+            target_text=" ".join(target_tokens),
+            punctuation_edits=punctuation_edits,
+            non_punctuation_edits=non_punctuation_edits,
         )
 
-    def build_target_no_pnx(self, edits: list[Alignment]) -> list[Alignment]:
-        """Build target text without punctuation edits."""
-        return [edit for edit in edits if not self._is_punctuation_edit("", "", edit)]
+    def _is_punctuation_edit(
+        self,
+        source_tokens: list[str],
+        target_tokens: list[str],
+        edit: Alignment,
+    ) -> bool:
+        """
+        Determine whether an alignment represents only punctuation.
+        """
+
+        src_span = source_tokens[
+            edit.source_start : edit.source_end
+        ]
+
+        tgt_span = target_tokens[
+            edit.target_start : edit.target_end
+        ]
+
+        span_tokens = src_span + tgt_span
+
+        if not span_tokens:
+            return False
+
+        return all(
+            token in PUNCTUATION_SET
+            or is_punctuation(token)
+            for token in span_tokens
+        )
+
+    def remove_punctuation_edits(
+        self,
+        source_tokens: list[str],
+        target_tokens: list[str],
+        edits: list[Alignment],
+    ) -> list[Alignment]:
+        """
+        Return only non-punctuation edits.
+        """
+
+        return [
+            edit
+            for edit in edits
+            if not self._is_punctuation_edit(
+                source_tokens,
+                target_tokens,
+                edit,
+            )
+        ]
+
+    def keep_only_punctuation_edits(
+        self,
+        source_tokens: list[str],
+        target_tokens: list[str],
+        edits: list[Alignment],
+    ) -> list[Alignment]:
+        """
+        Return only punctuation edits.
+        """
+
+        return [
+            edit
+            for edit in edits
+            if self._is_punctuation_edit(
+                source_tokens,
+                target_tokens,
+                edit,
+            )
+        ]
