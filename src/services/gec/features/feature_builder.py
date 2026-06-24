@@ -13,7 +13,7 @@ from src.services.gec.features.parser import ParallelCorpusParser
 
 class FeatureBuilder:
     """Builds projected training examples from a parallel corpus."""
-    CHECKPOINT_SIZE = 5000
+    CHECKPOINT_SIZE = 500
 
     def __init__(
         self,
@@ -50,6 +50,8 @@ class FeatureBuilder:
 
         processed_results: list[ProjectedExample] = []
 
+        all_results: list[ProjectedExample] = []
+
         checkpoint_file = (
             Path(checkpoint_path)
             if checkpoint_path
@@ -57,7 +59,7 @@ class FeatureBuilder:
         )
         curr_checkpoint = 1
         for idx, example in enumerate(parallel_examples, start=1):
-
+            print(idx)
             word_aligns = self.aligner.align_words(
                 example.source,
                 example.target,
@@ -89,7 +91,7 @@ class FeatureBuilder:
                 self.compressor,
             )
             processed_results.append(examp)
-
+            all_results.append(examp)
             if (
                 checkpoint_file is not None
                 and len(processed_results) >= self.CHECKPOINT_SIZE
@@ -107,6 +109,8 @@ class FeatureBuilder:
                 )
                 curr_checkpoint+=1
                 processed_results.clear()            
+            if (idx > 500): break
+
         if checkpoint_file is not None and processed_results:
             with checkpoint_file.open(
                 "a",
@@ -118,4 +122,4 @@ class FeatureBuilder:
 
             print("Final checkpoint saved")
 
-        return processed_results
+        return all_results

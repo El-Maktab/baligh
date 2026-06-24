@@ -29,10 +29,7 @@ class GECTrainingDataset(Dataset):
         self.tokenizer = tokenizer
         self.label2id = label2id
         self.max_length = max_length
-        self.unk_label_id: int = label2id.get(
-            "[UNK]",
-            label2id.get("[UNK_EDIT]", 1),
-        )
+        self.unk_label_id: int = label2id.get("[UNK_EDIT]", 1)
         self.examples: list[dict] = self._load_examples()
 
     def _load_examples(self) -> list[dict]:
@@ -83,5 +80,5 @@ class GECTrainingDataset(Dataset):
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
-            "label_ids": label_ids,
+            "labels": label_ids,
         }

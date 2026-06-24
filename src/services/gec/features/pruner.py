@@ -11,7 +11,7 @@ class LabelPruner:
     def __init__(
         self,
         min_frequency: int,
-        default_label: str = "KEEP",
+        default_label: str = "K",
     ) -> None:
         """Initialize the pruner.
 
@@ -38,7 +38,7 @@ class LabelPruner:
         label_counts: Counter[str] = Counter()
 
         for example in examples:
-            label_counts.update(example.labels)
+            label_counts.update(example.labels_star)
 
         # min_label, min_count = min(
         #     label_counts.items(),
@@ -50,8 +50,8 @@ class LabelPruner:
         rare_labels = {
             label for label, count in label_counts.items() if count < self.min_frequency
         }
-        print("tatal: ", {len(label_counts)})
-        print("rare: ", {len(rare_labels)})
+        print("total: ", len(label_counts))
+        print("rare: ", len(rare_labels))
         pruned_examples: list[ProjectedExample] = []
 
         for example in examples:
@@ -63,11 +63,11 @@ class LabelPruner:
             pruned_examples.append(
                 ProjectedExample(
                     subwords=example.subwords,
-                    labels=pruned_labels,
-                    labels_star=[
+                    labels=[
                         self.default_label if label in rare_labels else label
                         for label in example.labels_star
                     ] if example.labels_star is not None else None,
+                    labels_star= pruned_labels
                 )
             )
         

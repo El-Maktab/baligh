@@ -14,7 +14,6 @@ from src.services.gec.config import (
     CHECKPOINT_PATH,
 )
 from src.services.gec.features.vocabulary import LabelVocabularyBuilder
-from src.services.gec.modules.edit_tagger.segregator import EditSegregator
 from src.services.gec.features.common import build_feature_builder
 from src.services.gec.features.feature_builder import FeatureBuilder
 from src.services.gec.features.pruner import LabelPruner
@@ -37,15 +36,12 @@ def build_train() -> None:
         TRAIN_COR_PATH,
         CHECKPOINT_PATH,
     )
+    print("examples created")
 
     pruner = LabelPruner(min_frequency=MIN_LABEL_FREQUENCY)
 
     examples = pruner.prune(examples)
-
-    segregator = EditSegregator()
-
-    nopnx_examples, pnx_examples = segregator.segregate(examples)
-
+    print("pruned")
     vocab_builder = LabelVocabularyBuilder()
 
     label2id, id2label = vocab_builder.build(examples)
@@ -53,8 +49,8 @@ def build_train() -> None:
     save_json(label2id, LABEL2ID_PATH)
     save_json(id2label, ID2LABEL_PATH)
 
-    exporter = DatasetExporter()
+    print("label2id created")
+    # exporter = DatasetExporter()
+    # exporter.export_jsonl(examples, NOPNX_TRAIN_OUTPUT)
+    # exporter.export_jsonl(examples, PNX_TRAIN_OUTPUT)
 
-    exporter.export_jsonl(nopnx_examples, NOPNX_TRAIN_OUTPUT)
-
-    exporter.export_jsonl(pnx_examples, PNX_TRAIN_OUTPUT)

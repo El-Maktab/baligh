@@ -1,7 +1,7 @@
 """GECController: Orchestrates Ontology, Dictionary, and Tagger."""
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.services.gec.schemas import GECInput, ModuleResult
+from src.services.gec.schemas import GECInput, ModuleResult, ModuleStatus
 
 class GECController:
     def __init__(self, tagger, ontology, dictionary):
@@ -28,7 +28,7 @@ class GECController:
                 except Exception:
                     result = ModuleResult(
                         module_name=module_name,
-                        status="ERROR",
+                        status=ModuleStatus.ERROR,
                         candidate_edits=[],
                     )
 

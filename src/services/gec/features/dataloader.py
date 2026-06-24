@@ -44,7 +44,7 @@ class GECCollator:
                 )
 
             labels.append(
-                item["label_ids"]
+                item["labels"]
                 + [self.label_pad_id] * pad_len
             )
 

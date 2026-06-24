@@ -42,5 +42,5 @@ env/
 # Data/Resources
 #############################
 /src/services/ged/features/subsystems/lexicon/dictionary
-src/services/gec/data/edit_tagger/raw/train
-src/services/gec/data/edit_tagger/processed
+src/services/gec/data/edit_tagger/
+src/services/gec/data/edit_tagger/

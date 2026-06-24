@@ -7,7 +7,7 @@ class LabelVocabularyBuilder:
     """Builds label vocabularies for edit tagging."""
 
     PAD_LABEL = "[PAD]"
-    UNK_LABEL = "[UNK]"
+    UNK_LABEL = "[UNK_EDIT]"
 
     def build(
         self,

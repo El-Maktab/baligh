@@ -6,13 +6,14 @@ dependencies = [
     "camel-tools>=1.5.7",
     "farasapy>=0.1.1",
     "pydantic>=2.13.4",
-    "torch<2.3",
+    "torch>=2.4",
     "arramooz-pysqlite",
     "sparqlwrapper",
     "pyyaml>=6.0",
     "loguru>=0.7.3",
     "marisa-trie>=1.2.1",
     "transformers>=4.43.4",
+    "accelerate>=0.21.0"
 ]
 
 [dependency-groups]
