@@ -7,8 +7,6 @@ from src.services.gec.config import (
     TRAIN_COR_PATH,
     TRAIN_SENT_PATH,
     MIN_LABEL_FREQUENCY,
-    NOPNX_TRAIN_OUTPUT,
-    PNX_TRAIN_OUTPUT,
     LABEL2ID_PATH,
     ID2LABEL_PATH,
     CHECKPOINT_PATH,

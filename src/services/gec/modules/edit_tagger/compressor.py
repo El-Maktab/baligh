@@ -65,8 +65,8 @@ class Compressor:
         tag_type = prev_tag[0]
         if tag_type in ("I", "R"):
             if count > 1:
-                labels = self._collect_labels(tags, start, count)
-                return f"{tag_type}_[{labels}*]"
-            return prev_tag
+                return f"{tag_type}_[c*]"
+            else:
+                return prev_tag
         else:
             return f"{tag_type}*" if count > 1 else prev_tag

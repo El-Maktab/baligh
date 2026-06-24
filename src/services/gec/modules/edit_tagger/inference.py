@@ -1,25 +1,32 @@
 import torch
-from transformers import AutoTokenizer
+
+from src.services.gec.utils.string_utils import Tokenizer
 
 
 class GECInferencePipeline:
 
-    def __init__(self, model, tokenizer, label_vocab):
+    def __init__(self, model, tokenizer: Tokenizer, label_vocab):
         self.model = model
         self.tokenizer = tokenizer
         self.label_vocab = label_vocab
 
     def predict(self, text: str) -> tuple[list[str], list[str]]:
-        words = text.split()
-        
+        words = text.split(" ")
+        print("words: ", words)
+        tokens = []
+        for word in words:
+            tokens.append(self.tokenizer.tokenize(word))
+
+        print("tokens: ", tokens)
         encoding = self.tokenizer.tokenizer(
-            words,
+            tokens,
             is_split_into_words=True,
             add_special_tokens=True,
             return_tensors="pt",
             truncation=True,
             padding=True,
         )
+        print(encoding)
 
         input_ids = encoding["input_ids"]
         attention_mask = encoding["attention_mask"]
