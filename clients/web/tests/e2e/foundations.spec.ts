@@ -177,18 +177,16 @@ test("editor body and presentation controls are interactive", async ({
   if (testInfo.project.name === "mobile-chromium") {
     await page.getByRole("button", { name: "المسودات" }).click();
     await expect(
-      page
-        .getByRole("dialog")
-        .getByRole("button", { name: /القواعد النحوية، غير متاحة حالياً/ }),
-    ).toBeDisabled();
+      page.getByRole("dialog").getByRole("link", { name: /القواعد النحوية/ }),
+    ).toHaveAttribute("href", "/rules");
     await page
       .getByRole("dialog")
       .getByRole("button", { name: "إضافة نص" })
       .click();
   } else {
     await expect(
-      page.getByRole("button", { name: /القواعد النحوية، غير متاحة حالياً/ }),
-    ).toBeDisabled();
+      page.getByRole("link", { name: /القواعد النحوية/ }),
+    ).toHaveAttribute("href", "/rules");
     await page.getByRole("button", { name: "إضافة نص" }).click();
   }
   await expect(page.locator(".arabic-confetti__letter")).toHaveCount(13);
@@ -204,6 +202,29 @@ test("landing secondary actions keep the page stable", async ({ page }) => {
   await page.getByRole("button", { name: "دخول كضيف" }).click();
   const finalScroll = await page.evaluate(() => window.scrollY);
   expect(Math.abs(finalScroll - initialScroll)).toBeLessThan(20);
+});
+
+test("team social profiles are linked", async ({ page }) => {
+  await page.goto("/");
+
+  const expectedProfiles = [
+    ["حساب أمير أنور على جيت هب", "https://github.com/amir-kedis"],
+    ["حساب أمير أنور على لينكد إن", "https://www.linkedin.com/in/amir-kedis/"],
+    ["حساب أكرم هاني على جيت هب", "https://github.com/akramhany"],
+    ["حساب أحمد حامد على جيت هب", "https://github.com/AhmedHamed3699"],
+    ["حساب سمية سعد على جيت هب", "https://github.com/somiaelshemy"],
+  ] as const;
+
+  for (const [name, href] of expectedProfiles) {
+    await expect(page.getByRole("link", { name })).toHaveAttribute(
+      "href",
+      href,
+    );
+    await expect(page.getByRole("link", { name })).toHaveAttribute(
+      "target",
+      "_blank",
+    );
+  }
 });
 
 test("preview showcase documents foundations and mixed text", async ({
