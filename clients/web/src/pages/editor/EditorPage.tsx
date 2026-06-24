@@ -214,24 +214,14 @@ export function EditorPage() {
 
       <section className="editor-page__rail-section editor-page__secondary-links">
         <h2>مراجع الكتابة</h2>
-        <Button
-          className="editor-page__side-link"
-          isDisabled
-          aria-label="القواعد النحوية، غير متاحة حالياً"
-        >
+        <Link className="editor-page__side-link" to="/rules">
           <Languages aria-hidden="true" size={19} />
           <span>القواعد النحوية</span>
-          <small>قريباً</small>
-        </Button>
-        <Button
-          className="editor-page__side-link"
-          isDisabled
-          aria-label="المعجم، غير متاح حالياً"
-        >
+        </Link>
+        <Link className="editor-page__side-link" to="/mo3gm">
           <BookOpenText aria-hidden="true" size={19} />
           <span>المعجم</span>
-          <small>قريباً</small>
-        </Button>
+        </Link>
       </section>
     </div>
   );

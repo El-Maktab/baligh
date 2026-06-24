@@ -275,7 +275,7 @@
 
 .editor-page__side-link {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 0.6rem;
   align-items: center;
   width: 100%;
@@ -284,14 +284,22 @@
   color: var(--ds-color-text-muted);
   background: transparent;
   text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color var(--ds-duration-quick) var(--ds-ease-standard),
+    background var(--ds-duration-quick) var(--ds-ease-standard);
 }
 
-.editor-page__side-link small {
-  padding: 0.15rem 0.38rem;
-  border-radius: var(--ds-radius-pill);
-  color: var(--ds-color-text-muted);
+.editor-page__side-link:hover {
+  color: var(--ds-color-primary-strong);
   background: var(--ds-color-surface-muted);
-  font-size: 0.62rem;
+}
+
+.editor-page__side-link:focus-visible {
+  border-radius: var(--ds-radius-sm);
+  outline: 2px solid var(--ds-color-primary);
+  outline-offset: 2px;
 }
 
 .editor-page__workspace {

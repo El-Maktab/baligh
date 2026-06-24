@@ -3,6 +3,8 @@ import {
   BookOpenText,
   CaseUpper,
   CirclePlay,
+  Github,
+  Linkedin,
   PencilLine,
   SearchCheck,
   Sparkles,
@@ -82,10 +84,58 @@ const features = [
 ] as const;
 
 const team = [
-  ["أمير أنور", "/blobs/person-blob-4.svg", -2],
-  ["أكرم هاني", "/blobs/person-blob-3.svg", 2],
-  ["أحمد حامد", "/blobs/person-blob-2.svg", -3],
-  ["سمية سعد", "/blobs/person-blob-1.svg", 3],
+  {
+    name: "أمير أنور",
+    image: "/blobs/person-blob-4.svg",
+    // portrait: "/pics/amir-2-nobg.png",
+    portrait: "/pics/akram-nobg-2.png",
+    portraitViewBox: "0 0 329 287",
+    portraitClipPath:
+      "M159.3 275.794C113.985 269.166 33.5202 223.823 16.3691 183.907C-0.782019 143.99 23.4191 64.266 56.3933 36.2968C89.3675 8.32765 171.56 6.17069 214.214 16.0915C256.869 26.0123 299.978 61.2245 312.318 95.8218C324.659 130.419 313.762 193.68 288.259 223.675",
+    portraitFrame: { x: -45, y: -110, width: 360, height: 480 },
+    rotate: -2,
+    github: "https://github.com/amir-kedis",
+    linkedin: "https://www.linkedin.com/in/amir-kedis/",
+  },
+  {
+    name: "أكرم هاني",
+    image: "/blobs/person-blob-3.svg",
+    // portrait: "/pics/akram-nobg-2.png",
+    portrait: "/pics/akram-nobg-2.png",
+    portraitViewBox: "0 0 320 341",
+    portraitClipPath:
+      "M266.456 316.303C228.057 339.369 121.252 330.673 78.6515 305.27C36.0513 279.867 8.36607 210.708 10.8553 163.886C13.3445 117.063 57.1398 46.2974 93.5868 24.3366C130.034 2.37572 193.627 8.36462 229.537 32.1205C265.447 55.8764 302.894 119.508 309.047 166.872",
+    portraitFrame: { x: -70, y: -80, width: 460, height: 493 },
+    rotate: 2,
+    github: "https://github.com/akramhany",
+    linkedin: "https://www.linkedin.com/in/akramhany/",
+  },
+  {
+    name: "أحمد حامد",
+    image: "/blobs/person-blob-2.svg",
+    // portrait: "/pics/hamed-nobg.png",
+    portrait: "/pics/akram-nobg-2.png",
+    portraitViewBox: "0 0 282 318",
+    portraitClipPath:
+      "M270.339 233.621C255.823 272.525 203.106 299.971 161.283 305.373C119.46 310.775 39.4705 304.258 19.4013 266.032C-0.667829 227.807 17.1328 118.572 40.8684 76.0192C64.6041 33.4661 127.23 11.3927 161.815 10.7136C196.401 10.0345 230.293 34.7934 248.38 71.9446",
+    portraitFrame: { x: -99, y: -120, width: 480, height: 640 },
+    rotate: -3,
+    github: "https://github.com/AhmedHamed3699",
+    linkedin: "https://www.linkedin.com/in/ahmedhamed3699/",
+  },
+  {
+    name: "سمية سعد",
+    image: "/blobs/person-blob-1.svg",
+    // portrait: "/pics/somia-nobg.png",
+    portrait: "/pics/akram-nobg-2.png",
+    portraitViewBox: "0 0 322 304",
+    portraitClipPath:
+      "M228.059 268.879C193.921 291.432 142.079 301.814 105.852 282.762C69.6262 263.711 10.3489 194.833 10.7018 154.57C11.0546 114.308 72.7785 63.982 107.969 41.1865C143.16 18.3911 188.061 0.088439 221.847 17.7977C255.633 35.5069 309.649 105.595 310.684 147.442",
+    portraitFrame: { x: -64, y: -185, width: 450, height: 600 },
+    rotate: 3,
+    github: "https://github.com/somiaelshemy",
+    linkedin: "https://www.linkedin.com/in/somia-elshemy-a252a834b/",
+  },
 ] as const;
 
 const FINE_POINTER_QUERY = "(hover: hover) and (pointer: fine)";
@@ -332,37 +382,99 @@ export function HomePage() {
         </div>
 
         <div className="team-grid">
-          {team.map(([name, image, rotate], index) => (
-            <motion.article
-              className="team-member"
-              key={name}
-              initial={reduceMotion ? false : { opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ delay: index * 0.09 }}
-            >
-              <motion.img
-                alt=""
-                src={image}
-                animate={
-                  reduceMotion
-                    ? undefined
-                    : { y: [0, -7, 0], rotate: [0, rotate, 0] }
-                }
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : { scale: 1.06, rotate: rotate * -1 }
-                }
-                transition={{
-                  duration: 5 + index * 0.4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <h3>{name}</h3>
-            </motion.article>
-          ))}
+          {team.map(
+            (
+              {
+                name,
+                image,
+                portrait,
+                portraitViewBox,
+                portraitClipPath,
+                portraitFrame,
+                rotate,
+                github,
+                linkedin,
+              },
+              index,
+            ) => (
+              <motion.article
+                className="team-member"
+                key={name}
+                initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ delay: index * 0.09 }}
+              >
+                <motion.div
+                  className="team-member__portrait"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : { y: [0, -7, 0], rotate: [0, rotate, 0] }
+                  }
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : { scale: 1.06, rotate: rotate * -1 }
+                  }
+                  transition={{
+                    duration: 5 + index * 0.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img
+                    alt=""
+                    aria-hidden="true"
+                    className="team-member__blob"
+                    src={image}
+                  />
+                  {portrait && (
+                    <svg
+                      aria-label={`صورة ${name}`}
+                      className="team-member__photo"
+                      role="img"
+                      viewBox={portraitViewBox}
+                    >
+                      <defs>
+                        <clipPath id={`team-blob-clip-${index}`}>
+                          <path d={portraitClipPath} />
+                        </clipPath>
+                      </defs>
+                      <image
+                        clipPath={`url(#team-blob-clip-${index})`}
+                        height={portraitFrame.height}
+                        href={portrait}
+                        preserveAspectRatio="xMidYMid meet"
+                        width={portraitFrame.width}
+                        x={portraitFrame.x}
+                        y={portraitFrame.y}
+                      />
+                    </svg>
+                  )}
+                </motion.div>
+                <h3>{name}</h3>
+                <div className="team-member__socials">
+                  <a
+                    aria-label={`حساب ${name} على لينكد إن`}
+                    href={linkedin}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <Linkedin aria-hidden="true" size={18} strokeWidth={1.8} />
+                  </a>
+                  <a
+                    aria-label={`حساب ${name} على جيت هب`}
+                    href={github}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <Github aria-hidden="true" size={18} strokeWidth={1.8} />
+                  </a>
+                </div>
+              </motion.article>
+            ),
+          )}
         </div>
 
         <p className="supervisor">تحت إشراف دكتور أيمن أبوالحسن</p>

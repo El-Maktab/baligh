@@ -575,24 +575,83 @@
 
 .team-member {
   display: grid;
-  grid-template-rows: 18rem auto;
+  grid-template-rows: 18rem auto auto;
   text-align: center;
 }
 
-.team-member img {
+.team-member__portrait {
+  position: relative;
   width: 100%;
   height: 18rem;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.team-member__blob {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   filter: drop-shadow(
     0 24px 35px color-mix(in srgb, var(--ds-color-primary) 14%, transparent)
   );
-  cursor: pointer;
+}
+
+.team-member__photo {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(
+    0 14px 16px color-mix(in srgb, var(--ds-color-shadow) 75%, transparent)
+  );
+  pointer-events: none;
 }
 
 .team-member h3 {
   margin: 1.2rem 0 0;
   font-size: clamp(1.05rem, 2vw, 1.45rem);
   line-height: 1.5;
+}
+
+.team-member__socials {
+  display: flex;
+  gap: 0.45rem;
+  justify-content: center;
+  margin-top: 0.65rem;
+}
+
+.team-member__socials a {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--ds-color-border);
+  border-radius: 50%;
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface);
+  text-decoration: none;
+  transition:
+    color var(--ds-duration-quick) var(--ds-ease-standard),
+    border-color var(--ds-duration-quick) var(--ds-ease-standard),
+    background var(--ds-duration-quick) var(--ds-ease-standard),
+    transform var(--ds-duration-quick) var(--ds-ease-emphasized);
+}
+
+.team-member__socials a:hover {
+  border-color: var(--ds-color-primary);
+  color: var(--ds-color-on-primary);
+  background: var(--ds-color-primary-strong);
+  transform: translateY(-2px);
+}
+
+.team-member__socials a:focus-visible {
+  outline: 2px solid var(--ds-color-primary);
+  outline-offset: 3px;
 }
 
 .supervisor {
@@ -728,11 +787,12 @@
     font-size: 0.95rem;
   }
   .team-member {
-    grid-template-rows: 11rem auto;
+    grid-template-rows: 11rem auto auto;
   }
-  .team-member img {
+  .team-member__portrait {
     height: 11rem;
   }
+
   .supervisor {
     text-align: center;
   }
