@@ -46,6 +46,11 @@
   align-items: center;
 }
 
+/* Hidden on desktop — !important needed to beat .brand-asset { display: inline-grid } */
+.editor-page__topbar-logo {
+  display: none !important;
+}
+
 .editor-page__home-link,
 .editor-page__icon-button {
   display: grid;
@@ -447,6 +452,10 @@
 
 .editor-page__text-line[data-align="center"] {
   text-align: center;
+}
+
+.editor-page__text-line[data-align="end"] {
+  text-align: end;
 }
 
 .editor-page__text-line[data-list="bullet"],
@@ -884,17 +893,19 @@
     z-index: 50;
     inset: 0;
     display: flex;
-    justify-content: flex-start;
+    /* Use ltr so flex-end = right side physically, regardless of root RTL */
+    direction: ltr;
+    justify-content: flex-end;
     background: var(--ds-color-scrim);
     backdrop-filter: blur(3px);
   }
 
   .editor-page__mobile-overlay[data-entering] {
-    animation: editor-overlay-in var(--ds-duration-quick) ease-out;
+    animation: editor-overlay-in var(--ds-duration-quick) ease-out both;
   }
 
   .editor-page__mobile-overlay[data-exiting] {
-    animation: editor-overlay-in var(--ds-duration-instant) ease-in reverse;
+    animation: editor-overlay-out var(--ds-duration-instant) ease-in forwards;
   }
 
   .editor-page__mobile-panel {
@@ -908,11 +919,11 @@
 
   .editor-page__mobile-panel[data-entering] {
     animation: editor-panel-in var(--ds-duration-standard)
-      var(--ds-ease-emphasized);
+      var(--ds-ease-emphasized) both;
   }
 
   .editor-page__mobile-panel[data-exiting] {
-    animation: editor-panel-in var(--ds-duration-quick) ease-in reverse;
+    animation: editor-panel-out var(--ds-duration-quick) ease-in forwards;
   }
 
   .editor-page__mobile-dialog {
@@ -941,6 +952,17 @@
   .editor-page__mobile-panel .editor-page__navigation-content,
   .editor-page__mobile-panel .editor-page__corrections-content {
     min-height: auto;
+  }
+
+  .editor-page__topbar-logo {
+    display: inline-grid !important;
+    flex: none;
+    width: 4.8rem;
+    height: 2.4rem;
+  }
+
+  .editor-page__toolbar-button--italic {
+    display: none;
   }
 }
 
@@ -987,8 +1009,20 @@
   }
 }
 
+@keyframes editor-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes editor-panel-in {
   from {
-    transform: translateX(-100%);
+    transform: translateX(100%);
+  }
+}
+
+@keyframes editor-panel-out {
+  to {
+    transform: translateX(100%);
   }
 }

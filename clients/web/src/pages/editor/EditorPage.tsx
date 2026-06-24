@@ -1,4 +1,6 @@
 import {
+  AlignCenter,
+  AlignLeft,
   AlignRight,
   Bold,
   BookOpenText,
@@ -91,11 +93,13 @@ function DraftList({
 function ToolbarButton({
   label,
   active = false,
+  className,
   onPress,
   children,
 }: {
   label: string;
   active?: boolean;
+  className?: string;
   onPress: () => void;
   children: ReactNode;
 }) {
@@ -103,7 +107,9 @@ function ToolbarButton({
     <Button
       aria-label={label}
       aria-pressed={active}
-      className="editor-page__toolbar-button"
+      className={["editor-page__toolbar-button", className]
+        .filter(Boolean)
+        .join(" ")}
       data-active={active || undefined}
       onPress={onPress}
     >
@@ -172,7 +178,7 @@ export function EditorPage() {
     toggleStrong,
     toggleEmphasis,
     cycleList,
-    toggleAlign,
+    setAlign,
   } = useEditorDemo();
 
   const navigationContent = (
@@ -384,9 +390,15 @@ export function EditorPage() {
     activeDraft.formatting.emphasis,
     formattingRange,
   );
-  const alignmentActive = selectedLines.every(
+  const currentAlignment = selectedLines.every(
     (line) => getLineFormat(activeDraft.formatting, line).align === "center",
-  );
+  )
+    ? "center"
+    : selectedLines.every(
+          (line) => getLineFormat(activeDraft.formatting, line).align === "end",
+        )
+      ? "end"
+      : "start";
   const listActive = selectedLines.some(
     (line) => getLineFormat(activeDraft.formatting, line).list !== "none",
   );
@@ -408,6 +420,10 @@ export function EditorPage() {
             <Home aria-hidden="true" size={18} />
           </Link>
         </div>
+        <BalighWordmark
+          aria-label="بليغ"
+          className="editor-page__topbar-logo"
+        />
       </header>
 
       <aside className="editor-page__rail editor-page__rail--navigation">
@@ -430,6 +446,7 @@ export function EditorPage() {
             </ToolbarButton>
             <ToolbarButton
               active={emphasisActive}
+              className="editor-page__toolbar-button--italic"
               label="تمييز النص"
               onPress={() => toggleEmphasis(selection)}
             >
@@ -454,11 +471,25 @@ export function EditorPage() {
               )}
             </ToolbarButton>
             <ToolbarButton
-              active={alignmentActive}
-              label="تبديل محاذاة النص"
-              onPress={() => toggleAlign(selection)}
+              active={currentAlignment === "start"}
+              label="محاذاة لليمين"
+              onPress={() => setAlign(selection, "start")}
             >
               <AlignRight aria-hidden="true" size={18} />
+            </ToolbarButton>
+            <ToolbarButton
+              active={currentAlignment === "center"}
+              label="محاذاة للمنتصف"
+              onPress={() => setAlign(selection, "center")}
+            >
+              <AlignCenter aria-hidden="true" size={18} />
+            </ToolbarButton>
+            <ToolbarButton
+              active={currentAlignment === "end"}
+              label="محاذاة لليسار"
+              onPress={() => setAlign(selection, "end")}
+            >
+              <AlignLeft aria-hidden="true" size={18} />
             </ToolbarButton>
           </div>
         </header>

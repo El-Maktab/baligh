@@ -41,7 +41,11 @@ type Action =
   | { type: "toggleStrong"; range: EditorTextRange }
   | { type: "toggleEmphasis"; range: EditorTextRange }
   | { type: "cycleList"; range: EditorTextRange }
-  | { type: "toggleAlign"; range: EditorTextRange };
+  | {
+      type: "setAlign";
+      range: EditorTextRange;
+      align: EditorLineFormat["align"];
+    };
 
 const DEFAULT_LINE_FORMAT: EditorLineFormat = {
   list: "none",
@@ -519,28 +523,19 @@ export function editorDemoReducer(
           };
         }),
       };
-    case "toggleAlign":
+    case "setAlign":
       return {
         ...state,
-        drafts: updateDraft(state.drafts, activeDraft.id, (draft) => {
-          const selectedLines = getSelectedLineIndices(
-            draft.body,
-            action.range,
-          );
-          const allCentered = selectedLines.every(
-            (line) => getLineFormat(draft.formatting, line).align === "center",
-          );
-          return {
-            ...draft,
-            formatting: {
-              ...draft.formatting,
-              lines: updateLineFormats(draft, action.range, (format) => ({
-                ...format,
-                align: allCentered ? "start" : "center",
-              })),
-            },
-          };
-        }),
+        drafts: updateDraft(state.drafts, activeDraft.id, (draft) => ({
+          ...draft,
+          formatting: {
+            ...draft.formatting,
+            lines: updateLineFormats(draft, action.range, (format) => ({
+              ...format,
+              align: action.align,
+            })),
+          },
+        })),
       };
     default:
       return state;
@@ -585,7 +580,7 @@ export function useEditorDemo() {
       dispatch({ type: "toggleEmphasis", range }),
     cycleList: (range: EditorTextRange) =>
       dispatch({ type: "cycleList", range }),
-    toggleAlign: (range: EditorTextRange) =>
-      dispatch({ type: "toggleAlign", range }),
+    setAlign: (range: EditorTextRange, align: EditorLineFormat["align"]) =>
+      dispatch({ type: "setAlign", range, align }),
   };
 }

@@ -8,7 +8,7 @@ export type EditorTextRange = [start: number, end: number];
 
 export type EditorLineFormat = {
   list: EditorListStyle;
-  align: "start" | "center";
+  align: "start" | "center" | "end";
 };
 
 export type EditorFormatting = {
