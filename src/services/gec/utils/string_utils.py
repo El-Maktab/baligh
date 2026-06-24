@@ -21,3 +21,10 @@ class Tokenizer:
 
     def get_token_id(self, tokens: list[str]) -> list[int]:
         return self.tokenizer.convert_tokens_to_ids(tokens)
+    
+    def encode(self, text: str):
+        return self.tokenizer(
+            text,
+            return_tensors="pt",
+            truncation=True,
+        )
