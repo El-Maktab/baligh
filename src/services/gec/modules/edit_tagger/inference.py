@@ -12,7 +12,7 @@ class GECInferencePipeline:
     def predict(self, text: str) -> tuple[list[str], list[str]]:
         words = text.split()
         
-        encoding = self.tokenizer(
+        encoding = self.tokenizer.tokenizer(
             words,
             is_split_into_words=True,
             add_special_tokens=True,
@@ -35,7 +35,7 @@ class GECInferencePipeline:
         pred_ids = logits.argmax(-1).squeeze(0).tolist()
 
         subword_labels = [
-            self.label_vocab.get(idx, "[UNK]")
+            self.label_vocab.id2label.get(idx, "[UNK]")
             for idx in pred_ids
         ]
 
