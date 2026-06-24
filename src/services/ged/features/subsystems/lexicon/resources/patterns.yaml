@@ -1,5 +1,7 @@
 # Curated exact patterns for the GED lexicon matcher.
 
+# SPLIT patterns two adjacent tokens that should be one word
+
 - id: LEX_SPLIT_LAKIN
   match_type: split
   wrong_tokens:
@@ -10,6 +12,107 @@
   subtype: common_split
   tier: tier_1_rule_derived
   explanation: "تكتب الكلمة متصلة: لكن."
+
+- id: LEX_SPLIT_HAYTHU_MA
+  match_type: split
+  wrong_tokens:
+    - "حيث"
+    - "ما"
+  correct: "حيثما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة عند استخدامها أداةَ شرطٍ: حيثما."
+
+- id: LEX_SPLIT_KAY_LA
+  match_type: split
+  wrong_tokens:
+    - "كي"
+    - "لا"
+  correct: "كيلا"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة: كيلا."
+
+- id: LEX_SPLIT_BAADAMA
+  match_type: split
+  wrong_tokens:
+    - "بعد"
+    - "ما"
+  correct: "بعدما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة: بعدما."
+
+- id: LEX_SPLIT_LIMAN
+  match_type: split
+  wrong_tokens:
+    - "ل"
+    - "من"
+  correct: "لمن"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "حرف الجر «ل» يتصل بما بعده: لمن."
+
+- id: LEX_SPLIT_FI_MA
+  match_type: split
+  wrong_tokens:
+    - "في"
+    - "ما"
+  correct: "فيما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة عند استخدامها اسماً موصولاً ظرفياً: فيما."
+
+- id: LEX_SPLIT_LIMADHA
+  match_type: split
+  wrong_tokens:
+    - "ل"
+    - "ماذا"
+  correct: "لماذا"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "استفهام السبب «لماذا» يُكتب متصلاً."
+
+- id: LEX_SPLIT_INDA_MA
+  match_type: split
+  wrong_tokens:
+    - "عند"
+    - "ما"
+  correct: "عندما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة: عندما."
+
+- id: LEX_SPLIT_KULLAMA
+  match_type: split
+  wrong_tokens:
+    - "كل"
+    - "ما"
+  correct: "كلما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة عند استخدامها أداةَ شرطٍ أو ظرفاً: كلما."
+
+- id: LEX_SPLIT_RUBBA_MA
+  match_type: split
+  wrong_tokens:
+    - "رب"
+    - "ما"
+  correct: "ربما"
+  category: SP
+  subtype: common_split
+  tier: tier_1_rule_derived
+  explanation: "الصواب كتابتها متصلة: ربما."
+
+# MERGE patterns – one token that should be multiple words
 
 - id: LEX_MERGE_IN_SHA_ALLAH
   match_type: merge
@@ -22,3 +125,548 @@
   subtype: common_merge
   tier: tier_1_rule_derived
   explanation: "الصواب فصل العبارة: إن شاء الله."
+
+- id: LEX_MERGE_MASHA_ALLAH
+  match_type: merge
+  wrong: "ماشاءالله"
+  correct_tokens:
+    - "ما"
+    - "شاء"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل العبارة: ما شاء الله."
+
+- id: LEX_MERGE_ALHAMD_LILLAH
+  match_type: merge
+  wrong: "الحمدلله"
+  correct_tokens:
+    - "الحمد"
+    - "لله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل العبارة: الحمد لله."
+
+- id: LEX_MERGE_SUBHAN_ALLAH
+  match_type: merge
+  wrong: "سبحانالله"
+  correct_tokens:
+    - "سبحان"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمتين: سبحان الله."
+
+- id: LEX_MERGE_LA_SIYYAMA
+  match_type: merge
+  wrong: "لاسيما"
+  correct_tokens:
+    - "لا"
+    - "سيما"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصلها: لا سيما."
+
+- id: LEX_MERGE_JAZAK_ALLAH
+  match_type: merge
+  wrong: "جزاكالله"
+  correct_tokens:
+    - "جزاك"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمتين: جزاك الله."
+
+- id: LEX_MERGE_TAWAKKAL_ALLAH
+  match_type: merge
+  wrong: "توكلتعلىالله"
+  correct_tokens:
+    - "توكلت"
+    - "على"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمات: توكلت على الله."
+
+- id: LEX_MERGE_ASTAGHFIR_ALLAH
+  match_type: merge
+  wrong: "استغفرالله"
+  correct_tokens:
+    - "أستغفر"
+    - "الله"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمتين: أستغفر الله."
+
+- id: LEX_MERGE_ALLAHU_AKBAR
+  match_type: merge
+  wrong: "اللهاكبر"
+  correct_tokens:
+    - "الله"
+    - "أكبر"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمتين: الله أكبر."
+
+- id: LEX_MERGE_BISMILLAH
+  match_type: merge
+  wrong: "بسماللهالرحمنالرحيم"
+  correct_tokens:
+    - "بسم"
+    - "الله"
+    - "الرحمن"
+    - "الرحيم"
+  category: MG
+  subtype: common_merge
+  tier: tier_1_rule_derived
+  explanation: "الصواب فصل الكلمات: بسم الله الرحمن الرحيم."
+
+# TOKEN patterns single wrong surface form
+
+# Hamza errors (أ / إ / ا confusion)
+
+- id: LEX_TOKEN_ILA_HAMZA
+  match_type: token
+  wrong: "الى"
+  correct: "إلى"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "حرف الجر «إلى» يُكتب بهمزة قطع مكسورة."
+
+- id: LEX_TOKEN_ALA_HAMZA
+  match_type: token
+  wrong: "اولا"
+  correct: "أولاً"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أولاً» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AKBAR
+  match_type: token
+  wrong: "اكبر"
+  correct: "أكبر"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أكبر» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ASRA
+  match_type: token
+  wrong: "اسرة"
+  correct: "أسرة"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أسرة» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AHAMMIYYA
+  match_type: token
+  wrong: "اهمية"
+  correct: "أهمية"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أهمية» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AFDAL
+  match_type: token
+  wrong: "افضل"
+  correct: "أفضل"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أفضل» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ABNAA
+  match_type: token
+  wrong: "ابناء"
+  correct: "أبناء"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أبناء» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AWWAL
+  match_type: token
+  wrong: "اول"
+  correct: "أول"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أول» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_UKHRA
+  match_type: token
+  wrong: "اخرى"
+  correct: "أخرى"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أخرى» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AMAM
+  match_type: token
+  wrong: "امام"
+  correct: "أمام"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أمام» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ATHNA
+  match_type: token
+  wrong: "اثناء"
+  correct: "أثناء"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أثناء» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ADHAA
+  match_type: token
+  wrong: "اضافة"
+  correct: "إضافة"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «إضافة» بهمزة قطع مكسورة."
+
+- id: LEX_TOKEN_AYDAN
+  match_type: token
+  wrong: "ايضا"
+  correct: "أيضاً"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أيضاً» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_USAS
+  match_type: token
+  wrong: "اساس"
+  correct: "أساس"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أساس» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_AMAL
+  match_type: token
+  wrong: "امال"
+  correct: "آمال"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «آمال» بمدة على الألف جمع «أمل»."
+
+- id: LEX_TOKEN_ADAD
+  match_type: token
+  wrong: "اعداد"
+  correct: "أعداد"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أعداد» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ALAM
+  match_type: token
+  wrong: "الام"
+  correct: "آلام"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «آلام» بمدة على الألف."
+
+- id: LEX_TOKEN_ALAF
+  match_type: token
+  wrong: "الاف"
+  correct: "آلاف"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «آلاف» بمدة على الألف."
+
+- id: LEX_TOKEN_AKHIR
+  match_type: token
+  wrong: "اخير"
+  correct: "أخير"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أخير» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_ARAA
+  match_type: token
+  wrong: "اراء"
+  correct: "آراء"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «آراء» بمدة على الألف."
+
+# Alef Maqsura / Ya errors 
+
+- id: LEX_TOKEN_MATA_MAQSURA
+  match_type: token
+  wrong: "متي"
+  correct: "متى"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "اسم الاستفهام «متى» يُكتب بألف مقصورة."
+
+- id: LEX_TOKEN_SAWA_MAQSURA
+  match_type: token
+  wrong: "سوي"
+  correct: "سوى"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "الصواب «سوى» بألف مقصورة."
+
+- id: LEX_TOKEN_MADA_MAQSURA
+  match_type: token
+  wrong: "مدي"
+  correct: "مدى"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "الصواب «مدى» بألف مقصورة."
+
+- id: LEX_TOKEN_HUDA_MAQSURA
+  match_type: token
+  wrong: "هدي"
+  correct: "هدى"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "المصدر «هدى» يُكتب بألف مقصورة."
+
+- id: LEX_TOKEN_YADAA_MAQSURA
+  match_type: token
+  wrong: "يدعي"
+  correct: "يدعى"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "المبني للمجهول «يُدعى» يُكتب بألف مقصورة."
+
+# Ta Marbuta errors 
+
+- id: LEX_TOKEN_MADRASA_TA
+  match_type: token
+  wrong: "مدرسه"
+  correct: "مدرسة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «مدرسة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_JAMIA_TA
+  match_type: token
+  wrong: "جامعه"
+  correct: "جامعة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «جامعة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_HUKUMA_TA
+  match_type: token
+  wrong: "حكومه"
+  correct: "حكومة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «حكومة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_DAWLA_TA
+  match_type: token
+  wrong: "دوله"
+  correct: "دولة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «دولة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_FURSA_TA
+  match_type: token
+  wrong: "فرصه"
+  correct: "فرصة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «فرصة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_WALIDA_TA
+  match_type: token
+  wrong: "والده"
+  correct: "والدة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «والدة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_MASA_TA
+  match_type: token
+  wrong: "مسافه"
+  correct: "مسافة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «مسافة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_RIHLA_TA
+  match_type: token
+  wrong: "رحله"
+  correct: "رحلة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «رحلة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_NATIQA_TA
+  match_type: token
+  wrong: "نتيجه"
+  correct: "نتيجة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «نتيجة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_MUSTAQBALA_TA
+  match_type: token
+  wrong: "بيئه"
+  correct: "بيئة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «بيئة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_HAZINA_TA
+  match_type: token
+  wrong: "خزينه"
+  correct: "خزينة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «خزينة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_WASILA_TA
+  match_type: token
+  wrong: "وسيله"
+  correct: "وسيلة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «وسيلة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_FIKRA_TA
+  match_type: token
+  wrong: "فكره"
+  correct: "فكرة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «فكرة» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_RIWAYA_TA
+  match_type: token
+  wrong: "روايه"
+  correct: "رواية"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «رواية» يُكتب بتاء مربوطة."
+
+- id: LEX_TOKEN_ASHABIYYA_TA
+  match_type: token
+  wrong: "قصيده"
+  correct: "قصيدة"
+  category: OT
+  subtype: ta_marbuta
+  tier: tier_1_rule_derived
+  explanation: "الاسم المؤنث «قصيدة» يُكتب بتاء مربوطة."
+
+# Commonly confused word forms ────────────────────────────────
+
+- id: LEX_TOKEN_HAZA_HA
+  match_type: token
+  wrong: "هاذا"
+  correct: "هذا"
+  category: OT
+  subtype: spelling
+  tier: tier_1_rule_derived
+  explanation: "اسم الإشارة يُكتب «هذا» بدون ألف بعد الهاء."
+
+- id: LEX_TOKEN_HAZIH_HA
+  match_type: token
+  wrong: "هاذه"
+  correct: "هذه"
+  category: OT
+  subtype: spelling
+  tier: tier_1_rule_derived
+  explanation: "اسم الإشارة يُكتب «هذه» بدون ألف بعد الهاء."
+
+- id: LEX_TOKEN_ALLADHI_HA
+  match_type: token
+  wrong: "هاذان"
+  correct: "هذان"
+  category: OT
+  subtype: spelling
+  tier: tier_1_rule_derived
+  explanation: "اسم الإشارة يُكتب «هذان» بدون ألف بعد الهاء."
+
+- id: LEX_TOKEN_AKTHAR_HAMZA
+  match_type: token
+  wrong: "اكثر"
+  correct: "أكثر"
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "الصواب «أكثر» بهمزة قطع على الألف."
+
+- id: LEX_TOKEN_WALA_KINNA
+  match_type: token
+  wrong: "ولاكن"
+  correct: "ولكن"
+  category: OT
+  subtype: spelling
+  tier: tier_1_rule_derived
+  explanation: "الصواب «ولكن» بدون ألف بعد اللام."
+
+- id: LEX_TOKEN_LADHI_THAL
+  match_type: token
+  wrong: "الذى"
+  correct: "الذي"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "الاسم الموصول «الذي» يُكتب بياء لا بألف مقصورة."
+
+- id: LEX_TOKEN_LATI_THAL
+  match_type: token
+  wrong: "التى"
+  correct: "التي"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "الاسم الموصول «التي» يُكتب بياء لا بألف مقصورة."
+
+- id: LEX_TOKEN_FI_THAL
+  match_type: token
+  wrong: "فى"
+  correct: "في"
+  category: OT
+  subtype: alif_maqsura
+  tier: tier_1_rule_derived
+  explanation: "حرف الجر «في» يُكتب بياء لا بألف مقصورة."
