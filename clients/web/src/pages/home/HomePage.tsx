@@ -16,6 +16,8 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { BalighWordmark, motionPresets } from "../../design-system";
 import { ArabicConfettiButton } from "../../shared/ui/ArabicConfettiButton";
@@ -86,7 +88,30 @@ const team = [
   ["سمية سعد", "/blobs/person-blob-1.svg", 3],
 ] as const;
 
-function HeroFocus() {
+const FINE_POINTER_QUERY = "(hover: hover) and (pointer: fine)";
+
+function useFinePointer() {
+  const [hasFinePointer, setHasFinePointer] = useState(
+    () => window.matchMedia(FINE_POINTER_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(FINE_POINTER_QUERY);
+    const update = () => setHasFinePointer(mediaQuery.matches);
+
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
+  }, []);
+
+  return hasFinePointer;
+}
+
+type HeroFocusProps = {
+  interactive: boolean;
+};
+
+function HeroFocus({ interactive }: HeroFocusProps) {
   const reduceMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -94,10 +119,13 @@ function HeroFocus() {
   const springY = useSpring(pointerY, { stiffness: 90, damping: 18 });
   const blobX = useTransform(springX, (value) => value * 0.35);
   const blobY = useTransform(springY, (value) => value * 0.35);
+  const boundsRef = useRef<DOMRect | null>(null);
+  const allowMotion = interactive && !reduceMotion;
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (reduceMotion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
+    if (!allowMotion) return;
+    const bounds =
+      boundsRef.current ?? event.currentTarget.getBoundingClientRect();
     pointerX.set((event.clientX - bounds.left - bounds.width / 2) / 12);
     pointerY.set((event.clientY - bounds.top - bounds.height / 2) / 12);
   };
@@ -105,7 +133,14 @@ function HeroFocus() {
   return (
     <div
       className="hero-focus"
+      data-interactive={allowMotion || undefined}
+      onPointerEnter={(event) => {
+        if (allowMotion) {
+          boundsRef.current = event.currentTarget.getBoundingClientRect();
+        }
+      }}
       onPointerLeave={() => {
+        boundsRef.current = null;
         pointerX.set(0);
         pointerY.set(0);
       }}
@@ -114,10 +149,10 @@ function HeroFocus() {
       <motion.img
         alt=""
         className="hero-focus__blob"
-        src="/blobs/hero_blob.svg"
+        src="/blobs/hero_blob.webp"
         style={{ x: blobX, y: blobY }}
         animate={
-          reduceMotion
+          !allowMotion
             ? undefined
             : { rotate: [-1, 2, -1], scale: [1, 1.025, 1] }
         }
@@ -136,7 +171,7 @@ function HeroFocus() {
           <motion.span
             className="hero-letter"
             animate={
-              reduceMotion ? undefined : { y: [0, -6, 0], rotate: [-1, 1, -1] }
+              !allowMotion ? undefined : { y: [0, -6, 0], rotate: [-1, 1, -1] }
             }
             transition={{
               duration: 5.5,
@@ -155,10 +190,12 @@ function HeroFocus() {
 
 export function HomePage() {
   const reduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
+  const navigate = useNavigate();
 
   return (
     <main className="landing-page">
-      <LandingCursor />
+      {hasFinePointer && !reduceMotion && <LandingCursor />}
       <section className="landing-section landing-hero" id="home">
         <header className="landing-header">
           <BalighWordmark className="landing-logo" />
@@ -191,7 +228,11 @@ export function HomePage() {
               مدعومة بالذكاء الاصطناعي لتحسين الأسلوب والمفردات لحظياً.
             </p>
             <div className="hero-actions">
-              <ArabicConfettiButton>
+              <ArabicConfettiButton
+                onPress={() => {
+                  void navigate("/editor");
+                }}
+              >
                 <PencilLine aria-hidden="true" />
                 ابدأ الكتابة الآن
               </ArabicConfettiButton>
@@ -202,7 +243,7 @@ export function HomePage() {
             </div>
           </motion.div>
 
-          <HeroFocus />
+          <HeroFocus interactive={hasFinePointer} />
         </div>
 
         <a
