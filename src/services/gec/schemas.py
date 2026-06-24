@@ -36,6 +36,8 @@ class CandidateEdit(BaseModel):
     token_refs: list[int]
     correction: str
     edit_confidence: float
+    explanation: str | None = None
+    alternatives: list[str] | None = None
 
 
 class EditOperation(StrEnum):
@@ -87,7 +89,7 @@ class ModuleResult(BaseModel):
 
     module_name: ModuleName
     status: ModuleStatus
-    candidate_edits: list[GECUnionCandidateEdit]
+    candidate_edits: list[CandidateEdit]
 
 
 class GECInput(BaseModel):

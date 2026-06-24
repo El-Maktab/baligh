@@ -3,11 +3,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Any
 
+from pydantic import BaseModel
+
 from src.services.ged.schemas import ErrorSpan
 from src.services.preprocessing.schemas import Token
-from src.services.gec.schemas import GECOutput
+from src.services.gec.schemas import GECOutput, GECUnionCandidateEdit, ModuleName
 
 
+class ScoredCandidate(BaseModel):
+    candidate: GECUnionCandidateEdit
+    module_name: ModuleName
+    score: float
+    
 @dataclass
 class RankedEdit:
     error_id: int
