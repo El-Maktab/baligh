@@ -109,7 +109,6 @@ class FeatureBuilder:
                 )
                 curr_checkpoint+=1
                 processed_results.clear()            
-                if (idx > 400): return all_results
         if checkpoint_file is not None and processed_results:
             with checkpoint_file.open(
                 "a",
