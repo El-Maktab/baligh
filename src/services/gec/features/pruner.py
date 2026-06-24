@@ -38,14 +38,10 @@ class LabelPruner:
         label_counts: Counter[str] = Counter()
 
         for example in examples:
-            label_counts.update(example.labels_star)
-
-        # min_label, min_count = min(
-        #     label_counts.items(),
-        #     key=lambda item: item[1]
-        # )
-
-        # print("min: ", min_label, min_count)
+            if example.labels_star is not None:
+                label_counts.update(example.labels_star)
+            else:
+                label_counts.update(example.labels)
 
         rare_labels = {
             label for label, count in label_counts.items() if count < self.min_frequency
@@ -55,6 +51,14 @@ class LabelPruner:
         pruned_examples: list[ProjectedExample] = []
 
         for example in examples:
+            if example.labels_star is not None:
+                pruned_labels_star = [
+                    self.default_label if label in rare_labels else label
+                    for label in example.labels_star
+                ]
+            else:
+                pruned_labels_star = None
+            
             pruned_labels = [
                 self.default_label if label in rare_labels else label
                 for label in example.labels
@@ -63,11 +67,8 @@ class LabelPruner:
             pruned_examples.append(
                 ProjectedExample(
                     subwords=example.subwords,
-                    labels=[
-                        self.default_label if label in rare_labels else label
-                        for label in example.labels_star
-                    ] if example.labels_star is not None else None,
-                    labels_star= pruned_labels
+                    labels=pruned_labels,
+                    labels_star=pruned_labels_star,
                 )
             )
         

@@ -26,7 +26,10 @@ class LabelVocabularyBuilder:
         unique_labels: set[str] = set()
 
         for example in examples:
-            unique_labels.update(example.labels)
+            if example.labels_star is not None:
+                unique_labels.update(example.labels_star)
+            else:
+                unique_labels.update(example.labels)
 
         sorted_labels = sorted(unique_labels)
 

@@ -50,35 +50,39 @@ class GECTrainingDataset(Dataset):
 
         subwords = example.get("subwords", example.get("tokens", []))
 
-        encoding = self.tokenizer(
-            subwords,
-            is_split_into_words=True,
-            add_special_tokens=True,
-            max_length=self.max_length,
-            truncation=True,
-        )
-
-        input_ids: list[int] = encoding["input_ids"]
-        attention_mask: list[int] = encoding["attention_mask"]
-
-        labels_raw: list[str] = example.get("labels", [])
+        labels_raw: list[str] = example.get("labels_star", example.get("labels", []))
 
         label_ids: list[int] = [
             self.label2id.get(label, self.unk_label_id)
             for label in labels_raw
         ]
 
-        cls_offset = 1
-        pad_len = len(input_ids) - cls_offset - len(label_ids)
-        if pad_len > 0:
-            label_ids = [-100] * cls_offset + label_ids + [-100] * pad_len
-        elif pad_len < 0:
-            label_ids = [-100] * cls_offset + label_ids[: len(input_ids) - cls_offset]
-        else:
-            label_ids = [-100] * cls_offset + label_ids
+        encoding = self.tokenizer(
+            subwords,
+            is_split_into_words=True,
+            add_special_tokens=True,
+            max_length=self.max_length,
+            truncation=True,
+            padding=False,
+        )
+
+        input_ids: list[int] = encoding["input_ids"]
+        attention_mask: list[int] = encoding["attention_mask"]
+
+        word_ids = encoding.word_ids()
+        
+        aligned_labels = []
+        for token_idx, word_idx in enumerate(word_ids):
+            if word_idx is None:
+                aligned_labels.append(-100)
+            else:
+                if word_idx < len(label_ids):
+                    aligned_labels.append(label_ids[word_idx])
+                else:
+                    aligned_labels.append(-100)
 
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
-            "labels": label_ids,
+            "labels": aligned_labels,
         }

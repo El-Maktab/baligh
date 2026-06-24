@@ -47,7 +47,8 @@ class GECCollator:
                 item["labels"]
                 + [self.label_pad_id] * pad_len
             )
-
+            print(len(input_ids[-1]), len(attention_masks[-1]), len(labels[-1]))
+            
         return {
             "input_ids": torch.tensor(
                 input_ids,
