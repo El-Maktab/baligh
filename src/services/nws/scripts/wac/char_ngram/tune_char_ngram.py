@@ -2,7 +2,10 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+current_dir = Path(__file__).resolve().parent
+while current_dir.name and not (current_dir / 'pyproject.toml').exists():
+    current_dir = current_dir.parent
+sys.path.append(str(current_dir))
 from tqdm import tqdm
 
 from src.services.nws.features.wac.char_ngram.counter import NGramCounter
