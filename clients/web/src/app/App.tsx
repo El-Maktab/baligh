@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { DesignSystemPage } from "../pages/design-system/DesignSystemPage";
+import { EditorPage } from "../pages/editor/EditorPage";
 import { HomePage } from "../pages/home/HomePage";
 import { NotFoundPage } from "../pages/not-found/NotFoundPage";
 import { isShowcaseEnabled } from "./environment";
@@ -15,6 +16,7 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/editor" element={<EditorPage />} />
         {showcaseEnabled && (
           <Route path="/design-system" element={<DesignSystemPage />} />
         )}
