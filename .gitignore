@@ -44,3 +44,4 @@ env/
 /src/services/ged/features/subsystems/lexicon/dictionary
 src/services/gec/data/edit_tagger/
 src/services/gec/data/edit_tagger/
+src/services/gec/notebooks/gec_models/
