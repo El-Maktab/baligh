@@ -12,7 +12,6 @@ from __future__ import annotations
 import re
 import unicodedata
 
-from pyarabic.named_const import JAR_LIST, NOUN_NASEB_LIST, RAFE3_LIST
 from src.core.schemas import Token
 
 # ################################################################################
@@ -22,6 +21,17 @@ from src.core.schemas import Token
 # Tashkeel (diacritics) range U+064B - U+065F and the U+0670 is a supscript alif.
 # For the arabic unicode block you could see this https://en.wikipedia.org/wiki/Arabic_(Unicode_block)
 _DIACRITICS_RE = re.compile(r"[\u064b-\u065f\u0670]")
+FATHATAN = "\u064b"
+DAMMATAN = "\u064c"
+KASRATAN = "\u064d"
+FATHA = "\u064e"
+DAMMA = "\u064f"
+KASRA = "\u0650"
+SHADDA = "\u0651"
+SUKUN = "\u0652"
+DIACRITICS: frozenset[str] = frozenset(
+    [FATHATAN, DAMMATAN, KASRATAN, FATHA, DAMMA, KASRA, SHADDA, SUKUN]
+)
 
 # Tatweel/kashida elongation mark.
 # ـــــــــــــــــــــــــــ
@@ -88,6 +98,11 @@ SUFFIX_CLITICS: list[tuple[str, str]] = [
     ("ي", "PRON"),
 ]
 
+# Common clitic prefixes that may precede a stem
+# حروف متصلة
+# والكتاب - فقال - بالقلم
+_CLITIC_PREFIXES: frozenset[str] = frozenset("وفبلك")
+
 # Alif variants
 # وصل
 # قطع
@@ -116,8 +131,8 @@ BARE_ALIF = "ا"
 # CONJ أداة ربط
 HAMZA_REQUIRED_POS: frozenset[str] = frozenset({"PREP", "PART", "CONJ"})
 
-# function word list (prepositions, pronouns, accusative particles)
-FUNCTION_WORDS: frozenset[str] = frozenset(RAFE3_LIST | JAR_LIST | NOUN_NASEB_LIST)
+PRESENT_SUFFIXES: frozenset[str] = frozenset(["ون", "ان", "ين", "ن"])
+PAST_SUFFIXES: frozenset[str] = frozenset(["ا", "ت", "ن", "تا", "وا"])
 
 
 # ################################################################################
@@ -135,6 +150,13 @@ def strip_diacritics(text: str) -> str:
         The string with all diacritics (U+064B-U+065F, U+0670) removed.
     """
     return _DIACRITICS_RE.sub("", text)
+
+
+def strip_trailing_vowels(word: str) -> str:
+    """Strips final short vowels and tanwin from a vocalized Arabic word."""
+    while word and word[-1] in DIACRITICS:
+        word = word[:-1]
+    return word
 
 
 def normalize_arabic_surface(
@@ -202,7 +224,6 @@ def extract_affixes(token: Token) -> tuple[str, str, str]:
         return "", form, ""
 
     prefix_len = 0
-    suffix_len = 0
 
     for part in parts:
         if part == "STEM":
@@ -213,13 +234,18 @@ def extract_affixes(token: Token) -> tuple[str, str, str]:
                 break
 
     suffix_parts = [p for p in parts[parts.index("STEM") + 1 :] if p]
+    right_boundary = len(form)
     for part in reversed(suffix_parts):
+        matched = False
         for surface, tag in SUFFIX_CLITICS:
-            if part == tag and form.endswith(surface):
-                suffix_len += len(surface)
+            if part == tag and form[:right_boundary].endswith(surface):
+                right_boundary -= len(surface)
+                matched = True
                 break
+        if not matched:
+            break
 
-    stem_end = len(form) - suffix_len if suffix_len else len(form)
+    stem_end = right_boundary
     prefix = form[:prefix_len]
     stem = form[prefix_len:stem_end]
     suffix = form[stem_end:]
@@ -259,7 +285,7 @@ def first_significant_char(form: str, affix_structure: str | None = None) -> str
 
     # Fallback strip clitic prefixes
     idx = 0
-    while idx < len(clean) - 1 and clean[idx] in PREFIX_CLITICS:
+    while idx < len(clean) - 1 and clean[idx] in _CLITIC_PREFIXES:
         idx += 1
     return clean[idx]
 

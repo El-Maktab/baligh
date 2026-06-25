@@ -3,7 +3,7 @@
 from loguru import logger
 
 from src.services.gec.schemas import (
-    DictionaryCandidateEdit,
+    CandidateEdit,
     GECInput,
     ModuleName,
     ModuleResult,
@@ -27,12 +27,19 @@ class DictionaryEngine:
     receive a higher edit confidence than tokens discovered as OOV independently.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, arramooz_client: ArramoozClient | None = None) -> None:
         """Initializes the DictionaryEngine."""
-        self.arramooz_client = ArramoozClient()
+        self.arramooz_client = (
+            arramooz_client if arramooz_client is not None else ArramoozClient()
+        )
         self.spell_checker = SpellChecker(self.arramooz_client)
         self.alternative_ranker = AlternativeRanker(self.arramooz_client)
         logger.info("DictionaryEngine initialized successfully")
+
+    def close(self) -> None:
+        """Release database connections."""
+        self.arramooz_client.close()
+        logger.info("DictionaryEngine closed")
 
     def process(self, input_data: GECInput) -> ModuleResult:
         """Process the input and return spelling corrections.
@@ -51,7 +58,7 @@ class DictionaryEngine:
             ModuleResult with spelling correction edits.
         """
         ged_flagged: set[int] = set()
-        edits: list[DictionaryCandidateEdit] = []
+        edits: list[CandidateEdit] = []
 
         logger.info(
             "DictionaryEngine.process | tokens={} errors_span={}",
@@ -105,7 +112,7 @@ class DictionaryEngine:
         input_data: GECInput,
         token_index: int,
         base_confidence: float,
-    ) -> DictionaryCandidateEdit | None:
+    ) -> CandidateEdit | None:
         """Run spell-check + ranking on a single token.
 
         Args:
@@ -114,7 +121,7 @@ class DictionaryEngine:
             base_confidence: Confidence floor for the resulting edit.
 
         Returns:
-            A DictionaryCandidateEdit or None if no candidates.
+            A CandidateEdit or None if no candidates.
         """
         if token_index < 0 or token_index >= len(input_data.tokens):
             logger.warning(
@@ -161,7 +168,7 @@ class DictionaryEngine:
 
         ranked_forms = [c.form for c in ranked_candidates[:MAX_ALTERNATIVES]]
 
-        return DictionaryCandidateEdit(
+        return CandidateEdit(
             span=(start, end),
             token_refs=[token_index],
             alternatives=ranked_forms,

@@ -4,7 +4,6 @@ This module defines the request/response contracts and candidate edits
 as specified in docs/contracts/gec-contract.md.
 """
 
-from collections.abc import Sequence
 from enum import StrEnum
 
 from pydantic import BaseModel
@@ -37,6 +36,8 @@ class CandidateEdit(BaseModel):
     token_refs: list[int]
     correction: str
     edit_confidence: float
+    explanation: str | None = None
+    alternatives: list[str] | None = None
 
 
 class EditOperation(StrEnum):
@@ -50,45 +51,12 @@ class EditOperation(StrEnum):
     SPLIT = "S"
 
 
-class EditTaggerCandidateEdit(CandidateEdit):
-    """Candidate edit proposed by the ML Edit Tagger (TAG) module."""
-
-    edit_operation: list[EditOperation]
-
-
-class EditGroup(BaseModel):
-    """Represents an atomic edit set for ontology corrections."""
-
-    group_id: str
-    group_rank: int
-    explanation: str | None = None
-
-
-class OntologyCandidateEdit(CandidateEdit):
-    """Candidate edit proposed by the rule-based ONTOLOGY module."""
-
-    group: EditGroup
-    is_independent: bool
-
-
-class DictionaryCandidateEdit(CandidateEdit):
-    """Candidate edit proposed by the DICTIONARY module."""
-
-    alternatives: list[str]
-
-
-# Union type representing any subclass of CandidateEdit
-GECUnionCandidateEdit = (
-    EditTaggerCandidateEdit | OntologyCandidateEdit | DictionaryCandidateEdit
-)
-
-
 class ModuleResult(BaseModel):
     """Individual output result from one of the GEC submodules."""
 
     module_name: ModuleName
     status: ModuleStatus
-    candidate_edits: Sequence[GECUnionCandidateEdit]
+    candidate_edits: list[CandidateEdit]
 
 
 class GECInput(BaseModel):

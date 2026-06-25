@@ -7,11 +7,10 @@ from typing import Any
 from loguru import logger
 from pyarabic.araby import normalize_hamza
 
-from src.core.utils.arabic import FUNCTION_WORDS
-
 _DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "dictionary"
 _DICT_DB = _DATA_DIR / "arabicdictionary.sqlite"
 _FREQ_DB = _DATA_DIR / "wordfreq.sqlite"
+_STOP_WORDS = _DATA_DIR / "stopwords.txt"
 
 
 def _open_db(path: Path) -> sqlite3.Connection:
@@ -20,6 +19,12 @@ def _open_db(path: Path) -> sqlite3.Connection:
     conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _open_file(path: Path) -> frozenset[str]:
+    """Open a text file and return a frozenset of its lines."""
+    with open(path, encoding="utf-8") as f:
+        return frozenset(line.strip() for line in f if line.strip())
 
 
 class ArramoozClient:
@@ -33,6 +38,7 @@ class ArramoozClient:
         """Initializes SQLite connections to the dictionary and frequency DBs."""
         self._dict_conn = _open_db(_DICT_DB)
         self._freq_conn: sqlite3.Connection | None = None
+        self._stop_words: frozenset[str] = _open_file(_STOP_WORDS)
         logger.info("ArramoozClient initialized | dict_db={}", _DICT_DB)
 
     # ------------------------------------------------------------------
@@ -79,7 +85,7 @@ class ArramoozClient:
         Returns:
             True if the word is in the dictionary or function word list.
         """
-        if word in FUNCTION_WORDS:
+        if word in self._stop_words:
             return True
         results = self._lookup(word)
         return len(results) > 0
@@ -118,7 +124,7 @@ class ArramoozClient:
             except sqlite3.OperationalError:
                 logger.exception("Error fetching words from {}", table)
 
-        words.update(FUNCTION_WORDS)
+        words.update(self._stop_words)
 
         logger.info("Fetched {} normalized words from dictionary", len(words))
         return list(words)
@@ -156,6 +162,69 @@ class ArramoozClient:
         except sqlite3.OperationalError:
             logger.exception("Error querying word frequency for {!r}", word)
         return 0
+
+    def get_words_by_root(
+        self, root: str, table: str | None = None
+    ) -> list[dict[str, Any]]:
+        """Queries nouns and verbs tables for entries with the given root.
+
+        Args:
+            root: The Arabic root to search for.
+            table: Optional table to restrict search ("nouns" or "verbs").
+
+        Returns:
+            List of matching entry dictionaries.
+        """
+        tables = (table,) if table else ("nouns", "verbs")
+        results: list[dict[str, Any]] = []
+        cursor = self._dict_conn.cursor()
+
+        for t in tables:
+            try:
+                cursor.execute(
+                    f"SELECT * FROM {t} WHERE root = ?",
+                    (root,),
+                )
+                for row in cursor.fetchall():
+                    row_dict = dict(row)
+                    row_dict["table"] = t
+                    results.append(row_dict)
+            except sqlite3.OperationalError:
+                logger.exception("Error querying table {} for root {}", t, root)
+
+        return results
+
+    def get_word_by_lemma(
+        self, lemma: str, table: str | None = None
+    ) -> list[dict[str, Any]]:
+        """Queries nouns and verbs tables for entries with the given lemma.
+
+        Args:
+            lemma: The lemma/unvocalized word to search for.
+            table: Optional table to restrict search ("nouns" or "verbs").
+
+        Returns:
+            List of matching entry dictionaries.
+        """
+        normalized = normalize_hamza(lemma)
+        tables = (table,) if table else ("nouns", "verbs")
+        results: list[dict[str, Any]] = []
+        cursor = self._dict_conn.cursor()
+
+        for t in tables:
+            try:
+                cursor.execute(
+                    f"SELECT * FROM {t} WHERE unvocalized = ? OR normalized = ?",
+                    (lemma, normalized),
+                )
+                for row in cursor.fetchall():
+                    row_dict = dict(row)
+                    row_dict["table"] = t
+                    results.append(row_dict)
+            except sqlite3.OperationalError:
+                logger.exception("Error querying table {} for lemma {}", t, lemma)
+
+        return results
 
     # ------------------------------------------------------------------
     # Cleanup

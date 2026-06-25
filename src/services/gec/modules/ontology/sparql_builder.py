@@ -1,1 +1,0 @@
-"""Constructs SPARQL queries dynamically."""

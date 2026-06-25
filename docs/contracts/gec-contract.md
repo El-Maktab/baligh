@@ -61,59 +61,16 @@ Each submodule returns a status plus a list of candidate edits.
 
 ---
 
-## Candidate Edit Models
+## CandidateEdit
 
-### Base: CandidateEdit
-
-| Field             | Type              | Description                          |
-| ----------------- | ----------------- | ------------------------------------ |
-| `span`            | `tuple[int, int]` | Character offsets on original `text` |
-| `token_refs`      | `list[int]`       | Indices of affected tokens           |
-| `correction`      | `str`             | Proposed corrected surface form      |
-| `edit_confidence` | `float`           | Confidence score in `[0.0, 1.0]`     |
-
-### TAG: EditTaggerCandidateEdit
-
-Inherits from `CandidateEdit` and adds:
-
-| Field            | Type                  | Description                          |
-| ---------------- | --------------------- | ------------------------------------ |
-| `edit_operation` | `list[EditOperation]` | Operation type for the proposed edit |
-
-#### EditOperation
-
-- `replace`
-- `insert`
-- `delete`
-- `merge`
-- `split`
-
-### ONTOLOGY: OntologyCandidateEdit
-
-Inherits from `CandidateEdit` and adds:
-
-| Field            | Type        | Description                                               |
-| ---------------- | ----------- | --------------------------------------------------------- |
-| `group`          | `EditGroup` | Atomic edit set                                           |
-| `is_independent` | `boolean`   | Whether this edit can be applied independent of the group |
-
-#### EditGroup
-
-| Field         | Type          | Description                 |
-| ------------- | ------------- | --------------------------- |
-| `group_id`    | `str`         | Edit group identifier       |
-| `group_rank`  | `int`         | Edit group rank             |
-| `explanation` | `str \| null` | Optional explanation string |
-
-### DICTIONARY: DictionaryCandidateEdit
-
-Inherits from `CandidateEdit` and adds:
-
-| Field          | Type        | Description                                                |
-| -------------- | ----------- | ---------------------------------------------------------- |
-| `alternatives` | `list[str]` | Alternative corrections (ranked by confidence, best first) |
-
----
+| Field             | Type              | Description                                                |
+| ----------------- | ----------------- | ---------------------------------------------------------- |
+| `span`            | `tuple[int, int]` | Character offsets on original `text`                       |
+| `token_refs`      | `list[int]`       | Indices of affected tokens                                 |
+| `correction`      | `str`             | Proposed corrected surface form                            |
+| `edit_confidence` | `float`           | Confidence score in `[0.0, 1.0]`                           |
+| `explanation`     | `str \| null`     | Optional explanation string                                |
+| `alternatives`    | `list[str]`       | Alternative corrections (ranked by confidence, best first) |
 
 ## Example
 
@@ -130,7 +87,6 @@ Input sentence: `"ذهبوا الطلاب الى المدرسه"`
         "token_refs": [0],
         "correction": "ذهب",
         "edit_confidence": 0.94,
-        "edit_operation": "replace"
       }
     ]
   },
@@ -143,12 +99,7 @@ Input sentence: `"ذهبوا الطلاب الى المدرسه"`
         "token_refs": [0],
         "correction": "ذهب",
         "edit_confidence": 0.98,
-        "group": {
-          "group_id": "G1",
-          "group_rank": 1,
-          "explanation": "إذا تقدم الفعل على الفاعل، يكون مفرداً"
-        },
-        "is_independent": false
+        "explanation": "إذا تقدم الفعل على الفاعل، يكون مفرداً",
       }
     ]
   },

@@ -1,0 +1,581 @@
+templates:
+  # ═══════════════════════════════════════════════════════════════════
+  # Subject-Verb Relations (فاعل / نائب الفاعل)
+  # ═══════════════════════════════════════════════════════════════════
+
+  subject_verb_number:
+    template: "إذا تقدم الفعل على الفاعل، لزم إفراده"
+    description: "Verb preceding subject must be singular (VSO)"
+    applicable_when:
+      relation: "فاعل"
+      violation_type: "number_mismatch"
+
+  subject_verb_case:
+    template: "الفاعل يجب أن يكون {expected_case} ولكن وجد {actual_case}"
+    description: "Subject must be nominative"
+    applicable_when:
+      relation: "فاعل"
+      violation_type: "case_mismatch"
+
+  subject_verb_gender:
+    template: "الفعل يجب أن يطابق الفاعل في التذكير والتأنيث"
+    description: "Verb must agree with subject in gender"
+    applicable_when:
+      relation: "فاعل"
+      violation_type: "gender_mismatch"
+
+  deputy_subject_case:
+    template: "نائب الفاعل يجب أن يكون {expected_case} ولكن وجد {actual_case}"
+    description: "Deputy subject (passive) must be nominative"
+    applicable_when:
+      relation: "نائب_الفاعل"
+      violation_type: "case_mismatch"
+
+  deputy_subject_number:
+    template: "إذا تقدم الفعل المبني للمجهول على نائب الفاعل، لزم إفراده"
+    description: "Deputy subject verb must be singular in VSO"
+    applicable_when:
+      relation: "نائب_الفاعل"
+      violation_type: "number_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Predicate Relations (خبر مبتدأ)
+  # ═══════════════════════════════════════════════════════════════════
+
+  predicate_case:
+    template: "الخبر يجب أن يكون {expected_case}"
+    description: "Predicate must be nominative"
+    applicable_when:
+      relation: "خبر_مبتدأ"
+      violation_type: "case_mismatch"
+
+  predicate_number:
+    template: "الخبر يتبع المبتدأ في العدد"
+    description: "Predicate must agree with subject in number"
+    applicable_when:
+      relation: "خبر_مبتدأ"
+      violation_type: "number_mismatch"
+
+  predicate_gender:
+    template: "الخبر يتبع المبتدأ في التذكير والتأنيث"
+    description: "Predicate must agree with subject in gender"
+    applicable_when:
+      relation: "خبر_مبتدأ"
+      violation_type: "gender_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Noun-Adjective Agreement (نعت)
+  # ═══════════════════════════════════════════════════════════════════
+
+  noun_adjective_gender:
+    template: "النعت يتبع المنعوت في التذكير والتأنيث"
+    description: "Adjective must match noun in gender"
+    applicable_when:
+      relation: "نعت"
+      violation_type: "gender_mismatch"
+
+  noun_adjective_number:
+    template: "النعت يتبع المنعوت في العدد"
+    description: "Adjective must match noun in number"
+    applicable_when:
+      relation: "نعت"
+      violation_type: "number_mismatch"
+
+  noun_adjective_case:
+    template: "النعت يتبع المنعوت في الإعراب"
+    description: "Adjective must match noun in case"
+    applicable_when:
+      relation: "نعت"
+      violation_type: "case_mismatch"
+
+  noun_adjective_definiteness:
+    template: "النعت يتبع المنعوت في التعريف والتنكير"
+    description: "Adjective must match noun in definiteness"
+    applicable_when:
+      relation: "نعت"
+      violation_type: "definiteness_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Idafa Construction (مضاف إليه)
+  # ═══════════════════════════════════════════════════════════════════
+
+  idafa_definiteness:
+    template: "المضاف يجب أن يكون نكرة"
+    description: "First noun in idafa must be indefinite"
+    applicable_when:
+      relation: "مضاف_اليه"
+      violation_type: "definiteness_mismatch"
+
+  idafa_nun_deletion:
+    template: "تحذف نون {number_type} عند الإضافة"
+    description: "Nun must be deleted in dual/plural idafa"
+    applicable_when:
+      relation: "مضاف_اليه"
+      violation_type: "nun_deletion"
+
+  idafa_case:
+    template: "المضاف إليه يكون مجروراً دائماً"
+    description: "Second noun (mudaf ilayh) must be genitive"
+    applicable_when:
+      relation: "مضاف_اليه"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Genitive with Preposition (مجرور بحرف)
+  # ═══════════════════════════════════════════════════════════════════
+
+  majroor_case:
+    template: "الاسم المجرور بحرف الجر يجب أن يكون {expected_case}"
+    description: "Noun following a preposition must be genitive"
+    applicable_when:
+      relation: "مجرور_بحرف"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Direct and Indirect Objects (مفعولات)
+  # ═══════════════════════════════════════════════════════════════════
+
+  mafool_bih_case:
+    template: "المفعول به يجب أن يكون {expected_case}"
+    description: "Direct object must be accusative"
+    applicable_when:
+      relation: "مفعول_به"
+      violation_type: "case_mismatch"
+
+  mafool_fih_case:
+    template: "المفعول فيه (ظرف الزمان أو المكان) يجب أن يكون {expected_case}"
+    description: "Adverbial object must be accusative"
+    applicable_when:
+      relation: "مفعول_فيه"
+      violation_type: "case_mismatch"
+
+  mafool_lajlih_case:
+    template: "المفعول لأجله يجب أن يكون {expected_case}"
+    description: "Causal object must be accusative"
+    applicable_when:
+      relation: "مفعول_لاجله"
+      violation_type: "case_mismatch"
+
+  mafool_mutlaq_case:
+    template: "المفعول المطلق يجب أن يكون {expected_case}"
+    description: "Absolute object must be accusative"
+    applicable_when:
+      relation: "مفعول_مطلق"
+      violation_type: "case_mismatch"
+
+  mafool_maah_case:
+    template: "المفعول معه يجب أن يكون {expected_case}"
+    description: "Comitative object must be accusative"
+    applicable_when:
+      relation: "مفعول_معه"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Circumstantial and Specification (حال / تمييز)
+  # ═══════════════════════════════════════════════════════════════════
+
+  hal_case:
+    template: "الحال يجب أن يكون {expected_case}"
+    description: "Circumstantial must be accusative"
+    applicable_when:
+      relation: "حال"
+      violation_type: "case_mismatch"
+
+  hal_definiteness:
+    template: "الحال يجب أن يكون نكرة"
+    description: "Circumstantial must be indefinite"
+    applicable_when:
+      relation: "حال"
+      violation_type: "definiteness_mismatch"
+
+  tamyeez_case:
+    template: "التمييز يجب أن يكون {expected_case}"
+    description: "Tamyeez must be accusative"
+    applicable_when:
+      relation: "تمييز_ذات"
+      violation_type: "case_mismatch"
+
+  tamyeez_definiteness:
+    template: "التمييز يجب أن يكون نكرة"
+    description: "Tamyeez must be indefinite"
+    applicable_when:
+      relation: "تمييز_ذات"
+      violation_type: "definiteness_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Badal (بدل — Apposition/Substitution)
+  # ═══════════════════════════════════════════════════════════════════
+
+  badal_case:
+    template: "البدل يتبع المبدل منه في إعرابه"
+    description: "Badal must follow the mubdal minhu in case"
+    applicable_when:
+      relation: "بدل_من_اسم"
+      violation_type: "case_mismatch"
+
+  badal_number:
+    template: "البدل يتبع المبدل منه في العدد"
+    description: "Badal must agree with mubdal minhu in number"
+    applicable_when:
+      relation: "بدل_من_اسم"
+      violation_type: "number_mismatch"
+
+  badal_gender:
+    template: "البدل يتبع المبدل منه في الجنس"
+    description: "Badal must agree with mubdal minhu in gender"
+    applicable_when:
+      relation: "بدل_من_اسم"
+      violation_type: "gender_mismatch"
+
+  badal_verb_generic:
+    template: "بدل الفعل يتبع الفعل الأصلي في إعرابه"
+    description: "Verb badal must match the original verb"
+    applicable_when:
+      relation: "بدل_من_فعل"
+      violation_type: "case_mismatch"
+
+  badal_harf_generic:
+    template: "بدل الحرف يتبع الحرف الأصلي"
+    description: "Particle badal must match the original particle"
+    applicable_when:
+      relation: "بدل_من_حرف"
+      violation_type: "case_mismatch"
+
+  badal_jumal_generic:
+    template: "بدل الجملة يتبع الجملة الأصلية"
+    description: "Clause badal must match the original clause"
+    applicable_when:
+      relation: "بدل_من_جمل"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Tawkeed (توكيد — Emphasis)
+  # ═══════════════════════════════════════════════════════════════════
+
+  tawkeed_case:
+    template: "التوكيد يتبع المؤكَّد في إعرابه"
+    description: "Emphasis word must follow the emphasized word in case"
+    applicable_when:
+      relation: "توكيد_اسمي"
+      violation_type: "case_mismatch"
+
+  tawkeed_verb_generic:
+    template: "توكيد الفعل يتبع الفعل المؤكَّد"
+    description: "Verbal emphasis must match the original verb"
+    applicable_when:
+      relation: "توكيد_فعلي"
+      violation_type: "case_mismatch"
+
+  tawkeed_harf_generic:
+    template: "توكيد الحرف يتبع الحرف المؤكَّد"
+    description: "Particle emphasis must match the original particle"
+    applicable_when:
+      relation: "توكيد_حرفي"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Inna and Sisters — اسم وخبر إن وأخواتها
+  # ═══════════════════════════════════════════════════════════════════
+
+  ism_inna_case:
+    template: "اسم إن وأخواتها يجب أن يكون {expected_case}"
+    description: "Ism inna must be accusative"
+    applicable_when:
+      relation: "اسم_أخوات_ان"
+      violation_type: "case_mismatch"
+
+  khabar_inna_case:
+    template: "خبر إن وأخواتها يجب أن يكون {expected_case}"
+    description: "Khabar inna must be nominative"
+    applicable_when:
+      relation: "خبر_أخوات_ان"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Kana and Sisters — اسم وخبر كان وأخواتها
+  # ═══════════════════════════════════════════════════════════════════
+
+  ism_kana_case:
+    template: "اسم كان وأخواتها يجب أن يكون {expected_case}"
+    description: "Ism kana must be nominative"
+    applicable_when:
+      relation: "اسم_أخوات_كان"
+      violation_type: "case_mismatch"
+
+  khabar_kana_case:
+    template: "خبر كان وأخواتها يجب أن يكون {expected_case}"
+    description: "Khabar kana must be accusative"
+    applicable_when:
+      relation: "خبر_أخوات_كان"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Kaada and Sisters — اسم وخبر كاد وأخواتها
+  # ═══════════════════════════════════════════════════════════════════
+
+  ism_kaad_case:
+    template: "اسم كاد وأخواتها يجب أن يكون {expected_case}"
+    description: "Ism kaad must be nominative"
+    applicable_when:
+      relation: "اسم_أخوات_كاد"
+      violation_type: "case_mismatch"
+
+  khabar_kaad_case:
+    template: "خبر كاد وأخواتها يجب أن يكون {expected_case}"
+    description: "Khabar kaad must be accusative (as a verb)"
+    applicable_when:
+      relation: "خبر_أخوات_كاد"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Negative Particles — الحروف النافية / لا النافية للجنس
+  # ═══════════════════════════════════════════════════════════════════
+
+  ism_nafiya_case:
+    template: "اسم الحروف النافية يجب أن يكون {expected_case}"
+    description: "Ism of negative particles must be nominative"
+    applicable_when:
+      relation: "اسم_الحروف_النافية"
+      violation_type: "case_mismatch"
+
+  khabar_nafiya_case:
+    template: "خبر الحروف النافية يجب أن يكون {expected_case}"
+    description: "Khabar of negative particles must be accusative"
+    applicable_when:
+      relation: "خبر_الحروف_النافية"
+      violation_type: "case_mismatch"
+
+  ism_la_nafiya_case:
+    template: "اسم لا النافية للجنس يجب أن يكون نكرة {expected_case}"
+    description: "Ism of la nafiya must be indefinite accusative"
+    applicable_when:
+      relation: "اسم_لا_النافية_للجنس"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Jussive (مجزوم)
+  # ═══════════════════════════════════════════════════════════════════
+
+  majzoom_case:
+    template: "الفعل المضارع يجب أن يُجزم بعد حرف الجزم"
+    description: "Verb after jussive particle must be in jussive mood"
+    applicable_when:
+      relation: "مجزوم"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Vocative (منادى)
+  # ═══════════════════════════════════════════════════════════════════
+
+  munada_case:
+    template: "المنادى يجب أن يكون {expected_case}"
+    description: "Vocative must be accusative"
+    applicable_when:
+      relation: "منادى"
+      violation_type: "case_mismatch"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Structural Relations (صلة / متعلق)
+  # ═══════════════════════════════════════════════════════════════════
+
+  sila_generic:
+    template: "الصلة يجب أن تتبع الاسم الموصول في إعرابه"
+    description: "Relative clause must follow the relative pronoun"
+    applicable_when:
+      relation: "صلة"
+      violation_type: "case_mismatch"
+
+  muta3alliq_generic:
+    template: "شبه الجملة يجب أن يتعلق بفعل أو ما يشبهه"
+    description: "Prepositional phrase must attach to a verb or verb-like element"
+    applicable_when:
+      relation: "متعلق"
+      violation_type: "case_mismatch"
+
+metadata:
+  # Maps ontology relation URIs to template IDs
+  relation_to_template:
+    # Subject / Predicate
+    "http://arabicontology.org/oas_grammar.owl#فاعل":
+      - template_id: "subject_verb_case"
+        condition: "case_mismatch"
+      - template_id: "subject_verb_number"
+        condition: "number_mismatch"
+      - template_id: "subject_verb_gender"
+        condition: "gender_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#نائب_الفاعل":
+      - template_id: "deputy_subject_case"
+        condition: "case_mismatch"
+      - template_id: "deputy_subject_number"
+        condition: "number_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#خبر_مبتدأ":
+      - template_id: "predicate_case"
+        condition: "case_mismatch"
+      - template_id: "predicate_number"
+        condition: "number_mismatch"
+      - template_id: "predicate_gender"
+        condition: "gender_mismatch"
+
+    # Modifier
+    "http://arabicontology.org/oas_grammar.owl#نعت":
+      - template_id: "noun_adjective_gender"
+        condition: "gender_mismatch"
+      - template_id: "noun_adjective_number"
+        condition: "number_mismatch"
+      - template_id: "noun_adjective_case"
+        condition: "case_mismatch"
+      - template_id: "noun_adjective_definiteness"
+        condition: "definiteness_mismatch"
+
+    # Idafa
+    "http://arabicontology.org/oas_grammar.owl#مضاف_اليه":
+      - template_id: "idafa_definiteness"
+        condition: "definiteness_mismatch"
+      - template_id: "idafa_nun_deletion"
+        condition: "nun_deletion"
+      - template_id: "idafa_case"
+        condition: "case_mismatch"
+
+    # Preposition
+    "http://arabicontology.org/oas_grammar.owl#مجرور_بحرف":
+      - template_id: "majroor_case"
+        condition: "case_mismatch"
+
+    # Objects
+    "http://arabicontology.org/oas_grammar.owl#مفعول_به":
+      - template_id: "mafool_bih_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#مفعول_فيه":
+      - template_id: "mafool_fih_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#مفعول_لاجله":
+      - template_id: "mafool_lajlih_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#مفعول_مطلق":
+      - template_id: "mafool_mutlaq_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#مفعول_معه":
+      - template_id: "mafool_maah_case"
+        condition: "case_mismatch"
+
+    # Hal / Tamyeez
+    "http://arabicontology.org/oas_grammar.owl#حال":
+      - template_id: "hal_case"
+        condition: "case_mismatch"
+      - template_id: "hal_definiteness"
+        condition: "definiteness_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#تمييز_ذات":
+      - template_id: "tamyeez_case"
+        condition: "case_mismatch"
+      - template_id: "tamyeez_definiteness"
+        condition: "definiteness_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#تمييز_نسبة":
+      - template_id: "tamyeez_case"
+        condition: "case_mismatch"
+      - template_id: "tamyeez_definiteness"
+        condition: "definiteness_mismatch"
+
+    # Badal
+    "http://arabicontology.org/oas_grammar.owl#بدل_من_اسم":
+      - template_id: "badal_case"
+        condition: "case_mismatch"
+      - template_id: "badal_number"
+        condition: "number_mismatch"
+      - template_id: "badal_gender"
+        condition: "gender_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#بدل_من_فعل":
+      - template_id: "badal_verb_generic"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#بدل_من_حرف":
+      - template_id: "badal_harf_generic"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#بدل_من_جمل":
+      - template_id: "badal_jumal_generic"
+        condition: "case_mismatch"
+
+    # Tawkeed
+    "http://arabicontology.org/oas_grammar.owl#توكيد_اسمي":
+      - template_id: "tawkeed_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#توكيد_فعلي":
+      - template_id: "tawkeed_verb_generic"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#توكيد_حرفي":
+      - template_id: "tawkeed_harf_generic"
+        condition: "case_mismatch"
+
+    # Inna sisters
+    "http://arabicontology.org/oas_grammar.owl#اسم_أخوات_ان":
+      - template_id: "ism_inna_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#خبر_أخوات_ان":
+      - template_id: "khabar_inna_case"
+        condition: "case_mismatch"
+
+    # Kana sisters
+    "http://arabicontology.org/oas_grammar.owl#اسم_أخوات_كان":
+      - template_id: "ism_kana_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#خبر_أخوات_كان":
+      - template_id: "khabar_kana_case"
+        condition: "case_mismatch"
+
+    # Kaada sisters
+    "http://arabicontology.org/oas_grammar.owl#اسم_أخوات_كاد":
+      - template_id: "ism_kaad_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#خبر_أخوات_كاد":
+      - template_id: "khabar_kaad_case"
+        condition: "case_mismatch"
+
+    # Negative particles
+    "http://arabicontology.org/oas_grammar.owl#اسم_الحروف_النافية":
+      - template_id: "ism_nafiya_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#خبر_الحروف_النافية":
+      - template_id: "khabar_nafiya_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#اسم_لا_النافية_للجنس":
+      - template_id: "ism_la_nafiya_case"
+        condition: "case_mismatch"
+
+    # Jussive
+    "http://arabicontology.org/oas_grammar.owl#مجزوم":
+      - template_id: "majzoom_case"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#مجزوم_بحرف":
+      - template_id: "majzoom_case"
+        condition: "case_mismatch"
+
+    # Vocative
+    "http://arabicontology.org/oas_grammar.owl#منادى":
+      - template_id: "munada_case"
+        condition: "case_mismatch"
+
+    # Structural
+    "http://arabicontology.org/oas_grammar.owl#صلة":
+      - template_id: "sila_generic"
+        condition: "case_mismatch"
+
+    "http://arabicontology.org/oas_grammar.owl#متعلق":
+      - template_id: "muta3alliq_generic"
+        condition: "case_mismatch"
