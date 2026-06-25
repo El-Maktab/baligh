@@ -42,24 +42,17 @@ class GECTrainingDataset(Dataset):
         token_ids = token_ids[:max_content]
         label_ids = label_ids[:max_content]
 
-        encoding = self.tokenizer.prepare_for_model(
-            token_ids,
-            max_length=self.max_length,
-            padding=False,
-            truncation=True,
-            add_special_tokens=True,
-            return_attention_mask=True,
-        )
+        token_ids = [self.tokenizer.cls_token_id] + token_ids + [self.tokenizer.sep_token_id]
+        label_ids = [-100] + label_ids + [-100]
 
-        # Align labels: -100 for [CLS] and [SEP], label id for each content token
-        aligned_labels = (
-            [-100]            # [CLS]
-            + label_ids
-            + [-100]          # [SEP]
-        )
+        seq_len = len(token_ids)
+        pad_len = self.max_length - seq_len
+        attention_mask = [1] * seq_len + [0] * pad_len
+        if pad_len > 0:
+            token_ids = token_ids + [self.tokenizer.pad_token_id] * pad_len
 
         return {
-            "input_ids": encoding["input_ids"],
-            "attention_mask": encoding["attention_mask"],
-            "labels": aligned_labels,
+            "input_ids": token_ids,
+            "attention_mask": attention_mask,
+            "labels": label_ids,
         }
