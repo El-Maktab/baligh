@@ -71,11 +71,11 @@ class EditSegregator:
         """
 
         src_span = source_tokens[
-            edit.source_start : edit.source_end
+            edit.source_start : edit.source_end + 1
         ]
 
         tgt_span = target_tokens[
-            edit.target_start : edit.target_end
+            edit.target_start : edit.target_end + 1
         ]
 
         span_tokens = src_span + tgt_span

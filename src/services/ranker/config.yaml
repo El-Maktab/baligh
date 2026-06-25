@@ -1,0 +1,49 @@
+module_provenance:
+  W_ONTOLOGY: 0.25
+  W_TAG: 0.15
+  W_DICTIONARY: 0.10
+  W_INDEPENDENT: 0.05
+  W_GROUP_RANK: 0.10
+
+confidence:
+  W_EDIT_CONF: 0.30
+  W_GED_CONF: 0.10
+  W_LOW_CONF: 0.15
+  CONF_LOW_THRESHOLD: 0.30
+
+provenance_tier:
+  W_TIER1: 0.15
+  W_TIER2: 0.08
+  W_TIER3: 0.00
+
+edit_cost:
+  W_CHAR_DIST: 0.10
+  W_LENGTH_RATIO: 0.05
+  W_EMPTY: 0.50
+
+category_alignment:
+  W_SPELL_DICT: 0.10
+  W_GRAM_ONT: 0.10
+  W_EXPLAIN: 0.05
+
+agreement:
+  W_AGREEMENT: 0.20
+  W_MULTI_SRC: 0.05
+
+structural:
+  W_OOV: 0.05
+  W_FIRST_ALT: 0.05
+  W_OP_MISMATCH: 0.20
+
+feature_toggles:
+  enable_module_provenance: true
+  enable_confidence: true
+  enable_provenance_tier: true
+  enable_edit_cost: true
+  enable_category_alignment: true
+  enable_agreement: true
+  enable_structural: true
+
+debug:
+  log_score_breakdown: false
+  verbosity: 0

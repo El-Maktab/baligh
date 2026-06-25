@@ -29,7 +29,7 @@ class Rewriter:
                 pass
 
             elif edit.operation == EditOperation.MERGE:
-                result.append("".join(text_list[edit.source_start:edit.source_end]))
+                result.append("".join(text_list[edit.source_start:edit.source_end + 1]))
 
             elif edit.operation == EditOperation.SPLIT:
                 result.append(text_list[edit.source_start])
