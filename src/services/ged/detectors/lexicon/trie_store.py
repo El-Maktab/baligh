@@ -83,6 +83,13 @@ class LexiconTrieStore:
         key = loose_arabic_lookup_key(text)
         return bool(key) and key in self.words
 
+    def get_completions(self, prefix: str) -> list[str]:
+        """Return all words in the word trie that start with the given prefix."""
+        key = loose_arabic_lookup_key(prefix)
+        if not key:
+            return []
+        return self.words.keys(key)
+
     def has_entity_phrase(self, text: str) -> bool:
         """Return True when text exists in the entity phrase trie."""
         key = loose_arabic_lookup_key(text)
