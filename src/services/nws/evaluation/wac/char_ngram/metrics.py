@@ -41,7 +41,7 @@ def top_k_accuracy(
 ) -> float:
     hits = 0
     for prefix, true_word in test_pairs:
-        predictions = model.predict(prefix, top_k=k)
+        predictions = [p[0] for p in model.predict(prefix, top_k=k)]
         if true_word in predictions:
             hits += 1
     return hits / len(test_pairs) if test_pairs else 0.0
@@ -52,7 +52,7 @@ def mean_reciprocal_rank(
 ) -> float:
     rr_sum = 0.0
     for prefix, true_word in test_pairs:
-        predictions = model.predict(prefix, top_k=max_k)
+        predictions = [p[0] for p in model.predict(prefix, top_k=max_k)]
         if true_word in predictions:
             rank = predictions.index(true_word) + 1
             rr_sum += 1.0 / rank
@@ -65,7 +65,7 @@ def keystroke_savings_rate(
     total_without = 0
     total_with = 0
     for prefix, true_word in test_pairs:
-        predictions = model.predict(prefix, top_k=k)
+        predictions = [p[0] for p in model.predict(prefix, top_k=k)]
         keystrokes_without = len(true_word)
         if true_word in predictions:
             keystrokes_with = len(prefix) + 1

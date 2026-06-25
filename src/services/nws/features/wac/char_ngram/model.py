@@ -99,7 +99,7 @@ class CharNGramLM:
         # We normalize by the physical number of scored characters (len + 1 for the space).
         return log_prob / (len(word_with_boundary) ** 0.7) if word else 0.0
 
-    def predict(self, text: str, top_k: int = 5) -> list[str]:
+    def predict(self, text: str, top_k: int = 5) -> list[tuple[str, float]]:
         """Generate the top-k word completions for a given text context.
 
         This relies on the GED LexiconTrieStore to provide valid candidates,
@@ -130,4 +130,18 @@ class CharNGramLM:
             scored_candidates.append((cand, score))
 
         scored_candidates.sort(key=lambda x: x[1], reverse=True)
-        return [cand for cand, score in scored_candidates[:top_k]]
+        top_cands = scored_candidates[:top_k]
+
+        if not top_cands:
+            return []
+
+        # Softmax normalization over the top-K candidates
+        max_score = top_cands[0][1]
+        exp_scores = [math.exp(score - max_score) for _, score in top_cands]
+        sum_exp = sum(exp_scores)
+
+        normalized_results = []
+        for (cand, _), exp_s in zip(top_cands, exp_scores, strict=True):
+            normalized_results.append((cand, exp_s / sum_exp))
+
+        return normalized_results
