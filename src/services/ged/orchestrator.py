@@ -3,7 +3,7 @@
 Passes GED input to all subsystems and resolves conflicts between them.
 
 Authors:
-  Amir Anwar
+    Amir Anwar
 """
 
 from src.services.ged.detectors.base import BaseDetector

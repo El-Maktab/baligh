@@ -1,4 +1,8 @@
-"""Corpus paths and raw sentence parsing for GED ML training."""
+"""Corpus paths and raw sentence parsing for GED ML training.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 

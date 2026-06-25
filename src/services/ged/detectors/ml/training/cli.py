@@ -1,4 +1,8 @@
-"""Command-line interface for GED ML training."""
+"""Command-line interface for GED ML training.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 

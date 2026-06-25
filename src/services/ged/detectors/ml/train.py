@@ -1,4 +1,8 @@
-"""Train and export the GED CRF sequence labeler."""
+"""Train and export the GED CRF sequence labeler.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 

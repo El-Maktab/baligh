@@ -18,7 +18,7 @@ RuleEntry, so rule functions stay focused on *finding* the error location
 and nothing else.
 
 Authors:
-    Amir Anwar
+  Amir Anwar
 """
 
 from __future__ import annotations

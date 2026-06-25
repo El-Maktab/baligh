@@ -1,7 +1,7 @@
 """Fusion model handles conflict resolution and merging of GED.
 
 Authors:
-  Amir Anwar
+    Amir Anwar
 """
 
 from src.services.ged.schemas import ErrorSource, ErrorSpan, ProvenanceTier

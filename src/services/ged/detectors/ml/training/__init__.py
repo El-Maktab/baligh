@@ -1,4 +1,8 @@
-"""Internal training pipeline for the GED ML detector."""
+"""Internal training pipeline for the GED ML detector.
+
+Authors:
+        Amir Anwar
+"""
 
 from src.services.ged.detectors.ml.training.export import train_and_export
 

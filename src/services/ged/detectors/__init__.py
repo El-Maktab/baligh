@@ -1,4 +1,8 @@
-"""Detector interface for the GED service."""
+"""Detector interface for the GED service.
+
+Authors:
+    Amir Anwar
+"""
 
 from src.services.ged.detectors.base import BaseDetector
 from src.services.ged.detectors.lexicon import LexiconDetector

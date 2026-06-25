@@ -1,4 +1,8 @@
-"""Small logging helpers for long-running GED ML training jobs."""
+"""Small logging helpers for long-running GED ML training jobs.
+
+Authors:
+    Amir Anwar
+"""
 
 
 def log(message: str) -> None:

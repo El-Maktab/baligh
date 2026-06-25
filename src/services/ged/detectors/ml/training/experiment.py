@@ -1,4 +1,8 @@
-"""CRF fitting and threshold selection for GED ML training."""
+"""CRF fitting and threshold selection for GED ML training.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 

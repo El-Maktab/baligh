@@ -1,4 +1,8 @@
-"""Morphology-aware feature extraction for the GED CRF model."""
+"""Morphology-aware feature extraction for the GED CRF model.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 

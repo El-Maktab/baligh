@@ -1,4 +1,8 @@
-"""ML GED detector."""
+"""ML GED detector.
+
+Authors:
+    Amir Anwar
+"""
 
 from pathlib import Path
 from typing import Any

@@ -16,7 +16,7 @@ By the time the RuleBasedDetector class body is evaluated all rules are
 already are in the rule_registry.
 
 Authors:
-    Amir Anwar
+  Amir Anwar
 """
 
 from __future__ import annotations
@@ -35,12 +35,8 @@ from src.services.ged.detectors.base import BaseDetector
 # 2. loader (YAML rules)
 # 3. rule modules (Python rules).
 # #########################################################################
-from src.services.ged.detectors.rule_based.loader import (
-    load_yaml_rules,  # noqa: E402
-)
-from src.services.ged.detectors.rule_based.registry import (
-    rule_registry,  # noqa: E402
-)
+from src.services.ged.detectors.rule_based.loader import load_yaml_rules  # noqa: E402
+from src.services.ged.detectors.rule_based.registry import rule_registry  # noqa: E402
 from src.services.ged.schemas import ErrorSpan
 
 _RULES_DIR = Path(__file__).parent / "rules"
