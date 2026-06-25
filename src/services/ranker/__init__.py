@@ -5,7 +5,6 @@ from src.services.ranker.schemas import (
     RankerOutput,
     RankedEdit,
     RankingMetadata,
-    ScoredCandidate,
 )
 
 __all__ = [
@@ -16,5 +15,4 @@ __all__ = [
     "RankerOutput",
     "RankedEdit",
     "RankingMetadata",
-    "ScoredCandidate",
 ]

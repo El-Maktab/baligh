@@ -4,18 +4,7 @@ from pydantic import BaseModel
 
 from src.core.schemas import Token
 from src.services.ged.schemas import ErrorSpan
-from src.services.gec.schemas import (
-    GECUnionCandidateEdit,
-    ModuleName,
-    ModuleResult,
-)
-
-
-class ScoredCandidate(BaseModel):
-    candidate: GECUnionCandidateEdit
-    module_name: ModuleName
-    final_score: float
-    rule_breakdown: dict[str, float] = {}
+from src.services.gec.schemas import ModuleResult
 
 
 class RankedEdit(BaseModel):
