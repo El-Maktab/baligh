@@ -61,6 +61,8 @@ const correctionMeta: Record<
   style: { label: "أسلوب", icon: Sparkles },
 };
 
+const ARABIC_DIACRITICS_RE = /[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]/;
+
 function DraftList({
   drafts,
   activeDraftId,
@@ -177,6 +179,7 @@ export function EditorPage() {
     closePanel,
     toggleStrong,
     toggleEmphasis,
+    applyTashkeel,
     cycleList,
     setAlign,
   } = useEditorDemo();
@@ -380,6 +383,9 @@ export function EditorPage() {
     activeDraft.formatting.emphasis,
     formattingRange,
   );
+  const tashkeelActive = ARABIC_DIACRITICS_RE.test(
+    activeDraft.body.slice(...formattingRange),
+  );
   const currentAlignment = selectedLines.every(
     (line) => getLineFormat(activeDraft.formatting, line).align === "center",
   )
@@ -441,6 +447,16 @@ export function EditorPage() {
               onPress={() => toggleEmphasis(selection)}
             >
               <Italic aria-hidden="true" size={18} />
+            </ToolbarButton>
+            <ToolbarButton
+              active={tashkeelActive}
+              className="editor-page__toolbar-button--tashkeel"
+              label="إضافة التشكيل"
+              onPress={() => applyTashkeel(selection)}
+            >
+              <span aria-hidden="true" className="editor-page__toolbar-glyph">
+                شّـ
+              </span>
             </ToolbarButton>
             <span className="editor-page__toolbar-divider" />
             <ToolbarButton

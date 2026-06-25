@@ -10,6 +10,7 @@ import type {
   EditorListStyle,
   EditorTextRange,
   MockCorrection,
+  TashkeelResult,
 } from "./types";
 
 export type EditorPanel = "navigation" | "corrections";
@@ -40,6 +41,7 @@ type Action =
   | { type: "closePanel"; panel: EditorPanel }
   | { type: "toggleStrong"; range: EditorTextRange }
   | { type: "toggleEmphasis"; range: EditorTextRange }
+  | { type: "applyTashkeel"; range: EditorTextRange }
   | { type: "cycleList"; range: EditorTextRange }
   | {
       type: "setAlign";
@@ -50,6 +52,91 @@ type Action =
 const DEFAULT_LINE_FORMAT: EditorLineFormat = {
   list: "none",
   align: "start",
+};
+
+const ARABIC_WORD_RE = /[\u0621-\u063a\u0641-\u064a]+/g;
+
+const TASHKEEL_MAP: Record<string, string> = {
+  "المحبة": "المَحَبَّة",
+  "تتأنى": "تَتَأَنَّى",
+  "وترفق": "وَتَرفُق",
+  "ترفّق": "تَرَفَّق",
+  "لا": "لَا",
+  "تحسد": "تَحسُد",
+  "تتفاخر": "تَتَفَاخَر",
+  "تفتخر": "تَفتَخِر",
+  "ولا": "وَلَا",
+  "تنتفخ": "تَنتَفِخ",
+  "تقبح": "تَقبُح",
+  "تطلب": "تَطلُب",
+  "لنفسها": "لِنَفسِهَا",
+  "تحتد": "تَحتَد",
+  "تظن": "تَظُن",
+  "السوء": "السُّوءَ",
+  "تفرح": "تَفرَح",
+  "بالإثم": "بِالإِثم",
+  "بالحق": "بِالحَق",
+  "وتحتمل": "وَتَحتَمِل",
+  "كل": "كُلّ",
+  "شيء": "شَيء",
+  "وتصدق": "وَتُصَدِّق",
+  "وترجو": "وَتَرجُو",
+  "وتصبر": "وَتَصبِر",
+  "تسقط": "تَسقُط",
+  "أبداً": "أَبَدًا",
+  "يجب": "يَجِب",
+  "على": "عَلَى",
+  "الكاتب": "الكَاتِب",
+  "أن": "أَن",
+  "يعتن": "يَعتَنِ",
+  "يعتني": "يَعتَنِي",
+  "بالتفاصيل": "بِالتَّفَاصِيل",
+  "الدقيقة": "الدَّقِيقَة",
+  "وأن": "وَأَن",
+  "يختار": "يَختَار",
+  "تعبيرات": "تَعبِيرَات",
+  "مناسبة": "مُنَاسِبَة",
+  "جدا": "جِدًّا",
+  "للسياق": "لِلسِّيَاق",
+  "المقصود": "المَقصُود",
+  "أكتب": "أَكتُب",
+  "هذه": "هَذِهِ",
+  "الرسالة": "الرِّسَالَة",
+  "لأشارك": "لِأُشَارِكَ",
+  "الفريق": "الفَرِيق",
+  "ملاحظات": "مُلَاحَظَات",
+  "أولية": "أَوَّلِيَّة",
+  "حول": "حَول",
+  "الصفحة": "الصَّفحَة",
+  "الجديدة": "الجَدِيدَة",
+  "يفيدني": "يُفِيدُنِي",
+  "المحرر": "المُحَرِّر",
+  "في": "فِي",
+  "ترتيب": "تَرتِيب",
+  "الأفكار": "الأَفكَار",
+  "وضبط": "وَضَبط",
+  "علامات": "عَلَامَات",
+  "الترقيم": "التَّرقِيم",
+  "ومراجعة": "وَمُرَاجَعَة",
+  "بعض": "بَعض",
+  "الصياغات": "الصِّيَاغَات",
+  "قبل": "قَبل",
+  "الإرسال": "الإِرسَال",
+  "ابدأ": "ابدَأ",
+  "كتابة": "كِتَابَة",
+  "نص": "نَصّ",
+  "جديد": "جَدِيد",
+  "هنا": "هُنَا",
+  "سيبقى": "سَيَبقَى",
+  "هذا": "هَذَا",
+  "النموذج": "النَّمُوذَج",
+  "محلياً": "مَحَلِّيًّا",
+  "داخل": "دَاخِل",
+  "الواجهة": "الوَاجِهَة",
+  "إلى": "إِلَى",
+  "نربطه": "نَربِطُه",
+  "بالخلفية": "بِالخَلفِيَّة",
+  "لاحقاً": "لَاحِقًا",
 };
 
 export function createInitialEditorState(): EditorDemoState {
@@ -271,6 +358,34 @@ function cycleListStyle(current: EditorListStyle): EditorListStyle {
   if (current === "none") return "bullet";
   if (current === "bullet") return "numbered";
   return "none";
+}
+
+function applyTashkeelToText(text: string) {
+  let applied = false;
+  const nextText = text.replace(ARABIC_WORD_RE, (word) => {
+    const replacement = TASHKEEL_MAP[word];
+    if (!replacement || replacement === word) return word;
+    applied = true;
+    return replacement;
+  });
+
+  return { text: nextText, applied };
+}
+
+export function applyTashkeel(
+  body: string,
+  range: EditorTextRange,
+): TashkeelResult {
+  const [start, end] = resolveFormattingRange(body, range);
+  if (start >= end) return { body, applied: false };
+
+  const { text, applied } = applyTashkeelToText(body.slice(start, end));
+  if (!applied) return { body, applied: false };
+
+  return {
+    body: `${body.slice(0, start)}${text}${body.slice(end)}`,
+    applied: true,
+  };
 }
 
 export function getActiveDraft(state: EditorDemoState): EditorDraft {
@@ -502,6 +617,30 @@ export function editorDemoReducer(
         }),
       };
     }
+    case "applyTashkeel":
+      return {
+        ...state,
+        drafts: updateDraft(state.drafts, activeDraft.id, (draft) => {
+          const result = applyTashkeel(draft.body, action.range);
+          if (!result.applied) return draft;
+
+          return {
+            ...draft,
+            body: result.body,
+            updatedAt: "الآن",
+            formatting: reconcileFormatting(
+              draft.formatting,
+              draft.body,
+              result.body,
+            ),
+            corrections: resolveCorrections(
+              draft.body,
+              result.body,
+              draft.corrections,
+            ),
+          };
+        }),
+      };
     case "cycleList":
       return {
         ...state,
@@ -578,6 +717,8 @@ export function useEditorDemo() {
       dispatch({ type: "toggleStrong", range }),
     toggleEmphasis: (range: EditorTextRange) =>
       dispatch({ type: "toggleEmphasis", range }),
+    applyTashkeel: (range: EditorTextRange) =>
+      dispatch({ type: "applyTashkeel", range }),
     cycleList: (range: EditorTextRange) =>
       dispatch({ type: "cycleList", range }),
     setAlign: (range: EditorTextRange, align: EditorLineFormat["align"]) =>

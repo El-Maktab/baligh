@@ -17,6 +17,11 @@ export type EditorFormatting = {
   lines: Record<number, EditorLineFormat>;
 };
 
+export type TashkeelResult = {
+  body: string;
+  applied: boolean;
+};
+
 export type MockCorrection = {
   id: string;
   category: CorrectionCategory;

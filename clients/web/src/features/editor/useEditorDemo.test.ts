@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  applyTashkeel,
   createInitialEditorState,
   editorDemoReducer,
   getActiveDraft,
@@ -99,6 +100,29 @@ describe("editorDemoReducer", () => {
     expect(getActiveDraft(formatted).formatting.emphasis).toEqual([[0, 19]]);
   });
 
+  it("adds tashkeel to the selected text range", () => {
+    const state = createInitialEditorState();
+    const formatted = editorDemoReducer(state, {
+      type: "applyTashkeel",
+      range: [0, 18],
+    });
+
+    expect(getActiveDraft(formatted).body.startsWith("المَحَبَّة تَتَأَنَّى")).toBe(
+      true,
+    );
+  });
+
+  it("adds tashkeel to the current line when the selection is collapsed", () => {
+    const state = createInitialEditorState();
+    const formatted = editorDemoReducer(state, {
+      type: "applyTashkeel",
+      range: [253, 253],
+    });
+
+    expect(getActiveDraft(formatted).body).toContain("يَعتَنِ");
+    expect(getActiveDraft(formatted).body).toContain("بِالتَّفَاصِيل");
+  });
+
   it("applies block formatting only to lines intersecting the selection", () => {
     const state = createInitialEditorState();
     const formatted = editorDemoReducer(state, {
@@ -108,5 +132,12 @@ describe("editorDemoReducer", () => {
 
     expect(getActiveDraft(formatted).formatting.lines[1]?.list).toBe("bullet");
     expect(getActiveDraft(formatted).formatting.lines[0]).toBeUndefined();
+  });
+
+  it("leaves unmatched text unchanged when no tashkeel mapping exists", () => {
+    expect(applyTashkeel("hello world", [0, 5])).toEqual({
+      body: "hello world",
+      applied: false,
+    });
   });
 });
