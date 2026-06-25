@@ -25,6 +25,7 @@ test-results/
 *.tsbuildinfo
 .env.local
 .env.*.local
+.env
 
 
 #############################
