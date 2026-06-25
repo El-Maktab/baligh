@@ -87,3 +87,42 @@
     pos: NOUN_PROP
     gender: feminine
     form_ends_with: "ه"
+
+- id: OT_INNA_AFTER_QAWL
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "همزة «إن» تُكسر وجوباً بعد القول."
+  pattern:
+    match: sequence
+    tokens:
+      - lemma_in: ["قَالَ", "يَقُول", "قُلْ", "قَائِل", "قَوْل"]
+      - form_regex: "^(ان|أن)(?:ه|ها|هم|هن|نا|ني|ي|ك|كم|كن)?$"
+    flag_token: 1
+
+- id: OT_IDHA_HAMZA
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "«إذا» تُكتب بهمزة قطع تحت الألف."
+  pattern:
+    match: token
+    form: "اذا"
+
+- id: OT_ARWAH_HAMZA
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "كلمة «أرواح» جمع تكسير تُكتب بهمزة قطع على الألف."
+  pattern:
+    match: token
+    form: "ارواح"
+
+- id: OT_AQAL_HAMZA
+  category: OT
+  subtype: hamza
+  tier: tier_1_rule_derived
+  explanation: "أفعل التفضيل «أقل» يُكتب بهمزة قطع على الألف."
+  pattern:
+    match: token
+    form: "اقل"

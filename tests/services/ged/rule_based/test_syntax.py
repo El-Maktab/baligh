@@ -134,6 +134,75 @@ def _run(rule_id, tokens, morphs):
             [[_M(0, "PART")], [_M(1, "NOUN", number="dual", case="nominative")]],
             (3, 11),
         ),
+        (
+            "SY_MAMNOO3_SARF_TANWEEN_NASB",
+            [_T("أحمدا", (0, 5), 0)],
+            [[_M(0, "NOUN")]],
+            (0, 5),
+        ),
+        (
+            "SY_KAMA_ANNA",
+            [_T("كما", (0, 3), 0), _T("وأن", (4, 7), 1)],
+            [[_M(0, "PART")], [_M(1, "PART")]],
+            (4, 7),
+        ),
+        (
+            "SY_LA_SIYYAMA_WA",
+            [_T("لا", (0, 2), 0), _T("سيما", (3, 7), 1), _T("و", (8, 9), 2)],
+            [[_M(0, "PART")], [_M(1, "PART")], [_M(2, "CONJ")]],
+            (8, 9),
+        ),
+        (
+            "SY_AS_KA",
+            [_T("يعمل", (0, 4), 0), _T("كمدير", (5, 10), 1)],
+            [[_M(0, "VERB", lemma="عَمِل")], [_M(1, "NOUN")]],
+            (5, 10),
+        ),
+        (
+            "SY_LA_PAST_TENSE",
+            [_T("لا", (0, 2), 0), _T("شرب", (3, 6), 1)],
+            [[_M(0, "PART")], [_M(1, "VERB", tense="past")]],
+            (0, 2),
+        ),
+        (
+            "SY_MUBTADA_NAKIRA_PREP",
+            [_T("رجل", (0, 3), 0), _T("في", (4, 6), 1)],
+            [
+                [_M(0, "NOUN", definiteness="indefinite", case="nominative")],
+                [_M(1, "PREP")],
+            ],
+            (0, 3),
+        ),
+        (
+            "SY_QAAMA_BI",
+            [_T("قام", (0, 3), 0), _T("بالعمل", (4, 10), 1)],
+            [[_M(0, "VERB", lemma="قَام")], [_M(1, "NOUN")]],
+            (0, 3),
+        ),
+        (
+            "SY_HAWLA_FI",
+            [_T("بحث", (0, 3), 0), _T("حول", (4, 7), 1)],
+            [[_M(0, "NOUN")], [_M(1, "NOUN")]],
+            (4, 7),
+        ),
+        (
+            "SY_RAGHBA_LI",
+            [_T("رغبة", (0, 4), 0), _T("ل", (5, 6), 1)],
+            [[_M(0, "NOUN")], [_M(1, "PREP")]],
+            (5, 6),
+        ),
+        (
+            "SY_AATIL_AN",
+            [_T("عاطل", (0, 4), 0), _T("عن", (5, 7), 1), _T("العمل", (8, 13), 2)],
+            [[_M(0, "NOUN")], [_M(1, "PREP")], [_M(2, "NOUN")]],
+            (5, 7),
+        ),
+        (
+            "SY_TA2MEEN_DHIDDA",
+            [_T("تأمين", (0, 5), 0), _T("ضد", (6, 8), 1)],
+            [[_M(0, "NOUN")], [_M(1, "PREP")]],
+            (6, 8),
+        ),
     ],
 )
 def test_yaml_syntax_rules(rule_id, tokens, morphs, expected_span):

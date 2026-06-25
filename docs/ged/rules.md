@@ -13,6 +13,10 @@
 | OT_TA_MARBUTA_NOUN      | ta_marbuta   | YAML (Declarative)  | tier_1_rule_derived | وجوب كتابة التاء المربوطة (ة) في أواخر الأسماء المؤنثة بدلا من الهاء (ه).                                     |
 | OT_TA_MARBUTA_ADJ       | ta_marbuta   | YAML (Declarative)  | tier_1_rule_derived | وجوب كتابة التاء المربوطة (ة) في أواخر الصفات المؤنثة بدلا من الهاء (ه).                                      |
 | OT_TA_MARBUTA_NOUN_PROP | ta_marbuta   | YAML (Declarative)  | tier_1_rule_derived | وجوب كتابة التاء المربوطة (ة) في أواخر الأعلام المؤنثة بدلا من الهاء (ه)، مثل: مكة، فاطمة.                    |
+| OT_INNA_AFTER_QAWL | hamza | YAML (Declarative) | tier_1_rule_derived | همزة «إن» تُكسر وجوباً بعد القول. |
+| OT_IDHA_HAMZA | hamza | YAML (Declarative) | tier_1_rule_derived | «إذا» تُكتب بهمزة قطع تحت الألف. |
+| OT_ARWAH_HAMZA | hamza | YAML (Declarative) | tier_1_rule_derived | كلمة «أرواح» جمع تكسير تُكتب بهمزة قطع على الألف. |
+| OT_AQAL_HAMZA | hamza | YAML (Declarative) | tier_1_rule_derived | أفعل التفضيل «أقل» يُكتب بهمزة قطع على الألف. |
 
 ## Punctuation (PC)
 
@@ -48,6 +52,17 @@
 | SY_RELATIVE_PRONOUN_GENDER         | relative_pronoun_gender            | Python (Procedural) | tier_1_rule_derived | وجوب مطابقة الاسم الموصول للاسم السابق له في التذكير والتأنيث، مثل: القول الذي، الوشاية التي.   |
 | SY_PREP_DUAL_CASE                  | preposition_dual_case              | Python (Procedural) | tier_1_rule_derived | وجوب جر الاسم المثنى بعد حرف الجر، مثل: في الكتابين لا في الكتابان.                             |
 | SY_PREP_SOUND_MASC_PLURAL_CASE     | preposition_sound_masc_plural_case | Python (Procedural) | tier_1_rule_derived | وجوب جر جمع المذكر السالم بعد حرف الجر، مثل: مع المسافرين لا مع المسافرون.                      |
+| SY_MAMNOO3_SARF_TANWEEN_NASB | diptote_tanween | YAML (Declarative) | tier_1_rule_derived | الممنوع من الصرف لا يُنوَّن. |
+| SY_KAMA_ANNA | particle_usage | YAML (Declarative) | tier_1_rule_derived | الصواب «كما أن» بدون الواو الزائدة. |
+| SY_LA_SIYYAMA_WA | particle_usage | YAML (Declarative) | tier_1_rule_derived | الصواب «لا سيما» دون واو بعدها. |
+| SY_AS_KA | syntactic_calque | YAML (Declarative) | tier_1_rule_derived | استخدام الكاف للصفة استخدام أجنبي، والأصح النصب على الحالية. |
+| SY_LA_PAST_TENSE | negation_particle | YAML (Declarative) | tier_1_rule_derived | عند نفي الفعل الماضي يُنفى بـ «ما» أو «لم» مع المضارع، ولا يصح استخدام «لا» إلا إذا تكررت أو كانت للدعاء. |
+| SY_MUBTADA_NAKIRA_PREP | word_order | YAML (Declarative) | tier_1_rule_derived | المبتدأ النكرة يؤخر وجوباً إذا كان الخبر شبه جملة (جار ومجرور). |
+| SY_QAAMA_BI | stylistic_verbosity | YAML (Declarative) | tier_1_rule_derived | تعبير «القيام بـ» ركيك يستحسن تجنبه واستعمال الفعل مباشرة. |
+| SY_HAWLA_FI | preposition_usage | YAML (Declarative) | tier_1_rule_derived | يفضل استعمال حرف الجر «في» بدلاً من «حول» في هذا السياق. |
+| SY_RAGHBA_LI | preposition_usage | YAML (Declarative) | tier_1_rule_derived | يُقال: «رغبة في» وليس «رغبة لـ». |
+| SY_AATIL_AN | preposition_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح أن يقال: «عاطل من العمل» أو «متعطل». |
+| SY_TA2MEEN_DHIDDA | preposition_usage | YAML (Declarative) | tier_1_rule_derived | الأفصح «تأمين من» أو «مناعة من» بدلاً من «ضد». |
 
 ## Semantics (SE)
 

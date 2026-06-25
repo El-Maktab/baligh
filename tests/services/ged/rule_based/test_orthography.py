@@ -30,6 +30,9 @@ def _run(rule_id, tokens, morphs):
         ("OT_HAMZA_PREP", "انه", "CONJ_SUB", "إِنَّ"),
         ("OT_ALIF_MAQSURA_ALA", "علي", "PREP", "عَلَى"),
         ("OT_ALIF_MAQSURA_HATTA", "حتي", "PREP", "حَتَّى"),
+        ("OT_IDHA_HAMZA", "اذا", "CONJ", "إِذا"),
+        ("OT_ARWAH_HAMZA", "ارواح", "NOUN", "رُوح"),
+        ("OT_AQAL_HAMZA", "اقل", "ADJ", "أَقَلّ"),
     ],
 )
 def test_hamza_and_alif_maqsura_rules(rule_id, form, pos, lemma):
@@ -122,3 +125,18 @@ def test_ot_ta_marbuta_noun_prop():
     assert len(spans) == 1
     assert spans[0].category == ErrorCategory.ORTHOGRAPHY
     assert spans[0].subtype == "ta_marbuta"
+
+
+def test_ot_inna_after_qawl():
+    """Flags 'ان' or 'أن' after 'قال' or its derivatives."""
+    tokens = [
+        _T("قال", (0, 3), 0),
+        _T("انه", (4, 7), 1),
+    ]
+    morphs = [[_M(0, "VERB", lemma="قَالَ")], [_M(1, "PART")]]
+
+    spans = _run("OT_INNA_AFTER_QAWL", tokens, morphs)
+
+    assert len(spans) == 1
+    assert spans[0].span == (4, 7)
+    assert spans[0].subtype == "hamza"
