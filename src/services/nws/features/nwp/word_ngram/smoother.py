@@ -3,13 +3,14 @@
 Applies Absolute Discounting and Backoff computation to integerized n-grams.
 """
 
+import logging
 from collections import defaultdict
 from typing import Any
-import logging
 
 from src.services.nws.features.nwp.word_ngram.counter import NGramCounter
 
 logger = logging.getLogger(__name__)
+
 
 class KneserNeySmoother:
     """Computes Kneser-Ney smoothed probabilities from raw integer counts."""
@@ -23,11 +24,11 @@ class KneserNeySmoother:
         self, min_count: int = 3, min_n_to_prune: int = 3
     ) -> dict[int, Any]:
         """Build the final smoothed model parameters with aggressive pruning.
-        
+
         Args:
             min_count: The minimum frequency required to keep an n-gram.
             min_n_to_prune: Only prune n-grams of this order and higher.
-            
+
         Returns:
             Dictionary mapped for serialization.
         """

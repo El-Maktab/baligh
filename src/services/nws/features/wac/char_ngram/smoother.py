@@ -15,7 +15,7 @@ class KneserNeySmoother:
 
     def __init__(self, counter: NGramCounter):
         """Initialize the smoother with a built counter.
-        
+
         Args:
             counter: NGramCounter that has already processed the training text.
                 Must NOT be pruned yet, so discounts and lambdas are accurate.
@@ -28,16 +28,16 @@ class KneserNeySmoother:
         self, min_count: int = 3, min_n_to_prune: int = 3
     ) -> dict[int, Any]:
         """Build the final smoothed model parameters with pruning.
-        
+
         Calculates continuation probabilities for unigrams, and discounted
         probabilities + backoff weights for higher-order n-grams.
         Pruning drops low-frequency n-grams *after* their probability mass
         has been accounted for in the backoff weights.
-        
+
         Args:
             min_count: The minimum frequency required to keep an n-gram.
             min_n_to_prune: Only prune n-grams of this order and higher.
-            
+
         Returns:
             A dictionary representing the model:
             {

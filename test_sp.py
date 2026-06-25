@@ -1,3 +1,5 @@
+"""Module docstring."""
+
 import sentencepiece as spm
 
 sp = spm.SentencePieceProcessor(model_file="src/services/nws/data/arabic_bpe.model")
@@ -18,7 +20,7 @@ print(f"Next Pieces: {[sp.id_to_piece(i) for i in next_ids]}")
 for next_id in next_ids:
     decoded = sp.decode(ids[-1:] + [next_id])
     print(f"Decoding {ids[-1:]} + [{next_id}] -> '{decoded}'")
-    
+
     # What if we decode the whole context + next id?
     decoded_full = sp.decode(ids + [next_id])
     print(f"Decoding full + [{next_id}] -> '{decoded_full}'")

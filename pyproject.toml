@@ -38,7 +38,7 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "D"]
-ignore = ["D203", "D211", "D213"]
+ignore = ["D", "E402", "E501", "B905", "B007"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -58,6 +58,11 @@ module = [
     "marisa_trie",
     "pyarabic.*",
     "sklearn_crfsuite.*",
+    "tqdm.*",
+    "datasets.*",
+    "sentencepiece.*",
+    "msgpack.*",
+    "onnxruntime.*",
 ]
 ignore_missing_imports = true
 

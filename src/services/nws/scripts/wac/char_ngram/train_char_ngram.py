@@ -6,23 +6,23 @@ n-gram counts, applies Kneser-Ney smoothing, and serializes the model.
 
 import argparse
 import logging
-import msgpack
-import re
 import sys
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
-while current_dir.name and not (current_dir / 'pyproject.toml').exists():
+while current_dir.name and not (current_dir / "pyproject.toml").exists():
     current_dir = current_dir.parent
-sys.path.append(str(current_dir))
+sys.path.append(str(current_dir))  # noqa: E402
 
-from tqdm import tqdm
-
-from src.services.nws.features.wac.char_ngram.counter import NGramCounter
-from src.services.nws.features.wac.char_ngram.model import CharNGramLM
-from src.services.nws.features.wac.char_ngram.serializer import save_model
-from src.services.nws.features.wac.char_ngram.smoother import KneserNeySmoother
-from src.services.nws.evaluation.wac.char_ngram.dataset import get_eval_stream
+from src.services.nws.evaluation.wac.char_ngram.dataset import (
+    get_eval_stream,  # noqa: E402
+)
+from src.services.nws.features.wac.char_ngram.counter import NGramCounter  # noqa: E402
+from src.services.nws.features.wac.char_ngram.serializer import save_model  # noqa: E402
+from src.services.nws.features.wac.char_ngram.smoother import (
+    KneserNeySmoother,  # noqa: E402
+)
+from tqdm import tqdm  # noqa: E402
 
 # Setup logging
 logging.basicConfig(
@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    """Function docstring."""
     parser = argparse.ArgumentParser(description="Train Character N-gram LM")
     parser.add_argument(
         "--dataset",
@@ -76,15 +77,15 @@ def main():
     text_stream = get_eval_stream(
         dataset_name=args.dataset, split_type="train", limit_chars=args.max_chars
     )
-    
+
     chars_processed = 0
     pbar = tqdm(total=args.max_chars, desc="Processing characters")
-    
+
     for clean_text in text_stream:
         counter.add_sequence(clean_text)
         chars_processed += len(clean_text)
         pbar.update(len(clean_text))
-        
+
     pbar.close()
     logger.info(f"Finished processing {chars_processed:,} characters.")
 

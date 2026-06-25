@@ -1,10 +1,14 @@
 import math
-from typing import Iterable
+from collections.abc import Iterable
+
 from src.services.nws.features.wac.char_ngram.model import CharNGramLM
 
-def compute_perplexity(model: CharNGramLM, text_stream: Iterable[str]) -> tuple[float, float, int]:
+
+def compute_perplexity(
+    model: CharNGramLM, text_stream: Iterable[str]
+) -> tuple[float, float, int]:
     """Computes cross-entropy (BPC) and perplexity on raw text stream.
-    
+
     Returns:
         (bpc, perplexity, total_characters)
     """
@@ -12,7 +16,7 @@ def compute_perplexity(model: CharNGramLM, text_stream: Iterable[str]) -> tuple[
     total_chars = 0
     context_len = model.max_n - 1
     current_ctx: list[str] = []
-    
+
     for chunk in text_stream:
         for char in chunk:
             p = model._get_char_prob(char, tuple(current_ctx))
@@ -23,16 +27,18 @@ def compute_perplexity(model: CharNGramLM, text_stream: Iterable[str]) -> tuple[
             current_ctx.append(char)
             if len(current_ctx) > context_len:
                 current_ctx.pop(0)
-                
+
     if total_chars == 0:
         return 0.0, 0.0, 0
-        
+
     bpc = -total_log_prob / total_chars
-    perplexity = 2 ** bpc
+    perplexity = 2**bpc
     return bpc, perplexity, total_chars
 
 
-def top_k_accuracy(test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int) -> float:
+def top_k_accuracy(
+    test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int
+) -> float:
     hits = 0
     for prefix, true_word in test_pairs:
         predictions = model.predict(prefix, top_k=k)
@@ -41,7 +47,9 @@ def top_k_accuracy(test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int
     return hits / len(test_pairs) if test_pairs else 0.0
 
 
-def mean_reciprocal_rank(test_pairs: list[tuple[str, str]], model: CharNGramLM, max_k: int = 10) -> float:
+def mean_reciprocal_rank(
+    test_pairs: list[tuple[str, str]], model: CharNGramLM, max_k: int = 10
+) -> float:
     rr_sum = 0.0
     for prefix, true_word in test_pairs:
         predictions = model.predict(prefix, top_k=max_k)
@@ -51,7 +59,9 @@ def mean_reciprocal_rank(test_pairs: list[tuple[str, str]], model: CharNGramLM, 
     return rr_sum / len(test_pairs) if test_pairs else 0.0
 
 
-def keystroke_savings_rate(test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int) -> float:
+def keystroke_savings_rate(
+    test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int
+) -> float:
     total_without = 0
     total_with = 0
     for prefix, true_word in test_pairs:
@@ -63,7 +73,7 @@ def keystroke_savings_rate(test_pairs: list[tuple[str, str]], model: CharNGramLM
             keystrokes_with = len(true_word)
         total_without += keystrokes_without
         total_with += keystrokes_with
-        
+
     if total_without == 0:
         return 0.0
     return 1.0 - (total_with / total_without)

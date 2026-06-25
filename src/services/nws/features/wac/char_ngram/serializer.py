@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 def save_model(model_data: dict[int, Any], path: str | Path) -> None:
     """Save the smoothed model to a gzipped msgpack file.
-    
+
     Converts integer keys and tuple contexts to strings to comply with
     msgpack key requirements, and for compact storage.
-    
+
     Args:
         model_data: The nested dictionary produced by KneserNeySmoother.
         path: Path to save the `.msgpack.gz` file.
@@ -28,7 +28,7 @@ def save_model(model_data: dict[int, Any], path: str | Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     serializable_data: dict[str, Any] = {}
-    
+
     for n, order_data in model_data.items():
         if n == 1:
             serializable_data[str(n)] = order_data
@@ -50,24 +50,24 @@ def save_model(model_data: dict[int, Any], path: str | Path) -> None:
 
 def load_model(path: str | Path) -> dict[int, Any]:
     """Load the smoothed model from a gzipped msgpack file.
-    
+
     Reconstructs the original dictionary structure, parsing context strings
     back into tuples for the runtime model to use.
-    
+
     Args:
         path: Path to the `.msgpack.gz` file.
-        
+
     Returns:
         The model data dictionary, formatted exactly as smoother.build_model() outputs.
     """
     path = Path(path)
     logger.info(f"Loading character n-gram model from {path}...")
-    
+
     with gzip.open(path, "rb") as f:
         packed = f.read()
-        
+
     serializable_data = msgpack.unpackb(packed, raw=False)
-    
+
     model_data: dict[int, Any] = {}
     for n_str, order_data in serializable_data.items():
         n = int(n_str)
@@ -81,6 +81,6 @@ def load_model(path: str | Path) -> dict[int, Any]:
                 context = tuple(ctx_str)
                 restored_order_data[context] = data
             model_data[n] = restored_order_data
-            
+
     logger.info("Model loaded successfully.")
     return model_data
