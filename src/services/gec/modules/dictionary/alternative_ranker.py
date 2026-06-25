@@ -96,7 +96,7 @@ class AlternativeRanker:
 
             cand_len = len(cand.form)
             len_delta = abs(cand_len - orig_len)
-            length_score = 1.0 - (len_delta / max_len_delta)
+            length_score = max(0.0, 1.0 - (len_delta / max_len_delta))
 
             morphological_bonus = self._calculate_morphological_bonus(cand, {})
 
