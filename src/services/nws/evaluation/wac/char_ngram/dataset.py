@@ -29,6 +29,33 @@ def get_eval_stream(
 ) -> Iterator[str]:
     """Get a streaming iterator over the dataset split."""
     
+    if dataset_name == "lstm":
+        logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
+        from pathlib import Path
+        current_dir = Path(__file__).resolve().parent
+        while current_dir.name and not (current_dir / 'pyproject.toml').exists():
+            current_dir = current_dir.parent
+            
+        data_file = current_dir / f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt"
+        if not data_file.exists():
+            raise FileNotFoundError(f"LSTM corpus not found at {data_file}")
+            
+        chars_processed = 0
+        with open(data_file, "r", encoding="utf-8") as f:
+            for line in f:
+                raw_text = line.strip()
+                if not raw_text:
+                    continue
+                clean_text = clean_text_for_lm(raw_text)
+                if not clean_text:
+                    continue
+                clean_text = " " + clean_text + " "
+                yield clean_text
+                chars_processed += len(clean_text)
+                if limit_chars is not None and chars_processed >= limit_chars:
+                    break
+        return
+    
     logger.info(f"Connecting to HuggingFace to stream: {dataset_name}")
     dataset = load_dataset(dataset_name, split="train", streaming=True)
     
@@ -76,17 +103,22 @@ def get_eval_stream(
             break
 
 
-def generate_prefix_pairs(text: str) -> list[tuple[str, str]]:
-    """Implements Format B: Generate (prefix, word) pairs.
+def generate_prefix_pairs(text: str) -> list[tuple[str, str, int]]:
+    """Implements Format B: Generate (prefix, word, prefix_len) pairs.
     
-    For every word, generates all prefix lengths from 1 up to (word length - 1).
+    Includes preceding context words so the CharNGramLM can score based on context history.
     """
     words = text.split()
     pairs = []
-    for word in words:
+    for i, word in enumerate(words):
         if len(word) < 2:
             continue
+            
+        context_words = words[max(0, i-3):i]
+        context_str = " ".join(context_words) + " " if context_words else ""
+        
         for prefix_len in range(1, len(word)):
-            prefix = word[:prefix_len]
-            pairs.append((prefix, word))
+            word_prefix = word[:prefix_len]
+            full_prefix = context_str + word_prefix
+            pairs.append((full_prefix, word, prefix_len))
     return pairs

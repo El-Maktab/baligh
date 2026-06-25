@@ -108,33 +108,70 @@ class LSTMNWPModel:
             
         return -loss.item()  # score_sequence returns positive log_prob, loss is negative log_prob
 
-    def predict_next(self, context_tokens: list[str], top_k: int = 5, debug: bool = False) -> list[str]:
-        """Predict the top-k next words (used by evaluator or standalone).
-        Note: The true Hybrid Predictor will handle the subword decoding logic internally.
-        This is a fallback baseline subword decoding.
-        """
-        context_text = " ".join(context_tokens)
-        context_ids = self.sp.encode(context_text, out_type=int)[-32:]
-        if not context_ids:
+    def predict_next_word_beam(self, text: str, top_k: int = 5, beam_width: int = 10) -> List[Tuple[str, float]]:
+        """Predict the top-k next words using autoregressive beam search."""
+        import re
+        ARABIC_CHARS = re.compile(r'[\u0600-\u06FF\u0750-\u077F]')
+        
+        ctx_ids_list = self.sp.encode(text, out_type=int)[-32:]
+        if not ctx_ids_list:
             return []
             
-        with torch.no_grad():
-            x = torch.tensor([context_ids], dtype=torch.long, device=self.device)
-            logits, _ = self.model(x)
-            
-            next_token_logits = logits[0, -1, :]
-            probs = torch.softmax(next_token_logits, dim=-1)
-            
-            top_probs, top_indices = torch.topk(probs, k=top_k*2)
-            
-        results = []
-        for idx in top_indices:
-            idx_val = idx.item()
-            if idx_val in (PAD_ID, UNK_ID, BOS_ID, EOS_ID):
-                continue
-            word = self.sp.decode([idx_val])
-            if word and word not in results:
-                results.append(word)
-                if len(results) >= top_k:
-                    break
-        return results
+        ctx_ids = torch.tensor([ctx_ids_list], dtype=torch.long, device=self.device)
+        
+        # Each beam: (cumulative_log_prob, token_ids_generated_so_far)
+        beams = [(0.0, [])]
+        completed = []  # (score, word_string)
+
+        for step in range(8):  # max tokens per word
+            all_candidates = []
+
+            for cum_score, token_ids in beams:
+                # Build context with tokens generated so far
+                if token_ids:
+                    extension = torch.tensor([token_ids], device=self.device)
+                    new_ctx = torch.cat([ctx_ids, extension], dim=1)
+                else:
+                    new_ctx = ctx_ids
+
+                with torch.no_grad():
+                    logits, _ = self.model(new_ctx)
+                    probs = torch.softmax(logits[0, -1, :], dim=-1)
+                    
+                top_probs, top_ids = torch.topk(probs, k=beam_width)
+
+                for prob, tid in zip(top_probs.tolist(), top_ids.tolist()):
+                    if tid in (PAD_ID, UNK_ID, BOS_ID):
+                        continue
+                        
+                    piece = self.sp.id_to_piece(tid)
+                    new_token_ids = token_ids + [tid]
+                    # Length-normalized cumulative score
+                    new_score = (cum_score + math.log(prob + 1e-10)) / len(new_token_ids)
+
+                    # If next piece starts a new word → current sequence is complete
+                    if step > 0 and (piece.startswith('\u2581') or tid == EOS_ID):
+                        decoded = self.sp.decode(token_ids).strip()
+                        if decoded and ARABIC_CHARS.search(decoded):
+                            completed.append((new_score, decoded))
+                    else:
+                        all_candidates.append((new_score, new_token_ids))
+
+            if not all_candidates:
+                break
+
+            # Global pruning — all beams compete together
+            beams = sorted(all_candidates, key=lambda x: x[0], reverse=True)[:beam_width]
+
+            if len(completed) >= top_k * 3:
+                break
+
+        # Deduplicate and return top-k unique words
+        seen = {}
+        for score, word in sorted(completed, reverse=True):
+            if word not in seen:
+                seen[word] = score
+            if len(seen) >= top_k:
+                break
+
+        return [(word, score) for word, score in seen.items()]

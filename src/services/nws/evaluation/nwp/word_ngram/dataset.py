@@ -77,6 +77,25 @@ def get_eval_stream(
                     yield line
         return
 
+    # Handle LSTM Corpus
+    if dataset_name == "lstm":
+        logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
+        
+        current_dir = Path(__file__).resolve().parent
+        while current_dir.name and not (current_dir / 'pyproject.toml').exists():
+            current_dir = current_dir.parent
+            
+        data_file = current_dir / f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt"
+        
+        if not data_file.exists():
+            raise FileNotFoundError(f"LSTM corpus not found at {data_file}")
+            
+        with open(data_file, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    yield line
+        return
+
     # Handle HuggingFace Datasets
     logger.info(f"Connecting to HuggingFace to stream: {dataset_name} for {split_type} split...")
     dataset = load_dataset(dataset_name, split="train", streaming=True)

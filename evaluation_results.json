@@ -1,0 +1,53 @@
+{
+  "project": "Baligh",
+  "dataset": "lstm_corpus (arwiki + MAD)",
+  "test_split_words": 900000,
+  "tasks": {
+    "next_word_suggestion": {
+      "description": "Predicting the complete next word given a multi-word context (Full-Word Autocomplete).",
+      "models": {
+        "standalone_lstm": {
+          "description": "Pure Neural Network autoregressive subword-to-full-word beam search.",
+          "metrics": {
+            "top_1_accuracy": 0.1088,
+            "top_3_accuracy": 0.1756,
+            "top_5_accuracy": 0.2152
+          }
+        },
+        "hybrid_predictor": {
+          "description": "Confidence-Weighted Blending (alpha=0.75) between LSTM and Word N-Gram.",
+          "metrics": {
+            "top_1_accuracy": 0.1140,
+            "top_3_accuracy": 0.1820,
+            "top_5_accuracy": 0.2300
+          }
+        }
+      }
+    },
+    "word_auto_completion": {
+      "description": "Predicting the completion of a partially typed word dynamically character-by-character.",
+      "models": {
+        "character_ngram": {
+          "description": "Context-aware Character N-Gram evaluating preceding context words and typing prefixes.",
+          "metrics": {
+            "top_1_accuracy": 0.3000,
+            "top_3_accuracy": 0.4080,
+            "top_5_accuracy": 0.4640,
+            "mean_reciprocal_rank_mrr": 0.3699,
+            "keystroke_savings_rate_ksr": 0.0740
+          },
+          "breakdown_by_typed_prefix_length": {
+            "1": {"top_5_accuracy": 0.1176},
+            "2": {"top_5_accuracy": 0.3279},
+            "3": {"top_5_accuracy": 0.5400},
+            "4": {"top_5_accuracy": 0.7750},
+            "5": {"top_5_accuracy": 0.9444},
+            "6": {"top_5_accuracy": 1.0000},
+            "7": {"top_5_accuracy": 1.0000},
+            "8": {"top_5_accuracy": 1.0000}
+          }
+        }
+      }
+    }
+  }
+}

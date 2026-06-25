@@ -56,7 +56,7 @@ def main():
         sys.exit(1)
         
     # Cap test pairs for a reliable mathematical evaluation
-    max_eval_pairs = 200
+    max_eval_pairs = 250
     if len(test_pairs) > max_eval_pairs:
         logger.info(f"Capping evaluation to {max_eval_pairs} pairs for speed...")
         test_pairs = test_pairs[:max_eval_pairs]
@@ -69,8 +69,8 @@ def main():
     
     pairs_by_len = defaultdict(list)
     
-    for prefix, true_word in tqdm(test_pairs, desc="Evaluating"):
-        predictions = model.predict(prefix, top_k=10)
+    for full_prefix, true_word, prefix_len in tqdm(test_pairs, desc="Evaluating"):
+        predictions = model.predict(full_prefix, top_k=10)
         
         # Accuracy
         if true_word in predictions[:1]: hits_1 += 1
@@ -86,14 +86,14 @@ def main():
         ksr_predictions = predictions[:args.top_k]
         ksr_without = len(true_word)
         if true_word in ksr_predictions:
-            ksr_with = len(prefix) + 1
+            ksr_with = prefix_len + 1
         else:
             ksr_with = len(true_word)
         ksr_total_without += ksr_without
         ksr_total_with += ksr_with
         
         # Record for breakdown
-        pairs_by_len[len(prefix)].append((true_word, predictions[:5]))
+        pairs_by_len[prefix_len].append((true_word, predictions[:5]))
         
     n_pairs = len(test_pairs)
     top_1 = hits_1 / n_pairs if n_pairs else 0.0

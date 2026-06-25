@@ -20,40 +20,19 @@ class HybridArabicPredictor:
         if not context_ids:
             return []
 
-        # 2. Run a forward pass through the LSTM
-        with torch.no_grad():
-            x = torch.tensor([context_ids], dtype=torch.long, device=self.neural.device)
-            logits, _ = self.neural.model(x)
-            
-            next_token_logits = logits[0, -1, :]
-            probs = torch.softmax(next_token_logits, dim=-1)
-
-        # Extract top candidates from neural
-        top_neural_probs, top_neural_indices = torch.topk(probs, k=top_k * 5)
+        # 2. Run the LSTM Autoregressive Beam Search to extract top-K full words
+        neural_results = self.neural.predict_next_word_beam(context_text, top_k=top_k * 2)
         
         neural_candidates = {}
-        max_neural_prob = top_neural_probs[0].item()
-
-        # 3. Decode the top-K subword candidates back to full words
-        for p, idx in zip(top_neural_probs, top_neural_indices):
-            idx_val = idx.item()
-            if idx_val in (PAD_ID, UNK_ID, BOS_ID, EOS_ID):
-                continue
-                
-            prob = p.item()
+        for word, score in neural_results:
+            # Convert length-normalized log probability back to raw probability for blending
+            neural_candidates[word] = math.exp(score)
             
-            # Decode the context plus this new token to handle subword boundaries correctly
-            decoded_full = self.neural.sp.decode(context_ids + [idx_val])
-            words = decoded_full.split()
-            if not words:
-                continue
-            word = words[-1].strip()
-            
-            if word:
-                if word not in neural_candidates:
-                    neural_candidates[word] = prob
-                else:
-                    neural_candidates[word] += prob
+        # The max_neural_prob is used for alpha blending scaling. We use the top word's prob
+        if neural_candidates:
+            max_neural_prob = max(neural_candidates.values())
+        else:
+            max_neural_prob = 0.0
 
         # 4. Query the Kneser-Ney model with the last 2 full words
         # Clean the context to match the N-Gram dictionary format

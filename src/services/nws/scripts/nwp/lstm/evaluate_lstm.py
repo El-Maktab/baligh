@@ -1,141 +1,110 @@
-#!/usr/bin/env python3
+import os
 import json
-import math
-from pathlib import Path
-from tqdm.auto import tqdm
-
+import random
 import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-import sentencepiece as spm
+from tqdm import tqdm
+from loguru import logger
 
-from src.services.nws.features.nwp.lstm.model import ArabicLSTMLM, PAD_ID
-from src.services.nws.scripts.nwp.lstm.train_lstm import ArabicLMDataset, CFG
+from src.services.nws.features.nwp.lstm.model import LSTMNWPModel
+from src.services.nws.scripts.nwp.lstm.fetch_wiki_mad import normalise_arabic
 
-@torch.no_grad()
-def evaluate(model, loader, criterion, device):
-    model.eval()
-    total_loss, total_tokens = 0.0, 0
-    hidden = None
-
-    for x, y in tqdm(loader, desc="Evaluating Perplexity"):
-        x, y = x.to(device), y.to(device)
-        batch_size = x.size(0)
-
-        if hidden is None or hidden[0].size(1) != batch_size:
-            hidden = model.init_hidden(batch_size)
-        hidden = (hidden[0].detach(), hidden[1].detach())
-
-        logits, hidden = model(x, hidden)
-        loss = criterion(logits.view(-1, CFG["vocab_size"]), y.view(-1))
-
-        non_pad = (y.view(-1) != PAD_ID).sum().item()
-        total_loss += loss.item() * non_pad
-        total_tokens += non_pad
-
-    avg_loss = total_loss / max(total_tokens, 1)
-    return avg_loss, math.exp(avg_loss)
-
-@torch.no_grad()
-def compute_topk_accuracy(model, loader, device, k: int = 5, max_batches: int = 200):
-    model.eval()
-    correct_topk = {1: 0, 3: 0, 5: 0}
-    total_tokens = 0
-    hidden = None
-
-    for i, (x, y) in enumerate(tqdm(loader, desc="Evaluating Top-K Accuracy")):
-        if i >= max_batches:
-            break
-            
-        x, y = x.to(device), y.to(device)
-        batch_size = x.size(0)
-
-        if hidden is None or hidden[0].size(1) != batch_size:
-            hidden = model.init_hidden(batch_size)
-        hidden = (hidden[0].detach(), hidden[1].detach())
-
-        logits, hidden = model(x, hidden)
-        
-        # Flatten for top-k
-        logits_flat = logits.view(-1, CFG["vocab_size"])
-        targets_flat = y.view(-1)
-        
-        # Filter padding
-        mask = targets_flat != PAD_ID
-        logits_valid = logits_flat[mask]
-        targets_valid = targets_flat[mask]
-        
-        total_tokens += targets_valid.size(0)
-        
-        # Get top-5 predictions
-        _, top5_preds = torch.topk(logits_valid, 5, dim=-1)
-        
-        # Match against targets
-        for idx in range(targets_valid.size(0)):
-            target = targets_valid[idx].item()
-            preds = top5_preds[idx].tolist()
-            
-            if target == preds[0]:
-                correct_topk[1] += 1
-            if target in preds[:3]:
-                correct_topk[3] += 1
-            if target in preds[:5]:
-                correct_topk[5] += 1
-
-    return {k_val: correct_topk[k_val] / total_tokens for k_val in correct_topk}
-
-def run_evaluation():
-    base_dir = "src/services/nws/data"
-    corpus_dir = f"{base_dir}/lstm_corpus"
+def run_lstm_evaluation(num_samples: int = 2500, seed: int = 42):
+    """
+    Evaluates the LSTMNWPModel on a random sample of word-level contexts
+    from the test set using full-word autoregressive beam search.
+    """
+    random.seed(seed)
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
+    logger.info(f"Using device: {device}")
     
-    print("Loading Tokenizer...")
-    sp = spm.SentencePieceProcessor(model_file=f"{base_dir}/arabic_bpe.model")
+    base_dir = "src/services/nws/data"
+    test_file = f"{base_dir}/lstm_corpus/corpus_test.txt"
     
-    print("Loading Test Dataset...")
-    test_ds = ArabicLMDataset(f"{corpus_dir}/corpus_test.txt", sp, CFG["seq_len"])
-    test_loader = DataLoader(test_ds, batch_size=CFG["batch_size"], shuffle=False)
+    # Load the LSTM Model
+    logger.info("Loading LSTM Model...")
+    neural_model = LSTMNWPModel(
+        model_path=f"{base_dir}/best_model.pt",
+        sp_model_path=f"{base_dir}/arabic_bpe.model"
+    )
     
-    print("Loading LSTM Model...")
-    model = ArabicLSTMLM(
-        vocab_size=CFG["vocab_size"],
-        embed_dim=CFG["embed_dim"],
-        hidden_size=CFG["hidden_size"],
-        num_layers=CFG["num_layers"],
-        dropout=0.0
-    ).to(device)
+    # Prepare Context-Target pairs from Test Set
+    logger.info("Extracting context-target pairs from test set...")
+    pairs = []
     
-    ckpt = torch.load(f"{base_dir}/best_model.pt", map_location=device, weights_only=False)
-    if "model_state_dict" in ckpt:
-        model.load_state_dict(ckpt["model_state_dict"])
-    else:
-        model.load_state_dict(ckpt)
-    criterion = nn.CrossEntropyLoss(ignore_index=PAD_ID)
+    with open(test_file, "r", encoding="utf-8") as f:
+        for line in f:
+            words = line.strip().split()
+            # We need at least 2 words to form a context + target
+            if len(words) < 2:
+                continue
+                
+            for i in range(1, len(words)):
+                context = " ".join(words[:i]) + " "
+                target = words[i]
+                
+                # Exclude boundary markers if they bleed into target
+                if target in ("<s>", "</s>"):
+                    continue
+                    
+                pairs.append((context, target))
+                
+    logger.info(f"Total word-level pairs available: {len(pairs)}")
     
-    print("\n--- Starting Evaluation ---")
-    loss, ppl = evaluate(model, test_loader, criterion, device)
-    print(f"Test Loss: {loss:.4f} | Test Perplexity: {ppl:.2f}")
+    # Randomly sample to keep evaluation time reasonable
+    sampled_pairs = random.sample(pairs, min(num_samples, len(pairs)))
+    logger.info(f"Evaluating LSTM Predictor on {len(sampled_pairs)} sampled contexts...")
     
-    topk_acc = compute_topk_accuracy(model, test_loader, device)
-    print(f"Top-1 Accuracy: {topk_acc[1]:.2%}")
-    print(f"Top-3 Accuracy: {topk_acc[3]:.2%}")
-    print(f"Top-5 Accuracy: {topk_acc[5]:.2%}")
+    # Metrics
+    top_1 = 0
+    top_3 = 0
+    top_5 = 0
     
-    results = {
-        "perplexity": ppl,
-        "top_1_accuracy": topk_acc[1],
-        "top_3_accuracy": topk_acc[3],
-        "top_5_accuracy": topk_acc[5]
+    # Run Evaluation Loop
+    for context, target in tqdm(sampled_pairs, desc="Evaluating LSTM"):
+        # Normalise the context string but PRESERVE the trailing space!
+        norm_context = normalise_arabic(context)
+        if context.endswith(" "):
+            norm_context += " "
+            
+        norm_target = normalise_arabic(target)
+        
+        predictions = neural_model.predict_next_word_beam(norm_context, top_k=5)
+        pred_words = [word for word, score in predictions]
+        
+        if len(pred_words) >= 1 and pred_words[0] == norm_target:
+            top_1 += 1
+        if norm_target in pred_words[:3]:
+            top_3 += 1
+        if norm_target in pred_words[:5]:
+            top_5 += 1
+            
+    # Calculate Percentages
+    acc_1 = top_1 / len(sampled_pairs)
+    acc_3 = top_3 / len(sampled_pairs)
+    acc_5 = top_5 / len(sampled_pairs)
+    
+    print("\n--- LSTM Full-Word Evaluation Results ---")
+    print(f"Top-1 Word Accuracy: {acc_1:.2%}")
+    print(f"Top-3 Word Accuracy: {acc_3:.2%}")
+    print(f"Top-5 Word Accuracy: {acc_5:.2%}")
+    
+    # Save Report
+    report_dir = "artifacts/nws/evaluation/nwp"
+    os.makedirs(report_dir, exist_ok=True)
+    report_path = os.path.join(report_dir, "lstm_report.json")
+    
+    report = {
+        "samples_evaluated": len(sampled_pairs),
+        "top_1_accuracy": acc_1,
+        "top_3_accuracy": acc_3,
+        "top_5_accuracy": acc_5,
     }
     
-    out_path = Path("artifacts/nws/evaluation/nwp")
-    out_path.mkdir(parents=True, exist_ok=True)
-    with open(out_path / "lstm_report.json", "w") as f:
-        json.dump(results, f, indent=4)
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=4)
         
-    print(f"\nEvaluation complete. Report saved to {out_path / 'lstm_report.json'}")
+    print(f"Report saved to {report_path}")
 
 if __name__ == "__main__":
-    run_evaluation()
+    run_lstm_evaluation(num_samples=2500)
