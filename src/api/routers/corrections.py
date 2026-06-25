@@ -5,7 +5,7 @@ It updates the draft body and correction status via the repository.
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from src.api.services.draft_repo import apply_correction, get_draft, ignore_correction
+from src.api.services.drafts import apply_correction, get_draft, ignore_correction
 
 router = APIRouter()
 

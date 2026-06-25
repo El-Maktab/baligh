@@ -17,11 +17,17 @@ from .routers import analysis, corrections, drafts, suggestions, tashkeel
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan manager for the FastAPI application."""
-    app.state.mongo_client = AsyncIOMotorClient(settings.mongodb_uri)
+    client = AsyncIOMotorClient(settings.mongodb_uri)
+    db = client.get_default_database()
 
+    if "drafts" not in await db.list_collection_names():
+        await db.create_collection("drafts")
+
+    await db["drafts"].create_index("id", unique=True)
+    await db["drafts"].create_index("revision")
+    app.state.mongo_client = client
     yield
-
-    app.state.mongo_client.close()
+    client.close()
 
 
 app = FastAPI(

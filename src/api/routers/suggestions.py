@@ -5,7 +5,7 @@ It receives a request payload, runs the NWS service and returns the suggestions.
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from src.api.services.draft_repo import get_draft
+from src.api.services.drafts import get_draft
 from src.api.services.nws import run as nws_run
 from src.services.nws.schemas import Suggestion
 

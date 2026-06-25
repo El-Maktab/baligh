@@ -7,7 +7,7 @@ diacritics to the selected fragment.
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from src.api.services.draft_repo import get_draft, update_draft
+from src.api.services.drafts import get_draft, update_draft
 
 router = APIRouter()
 

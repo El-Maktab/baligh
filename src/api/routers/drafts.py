@@ -5,7 +5,7 @@ Provides endpoints to list, create, retrieve, and update drafts.
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
-from src.api.services.draft_repo import (
+from src.api.services.drafts import (
     create_draft,
     get_draft,
     list_drafts,
