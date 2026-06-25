@@ -1,7 +1,7 @@
 """Ranking Engine for grammatical correction candidates."""
 
 from src.core.utils.arabic import strip_diacritics
-from src.services.gec.schemas import OntologyCandidateEdit
+from src.services.gec.schemas import CandidateEdit
 
 
 def levenshtein_distance(s1: str, s2: str) -> int:
@@ -12,7 +12,7 @@ def levenshtein_distance(s1: str, s2: str) -> int:
     if len(s2) == 0:
         return len(s1)
 
-    previous_row = range(len(s2) + 1)
+    previous_row = list(range(len(s2) + 1))
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
@@ -30,13 +30,13 @@ class RankingEngine:
 
     def rank_candidates(
         self,
-        candidates: list[OntologyCandidateEdit],
+        candidates: list[CandidateEdit],
         original_token: str,
-    ) -> list[OntologyCandidateEdit]:
+    ) -> list[CandidateEdit]:
         """Ranks candidates using composite scoring and updates their confidence/ranks.
 
         Args:
-            candidates: List of proposed OntologyCandidateEdit objects.
+            candidates: List of proposed CandidateEdit objects.
             original_token: The original word before correction.
 
         Returns:
@@ -86,13 +86,13 @@ class RankingEngine:
 
     def rank_complete_sentences(
         self,
-        candidates: list[OntologyCandidateEdit],
+        candidates: list[CandidateEdit],
         original_sentence: str,
-    ) -> list[OntologyCandidateEdit]:
+    ) -> list[CandidateEdit]:
         """Ranks complete sentence candidates by Levenshtein distance.
 
         Args:
-            candidates: List of complete sentence OntologyCandidateEdit objects.
+            candidates: List of complete sentence CandidateEdit objects.
             original_sentence: The original input sentence.
 
         Returns:
@@ -124,7 +124,7 @@ class RankingEngine:
 
         # Assign ranks and update confidence
         ranked = []
-        for rank, (candidate, score) in enumerate(scored_candidates, start=1):
+        for candidate, score in scored_candidates:
             # Blend the score with original confidence
             candidate.edit_confidence = (score * 0.7) + (
                 candidate.edit_confidence * 0.3

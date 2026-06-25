@@ -1,11 +1,14 @@
+"""Tests for the ranking engine."""
+
 from src.services.gec.modules.ontology.ranking_engine import (
     RankingEngine,
     levenshtein_distance,
 )
-from src.services.gec.schemas import OntologyCandidateEdit
+from src.services.gec.schemas import CandidateEdit
 
 
 def test_levenshtein_distance():
+    """Test the Levenshtein distance function."""
     assert levenshtein_distance("كتب", "كتب") == 0
     assert levenshtein_distance("كتب", "كتبوا") == 2
     assert levenshtein_distance("كتبوا", "كتب") == 2
@@ -13,11 +16,12 @@ def test_levenshtein_distance():
 
 
 def test_ranking_engine():
+    """Test the ranking engine."""
     ranker = RankingEngine()
 
     # We have an original token: "كتبوا"
     # And candidate corrections: "كتب", "يكتب"
-    cand1 = OntologyCandidateEdit(
+    cand1 = CandidateEdit(
         span=(0, 5),
         token_refs=[0],
         correction="كتب",
@@ -25,7 +29,7 @@ def test_ranking_engine():
         explanation="test",
     )
 
-    cand2 = OntologyCandidateEdit(
+    cand2 = CandidateEdit(
         span=(0, 5),
         token_refs=[0],
         correction="يكتب",
@@ -36,7 +40,8 @@ def test_ranking_engine():
     ranked = ranker.rank_candidates([cand2, cand1], "كتبوا")
 
     assert len(ranked) == 2
-    # cand1 ("كتب") has smaller edit distance to "كتبوا" than cand2 ("يكتب"), so it should rank higher
+    # cand1 ("كتب") has smaller edit distance to "كتبوا" than cand2 ("يكتب"),
+    # so it should rank higher
     assert ranked[0].correction == "كتب"
     assert ranked[1].correction == "يكتب"
 
@@ -48,7 +53,7 @@ def test_rank_complete_sentences():
     original = "كتبوا المهندسون"
 
     # Candidate 1: Corrected sentence (closer to original)
-    cand1 = OntologyCandidateEdit(
+    cand1 = CandidateEdit(
         span=(0, 15),
         token_refs=[0, 1],
         correction="كتب المهندسون",
@@ -57,7 +62,7 @@ def test_rank_complete_sentences():
     )
 
     # Candidate 2: More different sentence
-    cand2 = OntologyCandidateEdit(
+    cand2 = CandidateEdit(
         span=(0, 15),
         token_refs=[0, 1],
         correction="كتب المهندس",

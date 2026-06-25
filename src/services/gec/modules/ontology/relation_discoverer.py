@@ -117,7 +117,7 @@ class RelationDiscoverer:
 
             # Keep only best priority relations for each pair
             filtered = []
-            for pair, rels in pair_best.items():
+            for rels in pair_best.values():
                 rels.sort(key=lambda r: r.priority)
                 best_priority = rels[0].priority
                 filtered.extend([r for r in rels if r.priority == best_priority])
@@ -286,7 +286,7 @@ class RelationDiscoverer:
 
             # Keep only best priority relations for each pair
             filtered = []
-            for pair, rels in pair_best.items():
+            for rels in pair_best.values():
                 rels.sort(key=lambda r: r.priority)
                 best_priority = rels[0].priority
                 filtered.extend([r for r in rels if r.priority == best_priority])

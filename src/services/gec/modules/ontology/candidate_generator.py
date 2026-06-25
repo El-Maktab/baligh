@@ -11,7 +11,7 @@ from src.core.utils.arabic import strip_diacritics
 from src.core.utils.features import get_disambiguated_analysis
 from src.services.gec.features.camel_adapter import normalize_camel
 from src.services.gec.modules.dictionary.morph_generator import MorphologicalGenerator
-from src.services.gec.schemas import OntologyCandidateEdit
+from src.services.gec.schemas import CandidateEdit
 from src.services.ged.schemas import ErrorCategory, ErrorSpan
 
 from .constraint_validator import ConstraintValidator, ConstraintViolation
@@ -46,7 +46,7 @@ class CandidateGenerator:
         tokens: list[Token],
         spans: list[ErrorSpan],
         morph_features: list[list[MorphAnalysis]],
-    ) -> list[OntologyCandidateEdit]:
+    ) -> list[CandidateEdit]:
         """Generates full sentence correction candidates.
 
         Following the paper methodology:
@@ -62,7 +62,7 @@ class CandidateGenerator:
             morph_features: Morphological features for each token.
 
         Returns:
-            List of OntologyCandidateEdit objects, each containing a full sentence correction.
+            List of CandidateEdit objects, each containing a full sentence correction.
         """
         logger.info("tokens={} spans={}", len(tokens), len(spans))
 
@@ -142,7 +142,6 @@ class CandidateGenerator:
             original_sentence,
             complete_sentences,
             token_explanations,
-            ged_syntax_indices,
         )
 
         logger.info("Generated {} complete sentence candidates", len(ranked_edits))
@@ -250,7 +249,7 @@ class CandidateGenerator:
         if all_alternatives:
             for combination in itertools.product(*all_alternatives):
                 # Build sentence with this combination of alternatives
-                token_forms = list(zip(token_indices, combination))
+                token_forms = list(zip(token_indices, combination, strict=False))
                 sentence = self._build_sentence(tokens, token_forms)
 
                 # Calculate minimum confidence across changes
@@ -304,8 +303,7 @@ class CandidateGenerator:
         original_sentence: str,
         complete_sentences: list[dict],
         token_explanations: dict[int, str],
-        ged_syntax_indices: dict[int, float],
-    ) -> list[OntologyCandidateEdit]:
+    ) -> list[CandidateEdit]:
         """Rank complete sentences and convert to OntologyCandidateEdit objects."""
         if not complete_sentences:
             return []
@@ -326,13 +324,12 @@ class CandidateGenerator:
                 first_tidx = token_forms[0][0]
                 explanation = token_explanations.get(first_tidx)
 
-            edit = OntologyCandidateEdit(
+            edit = CandidateEdit(
                 span=full_span,
                 token_refs=all_token_refs,
                 correction=sentence,
                 edit_confidence=confidence,
                 explanation=explanation,
-                alternatives=None,  # Will be populated by ranking if needed
             )
             edits.append(edit)
 

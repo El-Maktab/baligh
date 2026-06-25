@@ -10,7 +10,7 @@ from pyarabic.araby import normalize_hamza
 _DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "dictionary"
 _DICT_DB = _DATA_DIR / "arabicdictionary.sqlite"
 _FREQ_DB = _DATA_DIR / "wordfreq.sqlite"
-_STOP_WORDS = _DATA_DIR / "stop_words.txt"
+_STOP_WORDS = _DATA_DIR / "stopwords.txt"
 
 
 def _open_db(path: Path) -> sqlite3.Connection:
@@ -19,6 +19,7 @@ def _open_db(path: Path) -> sqlite3.Connection:
     conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def _open_file(path: Path) -> frozenset[str]:
     """Open a text file and return a frozenset of its lines."""

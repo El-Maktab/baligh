@@ -1,3 +1,5 @@
+"""Explaination generator for ontology candidates."""
+
 from pathlib import Path
 from typing import Any
 

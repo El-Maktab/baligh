@@ -389,7 +389,7 @@ def test_unflagged_subject_verb_mismatch():
 
     edit = result.candidate_edits[0]
     assert "كتب" in edit.correction
-    # Confidence is blended by ranking, just check it's in reasonable range for unflagged
+    # Confidence is blended by ranking, just check it's in reasonable range
     assert 0.3 <= edit.edit_confidence <= 0.6
 
 

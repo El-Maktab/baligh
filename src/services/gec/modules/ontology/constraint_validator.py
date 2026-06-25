@@ -272,7 +272,8 @@ class ConstraintValidator:
             return violations
 
         elif relation.relation_name == "نعت":
-            # For نعت (adjective), source is the noun (المنعوت), target is the adjective (النعت)
+            # For نعت (adjective):
+            # source is the noun (المنعوت), target is the adjective (النعت)
             # The adjective must agree with the noun
             if target_internal.pos != "adj":
                 return []

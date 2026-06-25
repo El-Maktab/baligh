@@ -39,6 +39,7 @@ class CandidateEdit(BaseModel):
     explanation: str | None = None
     alternatives: list[str] | None = None
 
+
 class EditOperation(StrEnum):
     """Operation types for sequence tagging edits."""
 

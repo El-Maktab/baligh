@@ -1,3 +1,5 @@
+"""Tests for the relation discoverer."""
+
 from unittest.mock import MagicMock
 
 from src.core.schemas import MorphAnalysis
@@ -5,16 +7,14 @@ from src.services.gec.modules.ontology.relation_discoverer import RelationDiscov
 
 
 def test_relation_discoverer_get_classes():
+    """Test the _get_ontology_classes method."""
     discoverer = RelationDiscoverer(loader=MagicMock())
 
     # Verb
     analysis = MorphAnalysis(
         pos="verb",
-        stem="كتب",
         lemma="كتب",
-        root="كتب",
         is_disambiguated=True,
-        confidence=0.9,
         token_index=0,
     )
     classes = discoverer._get_ontology_classes(analysis)
@@ -24,11 +24,8 @@ def test_relation_discoverer_get_classes():
     analysis = MorphAnalysis(
         pos="noun",
         case="nominative",
-        stem="مهندس",
         lemma="مهندس",
-        root="هندس",
         is_disambiguated=True,
-        confidence=0.9,
         token_index=0,
     )
     classes = discoverer._get_ontology_classes(analysis)
@@ -37,6 +34,7 @@ def test_relation_discoverer_get_classes():
 
 
 def test_relation_discoverer_check_pair():
+    """Test the _check_pair method."""
     loader = MagicMock()
     # Mock the query result returning relation_uri, relation_name, domain, range
     loader.graph.query.return_value = [
@@ -51,22 +49,16 @@ def test_relation_discoverer_check_pair():
     # Verb
     verb = MorphAnalysis(
         pos="verb",
-        stem="كتب",
         lemma="كتب",
-        root="كتب",
         is_disambiguated=True,
-        confidence=0.9,
         token_index=0,
     )
     # Noun
     noun = MorphAnalysis(
         pos="noun",
         case="nominative",
-        stem="مهندس",
         lemma="مهندس",
-        root="هندس",
         is_disambiguated=True,
-        confidence=0.9,
         token_index=1,
     )
 
