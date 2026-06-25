@@ -26,7 +26,7 @@ class DatasetExporter:
         ) as file:
             for example in examples:
                 record = {
-                    "tokens": example.tokens,
+                    "subwords": example.subwords,
                     "labels": example.labels,
                 }
                 if example.labels_star is not None:

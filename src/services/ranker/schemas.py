@@ -1,47 +1,46 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import List, Tuple, Dict, Any
-
 from pydantic import BaseModel
 
+from src.core.schemas import Token
 from src.services.ged.schemas import ErrorSpan
-from src.services.preprocessing.schemas import Token
-from src.services.gec.schemas import GECOutput, GECUnionCandidateEdit, ModuleName
+from src.services.gec.schemas import (
+    GECUnionCandidateEdit,
+    ModuleName,
+    ModuleResult,
+)
 
 
 class ScoredCandidate(BaseModel):
     candidate: GECUnionCandidateEdit
     module_name: ModuleName
-    score: float
-    
-@dataclass
-class RankedEdit:
+    final_score: float
+    rule_breakdown: dict[str, float] = {}
+
+
+class RankedEdit(BaseModel):
     error_id: int
-    span: Tuple[int, int]
-    token_refs: List[int]
+    span: tuple[int, int]
+    token_refs: list[int]
     correction: str
     edit_operation: str
     selected_module: str
     final_score: float
 
 
-@dataclass
-class RankingMetadata:
+class RankingMetadata(BaseModel):
     global_confidence: float
-    module_utilization: Dict[str, int]
+    module_utilization: dict[str, int]
 
 
-@dataclass
-class RankerInput:
+class RankerInput(BaseModel):
     text: str
-    tokens: List[Token]
-    errors_span: List[ErrorSpan]
-    errors_corrections: GECOutput
+    tokens: list[Token]
+    errors_span: list[ErrorSpan]
+    errors_corrections: list[ModuleResult]
 
 
-@dataclass
-class RankerOutput:
+class RankerOutput(BaseModel):
     text: str
-    ranked_edits: List[RankedEdit]
+    ranked_edits: list[RankedEdit]
     ranking_metadata: RankingMetadata
