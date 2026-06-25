@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isShowcaseEnabled } from "./environment";
+import { isShowcaseEnabled, resolveEditorDataSource } from "./environment";
 
 describe("isShowcaseEnabled", () => {
   it("enables the showcase during local development", () => {
@@ -11,5 +11,19 @@ describe("isShowcaseEnabled", () => {
     expect(isShowcaseEnabled(false, "true")).toBe(true);
     expect(isShowcaseEnabled(false, "false")).toBe(false);
     expect(isShowcaseEnabled(false)).toBe(false);
+  });
+
+  it("resolves the editor data source explicitly when configured", () => {
+    expect(resolveEditorDataSource("mock", "http://localhost:8000")).toBe("mock");
+    expect(resolveEditorDataSource("api", "http://localhost:8000")).toBe("api");
+    expect(resolveEditorDataSource("auto", "http://localhost:8000")).toBe("auto");
+  });
+
+  it("defaults to auto when a backend URL exists and no mode is set", () => {
+    expect(resolveEditorDataSource(undefined, "http://localhost:8000")).toBe("auto");
+  });
+
+  it("defaults to mock when no backend URL exists", () => {
+    expect(resolveEditorDataSource()).toBe("mock");
   });
 });

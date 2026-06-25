@@ -9,15 +9,15 @@ import {
   FilePlus2,
   FolderOpen,
   Home,
-  Italic,
   Languages,
   List,
   ListOrdered,
+  LoaderCircle,
   Sparkles,
   SpellCheck2,
   X,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
 import {
   Button,
   Dialog,
@@ -34,12 +34,12 @@ import {
   getSelectedLineIndices,
   isRangeCovered,
   resolveFormattingRange,
+  useEditorController,
   type FilterValue,
-  useEditorDemo,
-} from "../../features/editor/useEditorDemo";
+} from "../../features/editor/useEditorController";
 import type {
   CorrectionCategory,
-  EditorDraft,
+  DraftSummary,
   EditorTextRange,
 } from "../../features/editor/types";
 import { ArabicConfettiButton } from "../../shared/ui/ArabicConfettiButton";
@@ -61,14 +61,12 @@ const correctionMeta: Record<
   style: { label: "أسلوب", icon: Sparkles },
 };
 
-const ARABIC_DIACRITICS_RE = /[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]/;
-
 function DraftList({
   drafts,
   activeDraftId,
   selectDraft,
 }: {
-  drafts: EditorDraft[];
+  drafts: DraftSummary[];
   activeDraftId: string;
   selectDraft: (draftId: string) => void;
 }) {
@@ -159,17 +157,82 @@ function Drawer({
   );
 }
 
+function SuggestionMenu({
+  open,
+  mode,
+  anchorRect,
+  suggestions,
+  highlightedIndex,
+  onHover,
+  onSelect,
+}: {
+  open: boolean;
+  mode: "word" | "sentence" | null;
+  anchorRect: { top: number; left: number; width: number; height: number } | null;
+  suggestions: { id: string; label: string; displayText: string }[];
+  highlightedIndex: number;
+  onHover: (index: number) => void;
+  onSelect: (index: number) => void;
+}) {
+  if (!open || !anchorRect || suggestions.length === 0) return null;
+
+  return (
+    <div
+      className="editor-page__suggestions"
+      data-mode={mode ?? undefined}
+      style={{
+        top: anchorRect.top + anchorRect.height + window.scrollY + 10,
+        left: anchorRect.left + window.scrollX,
+      }}
+    >
+      <div className="editor-page__suggestions-header">
+        <Sparkles aria-hidden="true" size={15} />
+        <span>{mode === "word" ? "إكمال الكلمة" : "متابعة الجملة"}</span>
+      </div>
+      <div className="editor-page__suggestions-list" role="listbox">
+        {suggestions.map((suggestion, index) => (
+          <button
+            aria-selected={highlightedIndex === index}
+            className="editor-page__suggestion-item"
+            data-active={highlightedIndex === index || undefined}
+            key={suggestion.id}
+            onClick={() => onSelect(index)}
+            onMouseEnter={() => onHover(index)}
+            type="button"
+          >
+            <strong>{suggestion.label}</strong>
+            <span>{suggestion.displayText}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function EditorPage() {
-  const [selection, setSelection] = useState<EditorTextRange>([0, 0]);
   const {
-    state,
+    drafts,
+    draftsLoading,
     activeDraft,
+    activeDraftId,
+    activeFilter,
+    expandedCorrectionId,
+    focusedCorrectionId,
+    navigationOpen,
+    correctionsOpen,
+    selection,
     correctionCounts,
     visibleCorrections,
+    suggestionsEnabled,
+    suggestionState,
+    suggestionAnchorRect,
+    isHydratingDraft,
     selectDraft,
     addDraft,
     updateTitle,
     updateBody,
+    updateSelection,
+    setSuggestionAnchorRect,
     setFilter,
     toggleExpanded,
     focusCorrection,
@@ -178,11 +241,15 @@ export function EditorPage() {
     togglePanel,
     closePanel,
     toggleStrong,
-    toggleEmphasis,
     applyTashkeel,
     cycleList,
     setAlign,
-  } = useEditorDemo();
+    toggleSuggestionsEnabled,
+    cycleSuggestion,
+    highlightSuggestion,
+    applySuggestion,
+    closeSuggestions,
+  } = useEditorController();
 
   const navigationContent = (
     <div className="editor-page__navigation-content">
@@ -203,15 +270,12 @@ export function EditorPage() {
       <section className="editor-page__rail-section">
         <div className="editor-page__rail-heading">
           <h2>مسوداتي</h2>
-          <span>{state.drafts.length}</span>
+          <span>{drafts.length}</span>
         </div>
         <DraftList
-          activeDraftId={state.activeDraftId}
-          drafts={state.drafts}
-          selectDraft={(draftId) => {
-            setSelection([0, 0]);
-            selectDraft(draftId);
-          }}
+          activeDraftId={activeDraftId}
+          drafts={drafts}
+          selectDraft={selectDraft}
         />
       </section>
 
@@ -228,6 +292,34 @@ export function EditorPage() {
       </section>
     </div>
   );
+
+  if (!activeDraft) {
+    return (
+      <main className="editor-page editor-page--loading">
+        <div className="editor-page__loading-state">
+          <LoaderCircle aria-hidden="true" className="editor-page__spinner" size={26} />
+          <p>{draftsLoading || isHydratingDraft ? "جار تجهيز المحرر..." : "لا توجد مسودة نشطة."}</p>
+        </div>
+      </main>
+    );
+  }
+
+  const revealCorrection = (correctionId: string) => {
+    const correction = activeDraft.corrections.find((entry) => entry.id === correctionId);
+    if (!correction) return;
+
+    if (activeFilter !== correction.category) {
+      setFilter(correction.category);
+    }
+    if (expandedCorrectionId !== correctionId) {
+      toggleExpanded(correctionId);
+    } else {
+      focusCorrection(correctionId);
+    }
+    if (window.matchMedia("(max-width: 1099px)").matches) {
+      togglePanel("corrections");
+    }
+  };
 
   const correctionsContent = (
     <div className="editor-page__corrections-content">
@@ -246,9 +338,9 @@ export function EditorPage() {
           const Icon = correctionMeta[filter].icon;
           return (
             <Button
-              aria-pressed={state.activeFilter === filter}
+              aria-pressed={activeFilter === filter}
               className="editor-page__filter"
-              data-active={state.activeFilter === filter || undefined}
+              data-active={activeFilter === filter || undefined}
               key={filter}
               onPress={() => setFilter(filter)}
             >
@@ -265,7 +357,7 @@ export function EditorPage() {
       </div>
 
       <div className="editor-page__section-heading">
-        <h3>{filterLabels[state.activeFilter]}</h3>
+        <h3>{filterLabels[activeFilter]}</h3>
         <span>{visibleCorrections.length}</span>
       </div>
 
@@ -281,15 +373,13 @@ export function EditorPage() {
         ) : (
           visibleCorrections.map((correction) => {
             const meta = correctionMeta[correction.category];
-            const expanded = state.expandedCorrectionId === correction.id;
+            const expanded = expandedCorrectionId === correction.id;
             const stale = correction.status === "stale";
 
             return (
               <article
                 className="editor-page__correction-card"
-                data-active={
-                  state.focusedCorrectionId === correction.id || undefined
-                }
+                data-active={focusedCorrectionId === correction.id || undefined}
                 data-stale={stale || undefined}
                 data-tone={correction.category}
                 key={correction.id}
@@ -354,37 +444,12 @@ export function EditorPage() {
     </div>
   );
 
-  const revealCorrection = (correctionId: string) => {
-    const correction = activeDraft.corrections.find(
-      (entry) => entry.id === correctionId,
-    );
-    if (!correction) return;
-
-    if (state.activeFilter !== correction.category) {
-      setFilter(correction.category);
-    }
-    if (state.expandedCorrectionId !== correctionId) {
-      toggleExpanded(correctionId);
-    } else {
-      focusCorrection(correctionId);
-    }
-    if (window.matchMedia("(max-width: 1099px)").matches) {
-      togglePanel("corrections");
-    }
-  };
-
   const formattingRange = resolveFormattingRange(activeDraft.body, selection);
   const selectedLines = getSelectedLineIndices(activeDraft.body, selection);
-  const strongActive = isRangeCovered(
-    activeDraft.formatting.strong,
-    formattingRange,
-  );
+  const strongActive = isRangeCovered(activeDraft.formatting.strong, formattingRange);
   const emphasisActive = isRangeCovered(
     activeDraft.formatting.emphasis,
     formattingRange,
-  );
-  const tashkeelActive = ARABIC_DIACRITICS_RE.test(
-    activeDraft.body.slice(...formattingRange),
   );
   const currentAlignment = selectedLines.every(
     (line) => getLineFormat(activeDraft.formatting, line).align === "center",
@@ -402,6 +467,24 @@ export function EditorPage() {
     activeDraft.formatting,
     selectedLines[0] ?? 0,
   ).list;
+
+  const handleEditorKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!suggestionState.isOpen) return;
+    if (event.key === "Tab") {
+      event.preventDefault();
+      cycleSuggestion(event.shiftKey ? -1 : 1);
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      applySuggestion();
+      return;
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeSuggestions();
+    }
+  };
 
   return (
     <main className="editor-page">
@@ -441,22 +524,20 @@ export function EditorPage() {
               <Bold aria-hidden="true" size={18} />
             </ToolbarButton>
             <ToolbarButton
-              active={emphasisActive}
-              className="editor-page__toolbar-button--italic"
-              label="تمييز النص"
-              onPress={() => toggleEmphasis(selection)}
-            >
-              <Italic aria-hidden="true" size={18} />
-            </ToolbarButton>
-            <ToolbarButton
-              active={tashkeelActive}
               className="editor-page__toolbar-button--tashkeel"
               label="إضافة التشكيل"
-              onPress={() => applyTashkeel(selection)}
+              onPress={applyTashkeel}
             >
               <span aria-hidden="true" className="editor-page__toolbar-glyph">
                 شّـ
               </span>
+            </ToolbarButton>
+            <ToolbarButton
+              active={suggestionsEnabled}
+              label={suggestionsEnabled ? "تعطيل الاقتراحات" : "تفعيل الاقتراحات"}
+              onPress={toggleSuggestionsEnabled}
+            >
+              <Sparkles aria-hidden="true" size={18} />
             </ToolbarButton>
             <span className="editor-page__toolbar-divider" />
             <ToolbarButton
@@ -512,13 +593,24 @@ export function EditorPage() {
             <EditableDocument
               body={activeDraft.body}
               corrections={activeDraft.corrections}
-              focusedCorrectionId={state.focusedCorrectionId}
+              focusedCorrectionId={focusedCorrectionId}
               formatting={activeDraft.formatting}
               onBodyChange={updateBody}
+              onCaretRectChange={setSuggestionAnchorRect}
               onCorrectionFocus={revealCorrection}
-              onSelectionChange={setSelection}
+              onEditorKeyDown={handleEditorKeyDown}
+              onSelectionChange={updateSelection}
             />
           </div>
+          <SuggestionMenu
+            anchorRect={suggestionAnchorRect}
+            highlightedIndex={suggestionState.highlightedIndex}
+            mode={suggestionState.mode}
+            onHover={highlightSuggestion}
+            onSelect={applySuggestion}
+            open={suggestionState.isOpen}
+            suggestions={suggestionState.suggestions}
+          />
         </section>
 
         <nav className="editor-page__mobile-actions" aria-label="لوحات المحرر">
@@ -545,7 +637,7 @@ export function EditorPage() {
       </aside>
 
       <Drawer
-        isOpen={state.navigationOpen}
+        isOpen={navigationOpen}
         onClose={() => closePanel("navigation")}
         title="المسودات"
       >
@@ -553,7 +645,7 @@ export function EditorPage() {
       </Drawer>
 
       <Drawer
-        isOpen={state.correctionsOpen}
+        isOpen={correctionsOpen}
         onClose={() => closePanel("corrections")}
         title="الملاحظات"
       >

@@ -6,6 +6,13 @@ export type EditorListStyle = "none" | "bullet" | "numbered";
 
 export type EditorTextRange = [start: number, end: number];
 
+export type EditorSelection = {
+  start: number;
+  end: number;
+};
+
+export type DraftRevision = number;
+
 export type EditorLineFormat = {
   list: EditorListStyle;
   align: "start" | "center" | "end";
@@ -22,11 +29,11 @@ export type TashkeelResult = {
   applied: boolean;
 };
 
-export type MockCorrection = {
+export type Correction = {
   id: string;
   category: CorrectionCategory;
   status: CorrectionStatus;
-  span: [start: number, end: number];
+  span: EditorSelection;
   title: string;
   lineLabel: string;
   original: string;
@@ -35,12 +42,108 @@ export type MockCorrection = {
   ruleLabel: string;
 };
 
-export type EditorDraft = {
+export type CorrectionCounts = Record<CorrectionCategory | "all", number>;
+
+export type SuggestionMode = "word" | "sentence";
+
+export type SuggestionItem = {
+  id: string;
+  label: string;
+  insertText: string;
+  displayText: string;
+  kind: SuggestionMode;
+};
+
+export type SuggestionResponse = {
+  suggestionSessionId: string;
+  mode: SuggestionMode;
+  replaceRange: EditorSelection;
+  suggestions: SuggestionItem[];
+};
+
+export type DraftSummary = {
   id: string;
   title: string;
-  body: string;
   stageLabel: string;
   updatedAt: string;
+};
+
+export type DraftDocument = DraftSummary & {
+  body: string;
+  revision: DraftRevision;
+  savedAt?: string;
   formatting: EditorFormatting;
-  corrections: MockCorrection[];
+  corrections: Correction[];
+};
+
+export type EditorDraft = DraftDocument;
+
+export type SaveState = "idle" | "saving" | "saved" | "error";
+
+export type AnalysisState = "idle" | "loading" | "ready" | "error";
+
+export type DraftUpdatePayload = {
+  title?: string;
+  body?: string;
+  clientRevision: DraftRevision;
+};
+
+export type DraftUpdateResponse = {
+  draft: DraftDocument;
+  persistedRevision: DraftRevision;
+  savedAt: string;
+};
+
+export type AnalyzeDraftPayload = {
+  body: string;
+  selection: EditorSelection;
+  caret: number;
+  clientRevision: DraftRevision;
+  categories: CorrectionCategory[];
+};
+
+export type AnalyzeDraftResponse = {
+  analysisRevision: DraftRevision;
+  corrections: Correction[];
+  counts: CorrectionCounts;
+};
+
+export type CorrectionActionPayload = {
+  body?: string;
+  clientRevision: DraftRevision;
+};
+
+export type AcceptCorrectionResponse = {
+  draftBody: string;
+  persistedRevision: DraftRevision;
+  corrections: Correction[];
+  counts: CorrectionCounts;
+};
+
+export type IgnoreCorrectionResponse = {
+  correctionId: string;
+  status: CorrectionStatus;
+  corrections: Correction[];
+  counts: CorrectionCounts;
+};
+
+export type SuggestionRequest = {
+  body: string;
+  selection: EditorSelection;
+  caret: number;
+  clientRevision: DraftRevision;
+  mode: SuggestionMode;
+  limit: number;
+};
+
+export type TashkeelRequest = {
+  body: string;
+  selection: EditorSelection;
+  clientRevision: DraftRevision;
+};
+
+export type TashkeelResponse = {
+  draftBody: string;
+  replaceRange: EditorSelection;
+  persistedRevision: DraftRevision;
 };

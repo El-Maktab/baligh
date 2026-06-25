@@ -55,7 +55,7 @@ describe("editorDemoReducer", () => {
     const shifted = getActiveDraft(nextState).corrections.find(
       (correction) => correction.id === "correction-3",
     );
-    expect(shifted?.span).toEqual([258, 262]);
+    expect(shifted?.span).toEqual({ start: 258, end: 262 });
     expect(shifted?.status).toBe("active");
   });
 
