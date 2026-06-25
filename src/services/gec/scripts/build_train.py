@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from loguru import logger
+
 from src.services.gec.config import (
     TRAIN_COR_PATH,
     TRAIN_SENT_PATH,
@@ -34,12 +36,12 @@ def build_train() -> None:
         TRAIN_COR_PATH,
         CHECKPOINT_PATH,
     )
-    print("examples created")
+    logger.info("examples created")
 
     pruner = LabelPruner(min_frequency=MIN_LABEL_FREQUENCY)
 
     examples = pruner.prune(examples)
-    print("pruned")
+    logger.info("pruned")
     vocab_builder = LabelVocabularyBuilder()
 
     label2id, id2label = vocab_builder.build(examples)
@@ -47,7 +49,7 @@ def build_train() -> None:
     save_json(label2id, LABEL2ID_PATH)
     save_json(id2label, ID2LABEL_PATH)
 
-    print("label2id created")
+    logger.info("label2id created")
     
     # exporter = DatasetExporter()
     # exporter.export_jsonl(examples, NOPNX_TRAIN_OUTPUT)

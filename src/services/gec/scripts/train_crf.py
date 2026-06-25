@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 import torch
 
+from loguru import logger
 from transformers import AutoTokenizer
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForTokenClassification
@@ -99,7 +100,7 @@ def main() -> None:
         label2id_path=args.label2id,
         use_crf=True,
     )
-    print("Starting CRF‑only fine‑tuning (BERT frozen = {} )".format(args.freeze_bert))
+    logger.info("Starting CRF‑only fine‑tuning (BERT frozen = {} )".format(args.freeze_bert))
     trainer_crf.train()
 
     # ---------------------------------------------------------------------
@@ -120,14 +121,14 @@ def main() -> None:
         label2id_path=args.label2id,
         use_crf=True,
     )
-    print("Starting full fine‑tuning of BERT + classifier + CRF")
+    logger.info("Starting full fine‑tuning of BERT + classifier + CRF")
     trainer_full.train()
 
     # Save final model and tokenizer
     save_path = Path(args.output_dir) / "best"
     trainer_full.save_model(str(save_path))
     tokenizer.save_pretrained(str(save_path))
-    print(f"Model saved to {save_path}")
+    logger.info(f"Model saved to {save_path}")
 
 
 if __name__ == "__main__":

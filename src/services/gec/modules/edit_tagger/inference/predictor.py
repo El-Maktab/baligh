@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from loguru import logger
 from transformers import AutoModelForTokenClassification
 from src.services.gec.modules.edit_tagger.inference.inference import GECInferencePipeline
 from src.services.gec.modules.edit_tagger.preprocessing.rewriter import Rewriter
@@ -17,7 +18,7 @@ class Predictor:
         
     def _get_model(self):
         if not self.model_path.exists():
-            print("Model not found.")
+            logger.warning("Model not found.")
         else:
             inference_model = AutoModelForTokenClassification.from_pretrained(self.model_path)
             tokenizer = Tokenizer()

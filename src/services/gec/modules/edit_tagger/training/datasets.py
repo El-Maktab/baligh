@@ -30,27 +30,24 @@ class GECTrainingDataset(Dataset):
             self.label2id.get(l, self.unk_label_id) for l in labels_raw
         ]
 
-        encoding = self.tokenizer(
-            subwords,
-            is_split_into_words=True,
-            add_special_tokens=True,
-            max_length=self.max_length,
-            truncation=True,
-            padding=False,
-        )
+        max_content = self.max_length - 2
+        subwords = subwords[:max_content]
+        label_ids = label_ids[:max_content]
 
-        word_ids = encoding.word_ids()
-        aligned_labels = []
-        for word_idx in word_ids:
-            if word_idx is None:
-                aligned_labels.append(-100)
-            elif word_idx < len(label_ids):
-                aligned_labels.append(label_ids[word_idx])
-            else:
-                aligned_labels.append(-100)
+        token_ids = self.tokenizer.convert_tokens_to_ids(subwords)
+        input_ids = [self.tokenizer.cls_token_id] + token_ids + [self.tokenizer.sep_token_id]
+        attention_mask = [1] * len(input_ids)
+
+        aligned_labels = [-100] + label_ids + [-100]
+
+        padding_len = self.max_length - len(input_ids)
+        if padding_len > 0:
+            input_ids += [self.tokenizer.pad_token_id] * padding_len
+            attention_mask += [0] * padding_len
+            aligned_labels += [-100] * padding_len
 
         return {
-            "input_ids": encoding["input_ids"],
-            "attention_mask": encoding["attention_mask"],
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
             "labels": aligned_labels,
         }
