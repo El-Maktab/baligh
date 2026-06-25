@@ -56,3 +56,4 @@ env/
 /artifacts/
 /src/services/ged/detectors/lexicon/dictionary
 /src/services/ged/data
+/src/services/nws/data

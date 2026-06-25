@@ -78,7 +78,7 @@ class WordNGramLM:
             p = 1e-10
         return math.log(p)
         
-    def predict_next(self, context_tokens: list[str], top_k: int = 5) -> list[str]:
+    def predict_next(self, context_tokens: list[str], top_k: int = 5, debug: bool = False) -> list[str]:
         """Predict the top-k next words given a string context."""
         max_context_len = self.max_n - 1
         context_ids = [self.vocab.word_to_id(t) for t in context_tokens[-max_context_len:]]
@@ -99,6 +99,9 @@ class WordNGramLM:
             ctx_data = order_data.get(sub_ctx)
             if ctx_data:
                 candidates.update(ctx_data["probs"].keys())
+                if debug:
+                    ctx_words = [self.vocab.id_to_word(cid) for cid in sub_ctx]
+                    print(f"[DEBUG] Found {n}-Gram match for context: {ctx_words}")
                 
         scored = []
         for cand_id in candidates:
@@ -114,6 +117,8 @@ class WordNGramLM:
         
         # If the backoff chain didn't yield enough results, pad with global Top Unigrams
         if len(results) < top_k:
+            if debug:
+                print(f"[DEBUG] Padding remaining {top_k - len(results)} slots using Unigram backoff!")
             for cand_id, p in self._top_unigrams:
                 if cand_id >= 0:
                     word = self.vocab.id_to_word(cand_id)
