@@ -219,3 +219,137 @@
         number: dual
         case: nominative
     flag_token: 1
+
+- id: SY_MAMNOO3_SARF_TANWEEN_NASB
+  category: SY
+  subtype: diptote_tanween
+  tier: tier_1_rule_derived
+  explanation: "الممنوع من الصرف لا يُنوَّن."
+  pattern:
+    match: token
+    form_regex: "^(?:أحمدا|مساجدا|عناصرا|مبادئا|فنادقا|أسابيعا|مصابيحا|تجاربا|أقاويلا|حقائبا|مواضعا|مناظرا|مشاعرا|مدارسا|معاهدا)$"
+
+- id: SY_KAMA_ANNA
+  category: SY
+  subtype: particle_usage
+  tier: tier_1_rule_derived
+  explanation: "الصواب «كما أن» بدون الواو الزائدة."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "كما"
+      - form_regex: "^وأن(?:ني|نا|ك|كما|كم|كن|ه|ها|هما|هم|هن)?$"
+    flag_token: 1
+
+- id: SY_LA_SIYYAMA_WA
+  category: SY
+  subtype: particle_usage
+  tier: tier_1_rule_derived
+  explanation: "الصواب «لا سيما» دون واو بعدها."
+  pattern:
+    match: sequence
+    tokens:
+      - form: "لا"
+      - form: "سيما"
+      - form_regex: "^و"
+    flag_token: 2
+
+- id: SY_AS_KA
+  category: SY
+  subtype: syntactic_calque
+  tier: tier_1_rule_derived
+  explanation: "استخدام الكاف للصفة استخدام أجنبي، والأصح النصب على الحالية."
+  pattern:
+    match: sequence
+    tokens:
+      - lemma_in: ["عَمِل", "اِشْتَغَل", "شَغَل"]
+      - form_regex: "^ك"
+    flag_token: 1
+
+- id: SY_LA_PAST_TENSE
+  category: SY
+  subtype: negation_particle
+  tier: tier_1_rule_derived
+  explanation: "عند نفي الفعل الماضي يُنفى بـ «ما» أو «لم» مع المضارع، ولا يصح استخدام «لا» إلا إذا تكررت أو كانت للدعاء."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["لا", "ولا"]
+      - pos: VERB
+        tense: past
+    flag_token: 0
+
+- id: SY_MUBTADA_NAKIRA_PREP
+  category: SY
+  subtype: word_order
+  tier: tier_1_rule_derived
+  explanation: "المبتدأ النكرة يؤخر وجوباً إذا كان الخبر شبه جملة (جار ومجرور)."
+  pattern:
+    match: sequence
+    tokens:
+      - pos: NOUN
+        definiteness: indefinite
+        case: nominative
+      - pos: PREP
+    flag_token: 0
+
+- id: SY_QAAMA_BI
+  category: SY
+  subtype: stylistic_verbosity
+  tier: tier_1_rule_derived
+  explanation: "تعبير «القيام بـ» ركيك يستحسن تجنبه واستعمال الفعل مباشرة."
+  pattern:
+    match: sequence
+    tokens:
+      - lemma_in: ["قَام", "قِيَام"]
+      - form_regex: "^ب"
+    flag_token: 0
+
+- id: SY_HAWLA_FI
+  category: SY
+  subtype: preposition_usage
+  tier: tier_1_rule_derived
+  explanation: "يفضل استعمال حرف الجر «في» بدلاً من «حول» في هذا السياق."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["بحث", "أبحاث", "كتاب", "كتب", "مقال", "مقالات", "رسالة", "رسائل"]
+      - form: "حول"
+    flag_token: 1
+
+- id: SY_RAGHBA_LI
+  category: SY
+  subtype: preposition_usage
+  tier: tier_1_rule_derived
+  explanation: "يُقال: «رغبة في» وليس «رغبة لـ»."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["رغبة", "رغبات"]
+      - form_regex: "^ل"
+    flag_token: 1
+
+- id: SY_AATIL_AN
+  category: SY
+  subtype: preposition_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح أن يقال: «عاطل من العمل» أو «متعطل»."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["عاطل", "عاطلة", "عاطلون", "عاطلين", "عاطلات"]
+      - form: "عن"
+      - form_in: ["العمل", "عمل"]
+    flag_token: 1
+
+- id: SY_TA2MEEN_DHIDDA
+  category: SY
+  subtype: preposition_usage
+  tier: tier_1_rule_derived
+  explanation: "الأفصح «تأمين من» أو «مناعة من» بدلاً من «ضد»."
+  pattern:
+    match: sequence
+    tokens:
+      - form_in: ["تأمين", "مناعة", "تأمينات"]
+      - form: "ضد"
+    flag_token: 1
