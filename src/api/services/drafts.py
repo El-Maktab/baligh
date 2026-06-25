@@ -5,9 +5,10 @@ Provides CRUD operations for draft documents.
 
 import uuid
 
+from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
 
-from ..app import get_db
+from ..config import settings
 
 
 class DraftDocument(BaseModel):
@@ -32,7 +33,8 @@ class DraftDocument(BaseModel):
 
 def _get_collection():
     """Get the drafts collection."""
-    db = get_db().get_default_database()
+    client = AsyncIOMotorClient(settings.mongodb_uri)
+    db = client.get_default_database()
     return db["drafts"]
 
 
@@ -90,7 +92,6 @@ async def update_draft(
         update_fields["body"] = body
     if not update_fields:
         return await get_draft(draft_id)
-    update_fields["revision"] = 1  # will be incremented by $inc
     result = await coll.find_one_and_update(
         {"id": draft_id},
         {"$set": update_fields, "$inc": {"revision": 1}},

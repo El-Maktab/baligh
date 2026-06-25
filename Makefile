@@ -34,6 +34,7 @@ help:
 	@echo "  make clean                 Remove temporary files and caches"
 	@echo "  make pre-commit            Run pre-commit hooks on all files"
 	@echo "  make run                   Run a Python script (usage: make run SCRIPT=src/...)"
+	@echo "  make run-api               Run the API server"
 	@echo ""
 
 # Install dependencies
@@ -144,6 +145,11 @@ pre-commit:
 run:
 	@echo "Running $(SCRIPT)..."
 	PYTHONPATH=. uv run python $(SCRIPT)
+
+# Run the API server
+run-api:
+	@echo "Running API server..."
+	uv run uvicorn src.api.app:app --reload
 
 # Format check (without fixing) - useful for CI
 format-check:

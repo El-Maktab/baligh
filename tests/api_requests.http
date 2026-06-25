@@ -1,0 +1,87 @@
+# VS Code REST Client file to test Baligh API endpoints
+# Base URL (adjust if running on a different host/port)
+@baseUrl = http://127.0.0.1:8000
+
+### 1. List all drafts
+GET {{baseUrl}}/api/v1/drafts/ HTTP/1.1
+
+### 2. Create a new draft
+POST {{baseUrl}}/api/v1/drafts/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Test Draft",
+  "body": "هذا نص اختبار للـ draft."
+}
+
+### 3. Get a draft (replace <DRAFT_ID> after creation)
+GET {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d HTTP/1.1
+
+### 4. Update a draft (partial update)
+PATCH {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "body": "تم تحديث النص داخل الـ draft."
+}
+
+### 5. Run analysis on a draft
+POST {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d/analyze HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "هذا نص لتجربة التحليل.",
+  "selection": null,
+  "caret": null,
+  "clientRevision": null,
+  "categories": []
+}
+
+### 6. Accept a correction (replace <CORRECTION_ID>)
+POST {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d/corrections/<CORRECTION_ID>/accept HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "النص بعد القبول",
+  "clientRevision": null
+}
+
+### 7. Ignore a correction (replace <CORRECTION_ID>)
+POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/corrections/<CORRECTION_ID>/ignore HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "النص بعد التجاهل",
+  "clientRevision": null
+}
+
+### 8. Get suggestions for a draft
+POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/suggestions HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "النص الحالي للـ draft",
+  "selection": null,
+  "caret": null,
+  "clientRevision": null,
+  "mode": "default",
+  "top_k": 5
+}
+
+### 9. Apply Tashkeel (diacritization) to a draft
+POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/tashkeel HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "النص بدون تشكيل",
+  "selection": null,
+  "clientRevision": null
+}
+
+# ---------------------------------------------------------------
+# Note:
+# - Replace <DRAFT_ID> with the actual UUID returned from the create request.
+# - Replace <CORRECTION_ID> with an ID from the `corrections` array returned by the analysis endpoint.
+# - The API expects JSON bodies; adjust fields as needed for your tests.
+# - Run the FastAPI server (uvicorn src.api.app:app --reload) before executing these requests.

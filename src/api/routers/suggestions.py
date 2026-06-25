@@ -3,6 +3,8 @@
 It receives a request payload, runs the NWS service and returns the suggestions.
 """
 
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from src.api.services.drafts import get_draft
@@ -19,7 +21,7 @@ class SuggestionsRequest(BaseModel):
     selection: str | None = None
     caret: int | None = None
     clientRevision: int | None = None
-    mode: str | None = "default"
+    mode: Literal["NWP", "WAC"]
     top_k: int | None = 5
 
 
@@ -41,8 +43,6 @@ async def get_suggestions(draft_id: str, payload: SuggestionsRequest):
         (),
         {"tokens": [], "morph_features": [], "current_fragment": payload.body},
     )
-    nws_output = nws_run(
-        preproc_output, mode=payload.mode or "default", top_k=payload.top_k or 5
-    )
+    nws_output = nws_run(preproc_output, mode=payload.mode, top_k=payload.top_k or 5)
     suggestions = [s for s in nws_output.suggestions]
     return SuggestionsResponse(mode=nws_output.mode, suggestions=suggestions)
