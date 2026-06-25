@@ -9,7 +9,7 @@ Authors:
     - Akram Hany
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class Token(BaseModel):
@@ -34,23 +34,22 @@ class Token(BaseModel):
             token (ex. "ل+ال+حج").
     """
 
-    index: int
-    form: str
-    span: tuple[int, int]
-    norm_span: tuple[int, int]
+    index: int = 0
+    form: str = ""
+    span: tuple[int, int] = Field(default=(0, 0))
+    norm_span: tuple[int, int] | None = None
     affix_structure: str | None = None
     farasa_segmentation: str | None = None
     is_oov: bool = False
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the Token."""
-        super().__init__(*args, **kwargs)
-        self.index = kwargs.get("index", 0)
-        self.form = kwargs.get("form", "")
-        self.span = kwargs.get("span", (0, len(self.form)))
-        self.norm_span = kwargs.get("norm_span", self.span)
-        self.affix_structure = kwargs.get("affix_structure")
-        self.farasa_segmentation = kwargs.get("farasa_segmentation", None)
+    @model_validator(mode="after")
+    def set_default_spans(self) -> "Token":
+        """Set span defaults based on form length."""
+        if self.span == (0, 0):
+            self.span = (0, len(self.form))
+        if self.norm_span is None:
+            self.norm_span = self.span
+        return self
 
 
 class MorphAnalysis(BaseModel):
