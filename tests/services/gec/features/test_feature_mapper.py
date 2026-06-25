@@ -1,11 +1,11 @@
 """Tests for the feature adaptation and mapping pipeline."""
 
+from src.core.schemas import MorphAnalysis
 from src.services.gec.features.camel_adapter import (
     InternalMorphFeatures,
     normalize_camel,
 )
 from src.services.gec.features.ontology_mapper import BASE_URI, map_to_ontology_concepts
-from src.services.ged.schemas import MorphAnalysis
 
 
 def test_feature_mapper_pipeline():

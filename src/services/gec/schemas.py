@@ -8,9 +8,8 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-# Reuse Token, MorphAnalysis, and ErrorSpan from the GED schemas
-# since they are shared preprocessing structures
-from src.services.ged.schemas import ErrorSpan, MorphAnalysis, Token
+from src.core.schemas import MorphAnalysis, Token
+from src.services.ged.schemas import ErrorSpan
 
 
 class ModuleName(StrEnum):

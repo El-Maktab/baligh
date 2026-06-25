@@ -10,7 +10,7 @@ import json
 
 import marisa_trie
 from src.services.ged.config import load_ged_config
-from src.services.ged.features.subsystems.lexicon.processor import (
+from src.services.ged.detectors.lexicon.processor import (
     build_processed_lexicon,
     parse_wikifane_line,
 )

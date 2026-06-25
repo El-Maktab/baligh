@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, model_validator
+
 from src.services.ged.confidence import TIER_CONFIDENCE
 from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 

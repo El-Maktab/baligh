@@ -1,4 +1,8 @@
-"""Morphology-aware feature extraction for the GED CRF model."""
+"""Morphology-aware feature extraction for the GED CRF model.
+
+Authors:
+    Amir Anwar
+"""
 
 from __future__ import annotations
 
@@ -7,11 +11,25 @@ from collections.abc import Sequence
 
 from camel_tools.utils.charsets import AR_CHARSET
 from camel_tools.utils.normalize import normalize_alef_ar, normalize_alef_maksura_ar
+
 from src.core.schemas import MorphAnalysis, Token
 
 FEATURE_SET_VERSION = "surface_morph_v2"
 PUNCT_RE = re.compile(r"^[^\w\s]+$", re.UNICODE)
 MISSING = "__NONE__"
+MORPH_FIELDS = (
+    "pos",
+    "lemma",
+    "gender",
+    "number",
+    "person",
+    "definiteness",
+    "case",
+    "tense",
+    "voice",
+    "mood",
+    "diacritized",
+)
 
 
 def normalize_token(token: str) -> str:
@@ -48,19 +66,7 @@ def _add_morph_features(
 ) -> None:
     """Attach morphology fields with a consistent prefix."""
     if analysis is None:
-        for field in (
-            "pos",
-            "lemma",
-            "gender",
-            "number",
-            "person",
-            "definiteness",
-            "case",
-            "tense",
-            "voice",
-            "mood",
-            "diacritized",
-        ):
+        for field in MORPH_FIELDS:
             features[f"{prefix}_{field}"] = MISSING
         return
 
@@ -84,13 +90,29 @@ def token_features(
 ) -> dict[str, object]:
     """Extract morphology-aware CRF features for one token."""
     token = tokens[index]
-    token_norm = normalize_token(token.form)
-    analysis = _best_analysis(morph_features[index])
+    features = _base_token_features(token)
+    _add_morph_features(features, "morph", _best_analysis(morph_features[index]))
+    _add_affix_features(features, token)
 
-    features: dict[str, object] = {
+    if index == 0:
+        features["BOS"] = True
+    else:
+        _add_previous_context(features, tokens, morph_features, index)
+
+    if index == len(tokens) - 1:
+        features["EOS"] = True
+    else:
+        _add_next_context(features, tokens, morph_features, index)
+
+    return features
+
+
+def _base_token_features(token: Token) -> dict[str, object]:
+    """Build token-local surface and preprocessing features."""
+    return {
         "bias": 1.0,
         "token": token.form,
-        "norm": token_norm,
+        "norm": normalize_token(token.form),
         "shape": token_shape(token.form),
         "len": len(token.form),
         "is_digit": token.form.isdigit(),
@@ -101,41 +123,51 @@ def token_features(
         "farasa_segmentation": _string_feature(token.farasa_segmentation),
         "is_oov": token.is_oov,
     }
-    _add_morph_features(features, "morph", analysis)
 
+
+def _add_affix_features(features: dict[str, object], token: Token) -> None:
+    """Attach fixed-width surface prefixes and suffixes."""
     for size in range(1, 5):
         features[f"prefix_{size}"] = token.form[:size]
         features[f"suffix_{size}"] = token.form[-size:]
 
-    if index == 0:
-        features["BOS"] = True
-    else:
-        previous = tokens[index - 1]
-        features["prev_token"] = previous.form
-        features["prev_norm"] = normalize_token(previous.form)
-        features["prev_is_punct"] = bool(PUNCT_RE.match(previous.form))
-        features["prev_affix_structure"] = _string_feature(previous.affix_structure)
-        _add_morph_features(
-            features,
-            "prev_morph",
-            _best_analysis(morph_features[index - 1]),
-        )
 
-    if index == len(tokens) - 1:
-        features["EOS"] = True
-    else:
-        following = tokens[index + 1]
-        features["next_token"] = following.form
-        features["next_norm"] = normalize_token(following.form)
-        features["next_is_punct"] = bool(PUNCT_RE.match(following.form))
-        features["next_affix_structure"] = _string_feature(following.affix_structure)
-        _add_morph_features(
-            features,
-            "next_morph",
-            _best_analysis(morph_features[index + 1]),
-        )
+def _add_previous_context(
+    features: dict[str, object],
+    tokens: Sequence[Token],
+    morph_features: Sequence[Sequence[MorphAnalysis]],
+    index: int,
+) -> None:
+    """Attach one-token left context features."""
+    previous = tokens[index - 1]
+    features["prev_token"] = previous.form
+    features["prev_norm"] = normalize_token(previous.form)
+    features["prev_is_punct"] = bool(PUNCT_RE.match(previous.form))
+    features["prev_affix_structure"] = _string_feature(previous.affix_structure)
+    _add_morph_features(
+        features,
+        "prev_morph",
+        _best_analysis(morph_features[index - 1]),
+    )
 
-    return features
+
+def _add_next_context(
+    features: dict[str, object],
+    tokens: Sequence[Token],
+    morph_features: Sequence[Sequence[MorphAnalysis]],
+    index: int,
+) -> None:
+    """Attach one-token right context features."""
+    following = tokens[index + 1]
+    features["next_token"] = following.form
+    features["next_norm"] = normalize_token(following.form)
+    features["next_is_punct"] = bool(PUNCT_RE.match(following.form))
+    features["next_affix_structure"] = _string_feature(following.affix_structure)
+    _add_morph_features(
+        features,
+        "next_morph",
+        _best_analysis(morph_features[index + 1]),
+    )
 
 
 def sentence_features(

@@ -4,17 +4,16 @@ Authors:
     Amir Anwar
 """
 
+from src.core.schemas import MorphAnalysis, Token
+from src.services.ged.detectors.base import BaseDetector
 from src.services.ged.exceptions import GEDDetectionError
-from src.services.ged.features.subsystems.base import BaseDetector
 from src.services.ged.orchestrator import GEDService
 from src.services.ged.schemas import (
     ErrorCategory,
     ErrorSource,
     ErrorSpan,
     GEDInput,
-    MorphAnalysis,
     ProvenanceTier,
-    Token,
 )
 
 

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import marisa_trie
+
 from src.core.schemas import Token
 from src.core.utils.arabic import is_arabic_word, loose_arabic_lookup_key
 from src.services.ged.config import LexiconDictionaryConfig, load_ged_config

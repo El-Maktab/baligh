@@ -1,8 +1,8 @@
 lexicon:
-  patterns_path: features/subsystems/lexicon/resources/patterns.yaml
+  patterns_path: detectors/lexicon/resources/patterns.yaml
   dictionary:
-    raw_dir: features/subsystems/lexicon/dictionary
-    processed_dir: features/subsystems/lexicon/dictionary/processed
+    raw_dir: detectors/lexicon/dictionary
+    processed_dir: detectors/lexicon/dictionary/processed
     words_source: arabic-wordlist-1.6.txt
     entities_source: WIKIFANE_gazet_NE_wordlist.txt
     words_trie: words.marisa

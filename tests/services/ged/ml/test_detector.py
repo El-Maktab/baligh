@@ -2,7 +2,7 @@
 
 from sklearn_crfsuite import CRF
 from src.core.schemas import MorphAnalysis, Token
-from src.services.ged.features.subsystems.ml.detector import MLDetector
+from src.services.ged.detectors.ml.detector import MLDetector
 from src.services.ged.schemas import ErrorCategory, ErrorSource, ProvenanceTier
 
 

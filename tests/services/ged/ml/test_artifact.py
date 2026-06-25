@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
-from src.services.ged.features.subsystems.ml.artifact import verify_bundle
+from src.services.ged.detectors.ml.artifact import verify_bundle
 
 
 def _digest(path: Path) -> str:

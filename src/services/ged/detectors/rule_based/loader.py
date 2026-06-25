@@ -18,10 +18,11 @@ from typing import Literal
 import yaml
 from loguru import logger
 from pydantic import BaseModel, ConfigDict, ValidationError
+
 from src.core.schemas import MorphAnalysis, Token
 from src.core.utils.arabic import strip_diacritics
-from src.services.ged.features.subsystems.rule_based.models import RuleEntry
-from src.services.ged.features.subsystems.rule_based.registry import RuleRegistry
+from src.services.ged.detectors.rule_based.models import RuleEntry
+from src.services.ged.detectors.rule_based.registry import RuleRegistry
 from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 
 # ###########################################################################

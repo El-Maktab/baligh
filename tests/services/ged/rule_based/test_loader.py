@@ -21,14 +21,14 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-from src.services.ged.features.subsystems.rule_based import (
+from src.services.ged.detectors.rule_based import (
     RuleBasedDetector,  # noqa: F401
 )
-from src.services.ged.features.subsystems.rule_based.loader import (
+from src.services.ged.detectors.rule_based.loader import (
     compile_yaml_rule,
     load_yaml_rules,
 )
-from src.services.ged.features.subsystems.rule_based.registry import (
+from src.services.ged.detectors.rule_based.registry import (
     RuleRegistry,
     rule_registry,
 )
@@ -375,8 +375,7 @@ class TestLoadYamlRules:
             / "src"
             / "services"
             / "ged"
-            / "features"
-            / "subsystems"
+            / "detectors"
             / "rule_based"
             / "rules"
         )

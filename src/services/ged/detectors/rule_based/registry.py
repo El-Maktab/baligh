@@ -18,7 +18,7 @@ RuleEntry, so rule functions stay focused on *finding* the error location
 and nothing else.
 
 Authors:
-    Amir Anwar
+  Amir Anwar
 """
 
 from __future__ import annotations
@@ -26,8 +26,9 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from loguru import logger
+
 from src.core.schemas import MorphAnalysis, Token
-from src.services.ged.features.subsystems.rule_based.models import RuleEntry, RuleFn
+from src.services.ged.detectors.rule_based.models import RuleEntry, RuleFn
 from src.services.ged.schemas import (
     ErrorCategory,
     ErrorSource,

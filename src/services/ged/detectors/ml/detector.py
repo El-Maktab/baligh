@@ -1,26 +1,29 @@
-"""ML GED detector."""
+"""ML GED detector.
+
+Authors:
+    Amir Anwar
+"""
 
 from pathlib import Path
 from typing import Any
 
 from sklearn_crfsuite import CRF
+
 from src.core.schemas import MorphAnalysis, Token
 from src.services.ged.config import load_ged_config
-from src.services.ged.features.subsystems.base import BaseDetector
-from src.services.ged.features.subsystems.ml.artifact import load_bundle
-from src.services.ged.features.subsystems.ml.features import (
+from src.services.ged.detectors.base import BaseDetector
+from src.services.ged.detectors.ml.artifact import load_bundle
+from src.services.ged.detectors.ml.features import (
     FEATURE_SET_VERSION,
     sentence_features,
 )
+from src.services.ged.detectors.ml.labels import NO_ERROR, UNKNOWN
 from src.services.ged.schemas import (
     ErrorCategory,
     ErrorSource,
     ErrorSpan,
     ProvenanceTier,
 )
-
-NO_ERROR = "UC"
-UNKNOWN = "UNK"
 
 
 class MLDetector(BaseDetector):

@@ -7,8 +7,8 @@ Authors:
 from __future__ import annotations
 
 import marisa_trie
-from src.services.ged.features.subsystems.lexicon.detector import LexiconDetector
-from src.services.ged.features.subsystems.lexicon.trie_store import LexiconTrieStore
+from src.services.ged.detectors.lexicon.detector import LexiconDetector
+from src.services.ged.detectors.lexicon.trie_store import LexiconTrieStore
 from src.services.ged.schemas import ErrorCategory, ProvenanceTier
 
 from tests.services.ged.rule_based.conftest import make_morph, make_token

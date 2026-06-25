@@ -1,7 +1,7 @@
 """Tests for GED ML features."""
 
 from src.core.schemas import MorphAnalysis, Token
-from src.services.ged.features.subsystems.ml.features import (
+from src.services.ged.detectors.ml.features import (
     sentence_features,
 )
 
