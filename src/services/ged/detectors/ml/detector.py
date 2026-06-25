@@ -13,15 +13,13 @@ from src.services.ged.detectors.ml.features import (
     FEATURE_SET_VERSION,
     sentence_features,
 )
+from src.services.ged.detectors.ml.labels import NO_ERROR, UNKNOWN
 from src.services.ged.schemas import (
     ErrorCategory,
     ErrorSource,
     ErrorSpan,
     ProvenanceTier,
 )
-
-NO_ERROR = "UC"
-UNKNOWN = "UNK"
 
 
 class MLDetector(BaseDetector):
