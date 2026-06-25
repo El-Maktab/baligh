@@ -3,7 +3,7 @@
 from src.services.gec.schemas import EditOperation
 from src.services.gec.utils.distance_utils import levenshtein
 
-from .common import Alignment, AlignmentType, BackPointer
+from ..common import Alignment, AlignmentType, BackPointer
 
 
 class Aligner:

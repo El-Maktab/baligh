@@ -2,7 +2,7 @@
 
 import pytest
 from src.services.gec.modules.edit_tagger.common import Alignment
-from src.services.gec.modules.edit_tagger.extractor import Extractor
+from src.services.gec.modules.edit_tagger.preprocessing.extractor import Extractor
 from src.services.gec.schemas import EditOperation
 
 

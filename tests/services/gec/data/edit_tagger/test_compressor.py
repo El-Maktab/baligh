@@ -1,6 +1,6 @@
 """Tests for tag compression."""
 
-from src.services.gec.modules.edit_tagger.compressor import Compressor
+from src.services.gec.modules.edit_tagger.preprocessing.compressor import Compressor
 
 
 class TestCompressTagsCount:

@@ -1,6 +1,6 @@
 """Tests for word and character-level alignment."""
 
-from src.services.gec.modules.edit_tagger.aligner import Aligner
+from src.services.gec.modules.edit_tagger.preprocessing.aligner import Aligner
 from src.services.gec.modules.edit_tagger.common import AlignmentType
 from src.services.gec.schemas import EditOperation
 

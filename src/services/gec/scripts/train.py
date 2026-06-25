@@ -2,12 +2,20 @@ import argparse
 import json
 from pathlib import Path
 
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForTokenClassification
 
 from src.services.gec.config import CHECKPOINT_PATH, LABEL2ID_PATH
-from src.services.gec.training.datasets import GECTrainingDataset
-from src.services.gec.training.model import create_model
-from src.services.gec.training.trainer import build_trainer
+from src.services.gec.modules.edit_tagger.training.datasets import GECTrainingDataset
+from src.services.gec.modules.edit_tagger.training.trainer import build_trainer
+
+def create_model(checkpoint, label2id):
+    id2label = {v: k for k, v in label2id.items()}
+    return AutoModelForTokenClassification.from_pretrained(
+        checkpoint,
+        num_labels=len(label2id),
+        id2label=id2label,
+        label2id=label2id,
+    )
 
 
 def main():
@@ -59,3 +67,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+ 

@@ -1,7 +1,7 @@
 """Tests for edit segregation."""
 
 from src.services.gec.modules.edit_tagger.common import Alignment, AlignmentType
-from src.services.gec.modules.edit_tagger.segregator import (
+from src.services.gec.modules.edit_tagger.preprocessing.segregator import (
     EditSegregator,
     SegregatedEdits,
 )

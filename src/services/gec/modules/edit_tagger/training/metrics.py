@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def compute_metrics(eval_preds, id2label, ignore_index=-100):
+def compute_metrics(eval_preds, ignore_index=-100):
     predictions, label_ids = eval_preds
     pred_ids = np.argmax(predictions, axis=-1)
 

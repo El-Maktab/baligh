@@ -66,3 +66,9 @@ class Rewriter:
                 raise ValueError(f"Unsupported operation: {edit.operation}")
 
         return "".join(result)
+
+    import re
+
+
+    def apply_tag(token: list[str], tag: list[str]) -> str:
+        pass

@@ -9,9 +9,9 @@ from src.services.gec.modules.edit_tagger.common import (
     AlignmentType,
     ProjectedExample,
 )
-from src.services.gec.modules.edit_tagger.compressor import Compressor
-from src.services.gec.modules.edit_tagger.extractor import Extractor
-from src.services.gec.modules.edit_tagger.projector import SubwordProjector
+from src.services.gec.modules.edit_tagger.preprocessing.compressor import Compressor
+from src.services.gec.modules.edit_tagger.preprocessing.extractor import Extractor
+from src.services.gec.modules.edit_tagger.preprocessing.projector import SubwordProjector
 from src.services.gec.schemas import EditOperation
 
 

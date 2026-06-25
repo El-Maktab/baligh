@@ -2,7 +2,7 @@
 
 from src.services.gec.utils.string_utils import Tokenizer
 
-from .common import Alignment, ProjectedExample
+from ..common import Alignment, ProjectedExample
 from .compressor import Compressor
 from .extractor import Extractor
 
