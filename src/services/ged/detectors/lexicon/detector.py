@@ -16,10 +16,10 @@ from src.core.utils.arabic import (
 )
 from src.services.ged.confidence import TIER_CONFIDENCE
 from src.services.ged.config import LexiconConfig, load_ged_config
-from src.services.ged.features.subsystems.base import BaseDetector
-from src.services.ged.features.subsystems.lexicon.loader import load_patterns
-from src.services.ged.features.subsystems.lexicon.models import LexiconPattern
-from src.services.ged.features.subsystems.lexicon.trie_store import (
+from src.services.ged.detectors.base import BaseDetector
+from src.services.ged.detectors.lexicon.loader import load_patterns
+from src.services.ged.detectors.lexicon.models import LexiconPattern
+from src.services.ged.detectors.lexicon.trie_store import (
     LexiconTrieStore,
     load_processed_lexicon,
 )

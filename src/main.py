@@ -3,7 +3,7 @@
 import json
 import sys
 
-from src.services.ged.features.subsystems.rule_based.detector import RuleBasedDetector
+from src.services.ged.detectors import RuleBasedDetector
 from src.services.ged.orchestrator import GEDService
 from src.services.ged.schemas import GEDInput
 from src.services.preprocessing import (

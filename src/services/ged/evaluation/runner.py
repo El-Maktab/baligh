@@ -8,6 +8,8 @@ from pathlib import Path
 from loguru import logger
 
 from src.services.ged.config import load_ged_config
+from src.services.ged.detectors import BaseDetector
+from src.services.ged.detectors.ml.artifact import read_manifest
 from src.services.ged.evaluation.datasets import (
     DATASETS,
     NO_ERROR,
@@ -28,8 +30,6 @@ from src.services.ged.evaluation.policy import (
     filter_evaluable_spans,
     fuse_evaluation_spans,
 )
-from src.services.ged.features.subsystems.base import BaseDetector
-from src.services.ged.features.subsystems.ml.artifact import read_manifest
 from src.services.ged.fusion import resolve_overlaps
 from src.services.ged.schemas import ErrorCategory, ErrorSpan
 from src.services.preprocessing import (
@@ -54,9 +54,11 @@ def evaluate(config: EvaluationConfig) -> EvaluationReport:
 
     try:
         # NOTE: those are here cause these imports do some parts of the GED functinality
-        from src.services.ged.features.subsystems.lexicon import LexiconDetector
-        from src.services.ged.features.subsystems.ml import MLDetector
-        from src.services.ged.features.subsystems.rule_based import RuleBasedDetector
+        from src.services.ged.detectors import (
+            LexiconDetector,
+            MLDetector,
+            RuleBasedDetector,
+        )
 
         detectors: list[BaseDetector] = [
             RuleBasedDetector(),

@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel
 
-from src.services.ged.schemas import MorphAnalysis
+from src.core.schemas import MorphAnalysis
 
 
 class InternalMorphFeatures(BaseModel):

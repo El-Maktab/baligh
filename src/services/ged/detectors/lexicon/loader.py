@@ -11,7 +11,8 @@ from pathlib import Path
 import yaml
 from loguru import logger
 from pydantic import ValidationError
-from src.services.ged.features.subsystems.lexicon.models import LexiconPattern
+
+from src.services.ged.detectors.lexicon.models import LexiconPattern
 
 
 def load_patterns(path: Path) -> list[LexiconPattern]:

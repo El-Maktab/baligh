@@ -6,8 +6,8 @@ Authors:
 
 from __future__ import annotations
 
-from src.services.ged.features.subsystems.lexicon.detector import LexiconDetector
-from src.services.ged.features.subsystems.lexicon.models import LexiconPattern
+from src.services.ged.detectors.lexicon.detector import LexiconDetector
+from src.services.ged.detectors.lexicon.models import LexiconPattern
 from src.services.ged.schemas import ErrorCategory, ErrorSource, ProvenanceTier
 
 from tests.services.ged.rule_based.conftest import make_token

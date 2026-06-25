@@ -25,7 +25,8 @@ Authors:
     Amir Anwar
 """
 
-from src.services.ged.schemas import GEDInput, MorphAnalysis, Token
+from src.core.schemas import MorphAnalysis, Token
+from src.services.ged.schemas import GEDInput
 
 # ---------------------------------------------------------------------------
 # Helper

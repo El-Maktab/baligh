@@ -24,8 +24,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from loguru import logger
+
 from src.core.schemas import MorphAnalysis, Token
-from src.services.ged.features.subsystems.base import BaseDetector
+from src.services.ged.detectors.base import BaseDetector
 
 # #########################################################################
 # Bootstrap: load YAML rules then import Python rule modules.
@@ -34,10 +35,10 @@ from src.services.ged.features.subsystems.base import BaseDetector
 # 2. loader (YAML rules)
 # 3. rule modules (Python rules).
 # #########################################################################
-from src.services.ged.features.subsystems.rule_based.loader import (
+from src.services.ged.detectors.rule_based.loader import (
     load_yaml_rules,  # noqa: E402
 )
-from src.services.ged.features.subsystems.rule_based.registry import (
+from src.services.ged.detectors.rule_based.registry import (
     rule_registry,  # noqa: E402
 )
 from src.services.ged.schemas import ErrorSpan
@@ -47,9 +48,9 @@ _yaml_count = load_yaml_rules(_RULES_DIR, rule_registry)
 logger.debug("Loaded {} YAML rules from {}", _yaml_count, _RULES_DIR)
 
 # Importing these modules triggers their @rule_registry.register decorators.
-import src.services.ged.features.subsystems.rule_based.orthography  # noqa: E402, F401
-import src.services.ged.features.subsystems.rule_based.punctuation  # noqa: E402, F401
-import src.services.ged.features.subsystems.rule_based.syntax  # noqa: E402, F401
+import src.services.ged.detectors.rule_based.orthography  # noqa: E402, F401
+import src.services.ged.detectors.rule_based.punctuation  # noqa: E402, F401
+import src.services.ged.detectors.rule_based.syntax  # noqa: E402, F401
 
 # #########################################################################
 # Detector

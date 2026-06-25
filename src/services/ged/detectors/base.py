@@ -6,7 +6,8 @@ Authors:
 
 from abc import ABC, abstractmethod
 
-from src.services.ged.schemas import ErrorSpan, MorphAnalysis, Token
+from src.core.schemas import MorphAnalysis, Token
+from src.services.ged.schemas import ErrorSpan
 
 
 class BaseDetector(ABC):

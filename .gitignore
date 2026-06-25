@@ -54,5 +54,5 @@ env/
 # Data/Resources
 #############################
 /artifacts/
-/src/services/ged/features/subsystems/lexicon/dictionary
+/src/services/ged/detectors/lexicon/dictionary
 /src/services/ged/data

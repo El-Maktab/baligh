@@ -4,7 +4,7 @@ Authors:
     Amir Anwar
 """
 
-from src.services.ged.features.subsystems.rule_based.detector import (
+from src.services.ged.detectors.rule_based.detector import (
     RuleBasedDetector,
 )
 

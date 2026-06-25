@@ -14,18 +14,19 @@ from typing import Any
 
 import joblib
 from sklearn_crfsuite import CRF
+
 from src.services.ged.config import GED_ROOT
-from src.services.ged.evaluation.datasets import LABEL_TO_CATEGORY, NO_ERROR
-from src.services.ged.evaluation.metrics import calculate_metrics
-from src.services.ged.features.subsystems.ml.artifact import (
+from src.services.ged.detectors.ml.artifact import (
     DEFAULT_THRESHOLD,
     installed_runtime_versions,
     write_bundle,
 )
-from src.services.ged.features.subsystems.ml.features import (
+from src.services.ged.detectors.ml.features import (
     FEATURE_SET_VERSION,
     sentence_features,
 )
+from src.services.ged.evaluation.datasets import LABEL_TO_CATEGORY, NO_ERROR
+from src.services.ged.evaluation.metrics import calculate_metrics
 from src.services.preprocessing import PreprocessingInput, preprocess
 
 FORBIDDEN_SUBSTRINGS = ("&gt;", "&lt;", ">", "<")

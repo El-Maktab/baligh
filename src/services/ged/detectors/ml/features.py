@@ -7,6 +7,7 @@ from collections.abc import Sequence
 
 from camel_tools.utils.charsets import AR_CHARSET
 from camel_tools.utils.normalize import normalize_alef_ar, normalize_alef_maksura_ar
+
 from src.core.schemas import MorphAnalysis, Token
 
 FEATURE_SET_VERSION = "surface_morph_v2"

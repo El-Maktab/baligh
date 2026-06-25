@@ -14,7 +14,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from src.core.schemas import MorphAnalysis, Token
+import src.core.schemas as core_schemas
 
 
 class GEDInput(BaseModel):
@@ -36,8 +36,8 @@ class GEDInput(BaseModel):
 
     text: str
     normalized_text: str
-    tokens: list[Token]
-    morph_features: list[list[MorphAnalysis]]
+    tokens: list[core_schemas.Token]
+    morph_features: list[list[core_schemas.MorphAnalysis]]
 
 
 #######################################################################

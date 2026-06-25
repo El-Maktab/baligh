@@ -7,10 +7,10 @@ validated against actual tokenization and CAMeL/Farasa outputs.
 from __future__ import annotations
 
 import pytest
-from src.services.ged.features.subsystems.rule_based import (
+from src.services.ged.detectors.rule_based import (
     RuleBasedDetector,  # noqa: F401
 )
-from src.services.ged.features.subsystems.rule_based.registry import rule_registry
+from src.services.ged.detectors.rule_based.registry import rule_registry
 from src.services.preprocessing import PreprocessingInput, preprocess
 
 

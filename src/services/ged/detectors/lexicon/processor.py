@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import marisa_trie
+
 from src.core.utils.arabic import (
     is_arabic_word,
     loose_arabic_lookup_key,

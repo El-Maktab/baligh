@@ -6,8 +6,8 @@ Authors:
   Amir Anwar
 """
 
+from src.services.ged.detectors.base import BaseDetector
 from src.services.ged.exceptions import GEDDetectionError
-from src.services.ged.features.subsystems.base import BaseDetector
 from src.services.ged.fusion import resolve_overlaps
 from src.services.ged.schemas import ErrorSpan, GEDInput, GEDOutput
 

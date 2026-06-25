@@ -4,7 +4,7 @@ Authors:
     Amir Anwar
 """
 
-from src.services.ged.features.subsystems.lexicon.detector import (
+from src.services.ged.detectors.lexicon.detector import (
     LexiconDetector,
 )
 
