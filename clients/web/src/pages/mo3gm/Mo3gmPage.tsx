@@ -8,17 +8,12 @@ import {
   VolumeX,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
 import { Button, Form, Input, SearchField } from "react-aria-components";
 
 import { motionPresets } from "../../design-system";
+import { useMo3gmController } from "../../features/mo3gm/useMo3gmController";
+import type { DictionaryEntry } from "../../features/mo3gm/types";
 import { ReferenceHeader } from "../../shared/reference/ReferenceHeader";
-import {
-  dictionaryEntries,
-  findDictionaryEntry,
-  updateRecentSearches,
-  type DictionaryEntry,
-} from "./dictionaryData";
 import "../reference.css";
 
 function EntryResult({ entry }: { entry: DictionaryEntry }) {
@@ -130,20 +125,16 @@ function EntryResult({ entry }: { entry: DictionaryEntry }) {
 }
 
 export function Mo3gmPage() {
-  const [query, setQuery] = useState("بليغ");
-  const [entry, setEntry] = useState<DictionaryEntry | undefined>(
-    dictionaryEntries[0],
-  );
-  const [submittedQuery, setSubmittedQuery] = useState("بليغ");
-  const [recent, setRecent] = useState(["بليغ", "استنبط", "جذر", "متوارث"]);
   const reduceMotion = useReducedMotion();
-
-  const submitSearch = (value = query) => {
-    const result = findDictionaryEntry(value);
-    setSubmittedQuery(value.trim());
-    setEntry(result);
-    if (result) setRecent((items) => updateRecentSearches(items, result.word));
-  };
+  const {
+    entry,
+    isHydrating,
+    query,
+    recent,
+    setQuery,
+    submitSearch,
+    submittedQuery,
+  } = useMo3gmController();
 
   return (
     <main className="reference-page dictionary-page">
@@ -168,6 +159,7 @@ export function Mo3gmPage() {
           className="reference-search"
           onSubmit={(event) => {
             event.preventDefault();
+            if (isHydrating) return;
             submitSearch();
           }}
         >
@@ -214,7 +206,19 @@ export function Mo3gmPage() {
 
         <div className="dictionary-result-slot">
           <AnimatePresence mode="wait">
-            {entry ? (
+            {isHydrating ? (
+              <motion.div
+                aria-live="polite"
+                className="reference-empty"
+                key="loading"
+                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Search aria-hidden="true" size={28} />
+                <h2>جار تجهيز المعجم</h2>
+                <p>نحمّل الكلمات الأخيرة ومدخل البداية الآن.</p>
+              </motion.div>
+            ) : entry ? (
               <EntryResult entry={entry} key={entry.word} />
             ) : (
               <motion.div
