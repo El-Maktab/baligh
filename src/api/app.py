@@ -17,7 +17,7 @@ from .routers import analysis, corrections, drafts, suggestions, tashkeel
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan manager for the FastAPI application."""
-    client = AsyncIOMotorClient(settings.mongodb_uri)
+    client: AsyncIOMotorClient = AsyncIOMotorClient(settings.mongodb_uri)
     db = client.get_default_database()
 
     if "drafts" not in await db.list_collection_names():
@@ -36,16 +36,6 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
-
-
-def get_db() -> AsyncIOMotorClient:
-    """Dependency that provides the Motor client.
-
-    All routers import this dependency to interact with the ``drafts``
-    collection. Using ``Depends`` ensures that FastAPI resolves the client
-    lazily for each request.
-    """
-    return app.state.mongo_client
 
 
 app.include_router(drafts.router, prefix="/api/v1/drafts", tags=["drafts"])
