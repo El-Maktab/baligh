@@ -150,9 +150,7 @@ test("editor body and presentation controls are interactive", async ({
 
   const editor = page.getByRole("textbox", { name: "محتوى النص" });
   const lineLocator = editor.locator(".editor-page__text-line");
-  await expect
-    .poll(async () => lineLocator.count())
-    .toBeGreaterThan(1);
+  await expect.poll(async () => lineLocator.count()).toBeGreaterThan(1);
   const initialLineCount = await lineLocator.count();
   await editor.click();
   await page.keyboard.press("End");
@@ -171,9 +169,7 @@ test("editor body and presentation controls are interactive", async ({
   await expect(
     editor.locator(".editor-page__text-line:has([data-strong])"),
   ).toHaveCount(1);
-  expect(
-    await lineLocator.count(),
-  ).toBeGreaterThan(1);
+  expect(await lineLocator.count()).toBeGreaterThan(1);
   if (testInfo.project.name === "mobile-chromium") {
     await page.getByRole("button", { name: "المسودات" }).click();
     await expect(

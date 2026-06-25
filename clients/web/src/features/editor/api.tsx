@@ -1,8 +1,5 @@
-import {
-  createContext,
-  useContext,
-  type PropsWithChildren,
-} from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, type PropsWithChildren } from "react";
 
 import { BLANK_DRAFT_BODY, SEEDED_DRAFTS } from "./mockData";
 import {
@@ -241,7 +238,11 @@ export function createMockEditorApi(
 
       const nextBody = payload.body ?? draft.body;
       const nextTitle = payload.title ?? draft.title;
-      draft.corrections = resolveCorrections(draft.body, nextBody, draft.corrections);
+      draft.corrections = resolveCorrections(
+        draft.body,
+        nextBody,
+        draft.corrections,
+      );
       draft.body = nextBody;
       draft.title = nextTitle;
       draft.updatedAt = "الآن";
@@ -262,7 +263,11 @@ export function createMockEditorApi(
       await delay(signal);
       const draft = getStoredDraft(draftId);
       assertRevision(draft, payload.clientRevision);
-      draft.corrections = resolveCorrections(draft.body, payload.body, draft.corrections);
+      draft.corrections = resolveCorrections(
+        draft.body,
+        payload.body,
+        draft.corrections,
+      );
       if (draft.body !== payload.body) {
         draft.body = payload.body;
       }
@@ -283,7 +288,9 @@ export function createMockEditorApi(
       const draft = getStoredDraft(draftId);
       assertRevision(draft, payload.clientRevision);
 
-      const correction = draft.corrections.find((entry) => entry.id === correctionId);
+      const correction = draft.corrections.find(
+        (entry) => entry.id === correctionId,
+      );
       if (!correction || correction.status === "stale") {
         throw new EditorApiError("Correction not available", 409, {
           latestDraft: cloneStoredDraft(draft),
@@ -292,12 +299,22 @@ export function createMockEditorApi(
 
       const nextBody = payload.body ?? draft.body;
       if (draft.body !== nextBody) {
-        draft.corrections = resolveCorrections(draft.body, nextBody, draft.corrections);
+        draft.corrections = resolveCorrections(
+          draft.body,
+          nextBody,
+          draft.corrections,
+        );
         draft.body = nextBody;
       }
 
-      const refreshed = draft.corrections.find((entry) => entry.id === correctionId);
-      if (!refreshed || draft.body.slice(refreshed.span.start, refreshed.span.end) !== refreshed.original) {
+      const refreshed = draft.corrections.find(
+        (entry) => entry.id === correctionId,
+      );
+      if (
+        !refreshed ||
+        draft.body.slice(refreshed.span.start, refreshed.span.end) !==
+          refreshed.original
+      ) {
         throw new EditorApiError("Correction became stale", 409, {
           latestDraft: cloneStoredDraft(draft),
         });
@@ -305,7 +322,11 @@ export function createMockEditorApi(
 
       const { start, end } = refreshed.span;
       const delta = refreshed.replacement.length - (end - start);
-      draft.body = replaceTextRange(draft.body, refreshed.span, refreshed.replacement);
+      draft.body = replaceTextRange(
+        draft.body,
+        refreshed.span,
+        refreshed.replacement,
+      );
       draft.corrections = draft.corrections.map((entry) => {
         if (entry.id === correctionId) {
           return { ...entry, status: "accepted" as const };
@@ -342,7 +363,9 @@ export function createMockEditorApi(
       const draft = getStoredDraft(draftId);
       assertRevision(draft, payload.clientRevision);
       draft.corrections = draft.corrections.map((entry) =>
-        entry.id === correctionId ? { ...entry, status: "ignored" as const } : entry,
+        entry.id === correctionId
+          ? { ...entry, status: "ignored" as const }
+          : entry,
       );
       draft.updatedAt = "الآن";
       draft.savedAt = new Date().toISOString();
@@ -370,7 +393,11 @@ export function createMockEditorApi(
       };
       const result = applyTashkeelToBody(draft.body, range);
       if (result.applied) {
-        draft.corrections = resolveCorrections(draft.body, result.body, draft.corrections);
+        draft.corrections = resolveCorrections(
+          draft.body,
+          result.body,
+          draft.corrections,
+        );
         draft.body = result.body;
         draft.revision += 1;
         draft.updatedAt = "الآن";
@@ -622,7 +649,9 @@ export function EditorApiProvider({
   children,
 }: PropsWithChildren<{ api: EditorApi }>) {
   return (
-    <EditorApiContext.Provider value={api}>{children}</EditorApiContext.Provider>
+    <EditorApiContext.Provider value={api}>
+      {children}
+    </EditorApiContext.Provider>
   );
 }
 

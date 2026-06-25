@@ -19,22 +19,22 @@ export function useMo3gmController() {
 
   useEffect(() => {
     if (!bootstrapQuery.data) return;
-    setQuery((current) => current || bootstrapQuery.data.initialQuery);
-    setSubmittedQuery((current) => current || bootstrapQuery.data.initialQuery);
-    setEntry((current) => current ?? bootstrapQuery.data.featuredEntry);
-    setRecent((current) =>
-      current.length > 0 ? current : bootstrapQuery.data.recentSearches,
-    );
+    const timer = setTimeout(() => {
+      setQuery((current) => current || bootstrapQuery.data.initialQuery);
+      setSubmittedQuery(
+        (current) => current || bootstrapQuery.data.initialQuery,
+      );
+      setEntry((current) => current ?? bootstrapQuery.data.featuredEntry);
+      setRecent((current) =>
+        current.length > 0 ? current : bootstrapQuery.data.recentSearches,
+      );
+    }, 0);
+    return () => clearTimeout(timer);
   }, [bootstrapQuery.data]);
 
   const searchMutation = useMutation({
-    mutationFn: ({
-      value,
-      signal,
-    }: {
-      value: string;
-      signal?: AbortSignal;
-    }) => api.searchEntry({ query: value }, signal),
+    mutationFn: ({ value, signal }: { value: string; signal?: AbortSignal }) =>
+      api.searchEntry({ query: value }, signal),
     onSuccess: (result) => {
       setSubmittedQuery(result.query);
       const entry = result.entry;

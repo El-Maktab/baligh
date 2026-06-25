@@ -15,6 +15,7 @@ import {
   LoaderCircle,
   Sparkles,
   SpellCheck2,
+  Terminal,
   X,
 } from "lucide-react";
 import type { KeyboardEvent, ReactNode } from "react";
@@ -40,7 +41,6 @@ import {
 import type {
   CorrectionCategory,
   DraftSummary,
-  EditorTextRange,
 } from "../../features/editor/types";
 import { ArabicConfettiButton } from "../../shared/ui/ArabicConfettiButton";
 import { ThemeControl } from "../../shared/ui/ThemeControl";
@@ -168,7 +168,12 @@ function SuggestionMenu({
 }: {
   open: boolean;
   mode: "word" | "sentence" | null;
-  anchorRect: { top: number; left: number; width: number; height: number } | null;
+  anchorRect: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null;
   suggestions: { id: string; label: string; displayText: string }[];
   highlightedIndex: number;
   onHover: (index: number) => void;
@@ -289,6 +294,10 @@ export function EditorPage() {
           <BookOpenText aria-hidden="true" size={19} />
           <span>المعجم</span>
         </Link>
+        <Link className="editor-page__side-link" to="/api">
+          <Terminal aria-hidden="true" size={19} />
+          <span>واجهة البرمجة (API)</span>
+        </Link>
       </section>
     </div>
   );
@@ -297,15 +306,25 @@ export function EditorPage() {
     return (
       <main className="editor-page editor-page--loading">
         <div className="editor-page__loading-state">
-          <LoaderCircle aria-hidden="true" className="editor-page__spinner" size={26} />
-          <p>{draftsLoading || isHydratingDraft ? "جار تجهيز المحرر..." : "لا توجد مسودة نشطة."}</p>
+          <LoaderCircle
+            aria-hidden="true"
+            className="editor-page__spinner"
+            size={26}
+          />
+          <p>
+            {draftsLoading || isHydratingDraft
+              ? "جار تجهيز المحرر..."
+              : "لا توجد مسودة نشطة."}
+          </p>
         </div>
       </main>
     );
   }
 
   const revealCorrection = (correctionId: string) => {
-    const correction = activeDraft.corrections.find((entry) => entry.id === correctionId);
+    const correction = activeDraft.corrections.find(
+      (entry) => entry.id === correctionId,
+    );
     if (!correction) return;
 
     if (activeFilter !== correction.category) {
@@ -446,9 +465,8 @@ export function EditorPage() {
 
   const formattingRange = resolveFormattingRange(activeDraft.body, selection);
   const selectedLines = getSelectedLineIndices(activeDraft.body, selection);
-  const strongActive = isRangeCovered(activeDraft.formatting.strong, formattingRange);
-  const emphasisActive = isRangeCovered(
-    activeDraft.formatting.emphasis,
+  const strongActive = isRangeCovered(
+    activeDraft.formatting.strong,
     formattingRange,
   );
   const currentAlignment = selectedLines.every(
@@ -534,7 +552,9 @@ export function EditorPage() {
             </ToolbarButton>
             <ToolbarButton
               active={suggestionsEnabled}
-              label={suggestionsEnabled ? "تعطيل الاقتراحات" : "تفعيل الاقتراحات"}
+              label={
+                suggestionsEnabled ? "تعطيل الاقتراحات" : "تفعيل الاقتراحات"
+              }
               onPress={toggleSuggestionsEnabled}
             >
               <Sparkles aria-hidden="true" size={18} />

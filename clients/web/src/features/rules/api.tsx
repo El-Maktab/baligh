@@ -1,8 +1,5 @@
-import {
-  createContext,
-  useContext,
-  type PropsWithChildren,
-} from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, type PropsWithChildren } from "react";
 
 import { type ApiDataSource } from "../../app/environment";
 import { rulesContract } from "./contract";

@@ -6,6 +6,7 @@ import { HomePage } from "../pages/home/HomePage";
 import { Mo3gmPage } from "../pages/mo3gm/Mo3gmPage";
 import { NotFoundPage } from "../pages/not-found/NotFoundPage";
 import { RulesPage } from "../pages/rules/RulesPage";
+import { ApiPage } from "../pages/api/ApiPage";
 import { isShowcaseEnabled } from "./environment";
 
 const showcaseEnabled = isShowcaseEnabled(
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/editor" element={<EditorPage />} />
         <Route path="/mo3gm" element={<Mo3gmPage />} />
         <Route path="/rules" element={<RulesPage />} />
+        <Route path="/api" element={<ApiPage />} />
         {showcaseEnabled && (
           <Route path="/design-system" element={<DesignSystemPage />} />
         )}

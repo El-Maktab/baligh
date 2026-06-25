@@ -1,10 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { createAppQueryClient } from "../../app/queryClient";
@@ -22,17 +17,26 @@ function TestHarness() {
   return (
     <div>
       <span data-testid="draft-count">{controller.drafts.length}</span>
-      <span data-testid="active-title">{controller.activeDraft?.title ?? ""}</span>
-      <span data-testid="active-body">{controller.activeDraft?.body ?? ""}</span>
+      <span data-testid="active-title">
+        {controller.activeDraft?.title ?? ""}
+      </span>
+      <span data-testid="active-body">
+        {controller.activeDraft?.body ?? ""}
+      </span>
       <span data-testid="save-state">{controller.saveState}</span>
       <span data-testid="suggestion-open">
         {String(controller.suggestionState.isOpen)}
       </span>
-      <span data-testid="suggestion-mode">{controller.suggestionState.mode ?? ""}</span>
+      <span data-testid="suggestion-mode">
+        {controller.suggestionState.mode ?? ""}
+      </span>
       <span data-testid="highlighted-index">
         {controller.suggestionState.highlightedIndex}
       </span>
-      <button onClick={() => controller.updateTitle("عنوان جديد")} type="button">
+      <button
+        onClick={() => controller.updateTitle("عنوان جديد")}
+        type="button"
+      >
         edit-title
       </button>
       <button onClick={() => controller.updateBody("الم")} type="button">
@@ -152,6 +156,8 @@ describe("useEditorController", () => {
       },
       { timeout: 2_500 },
     );
-    expect(screen.getByTestId("active-title")).toHaveTextContent("عنوان من الخادم");
+    expect(screen.getByTestId("active-title")).toHaveTextContent(
+      "عنوان من الخادم",
+    );
   });
 });

@@ -8,11 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-import type {
-  Correction,
-  EditorFormatting,
-  EditorTextRange,
-} from "./types";
+import type { Correction, EditorFormatting, EditorTextRange } from "./types";
 import { getLineFormat } from "./editorState";
 import { applyEditorInput } from "./inputOperations";
 
@@ -154,7 +150,8 @@ function renderLineContent(
       correction.status === "active" &&
       correction.span.start < lineEnd &&
       correction.span.end > lineStart &&
-      body.slice(correction.span.start, correction.span.end) === correction.original,
+      body.slice(correction.span.start, correction.span.end) ===
+        correction.original,
   );
   const boundaries = new Set([lineStart, lineEnd]);
 
@@ -303,7 +300,8 @@ export function EditableDocument({
     }
     const selectionRange = selection.getRangeAt(0).cloneRange();
     const rect =
-      selectionRange.getClientRects()[0] ?? selectionRange.getBoundingClientRect();
+      selectionRange.getClientRects()[0] ??
+      selectionRange.getBoundingClientRect();
     onCaretRectChange?.(rect.width === 0 && rect.height === 0 ? null : rect);
   };
 

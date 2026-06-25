@@ -107,9 +107,9 @@ describe("editorDemoReducer", () => {
       range: [0, 18],
     });
 
-    expect(getActiveDraft(formatted).body.startsWith("المَحَبَّة تَتَأَنَّى")).toBe(
-      true,
-    );
+    expect(
+      getActiveDraft(formatted).body.startsWith("المَحَبَّة تَتَأَنَّى"),
+    ).toBe(true);
   });
 
   it("adds tashkeel to the current line when the selection is collapsed", () => {

@@ -121,9 +121,9 @@ export function useEditorController() {
   const queryClient = useQueryClient();
   const [activeDraftId, setActiveDraftId] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterValue>("spelling");
-  const [expandedCorrectionId, setExpandedCorrectionId] = useState<string | null>(
-    null,
-  );
+  const [expandedCorrectionId, setExpandedCorrectionId] = useState<
+    string | null
+  >(null);
   const [focusedCorrectionId, setFocusedCorrectionId] = useState<string | null>(
     null,
   );
@@ -168,7 +168,11 @@ export function useEditorController() {
 
   useEffect(() => {
     if (activeDraftId || !draftsQuery.data?.length) return;
-    setActiveDraftId(draftsQuery.data[0]?.id ?? "");
+    const firstId = draftsQuery.data[0]?.id ?? "";
+    const timer = setTimeout(() => {
+      setActiveDraftId(firstId);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [activeDraftId, draftsQuery.data]);
 
   const activeDraftQuery = useQuery({
@@ -196,13 +200,17 @@ export function useEditorController() {
   }, [activeDraftQuery.data]);
 
   const addDraftMutation = useMutation({
-    mutationFn: ({ signal }: { signal?: AbortSignal }) => api.createDraft({}, signal),
+    mutationFn: ({ signal }: { signal?: AbortSignal }) =>
+      api.createDraft({}, signal),
     onSuccess: (createdDraft) => {
       queryClient.setQueryData<DraftSummary[]>(
         editorQueryKeys.drafts,
         (current = []) => [buildDraftSummary(createdDraft), ...current],
       );
-      queryClient.setQueryData(editorQueryKeys.draft(createdDraft.id), createdDraft);
+      queryClient.setQueryData(
+        editorQueryKeys.draft(createdDraft.id),
+        createdDraft,
+      );
       setActiveDraftId(createdDraft.id);
     },
   });
@@ -309,7 +317,12 @@ export function useEditorController() {
       revision: number;
       signal?: AbortSignal;
     }) =>
-      api.ignoreCorrection(draftId, correctionId, { clientRevision: revision }, signal),
+      api.ignoreCorrection(
+        draftId,
+        correctionId,
+        { clientRevision: revision },
+        signal,
+      ),
   });
 
   const tashkeelMutation = useMutation({
@@ -362,7 +375,9 @@ export function useEditorController() {
   const scheduleSave = () => {
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
     saveTimerRef.current = window.setTimeout(() => {
-      const snapshot = draftRef.current ? cloneDraftDocument(draftRef.current) : null;
+      const snapshot = draftRef.current
+        ? cloneDraftDocument(draftRef.current)
+        : null;
       if (!snapshot) return;
 
       saveAbortRef.current?.abort();
@@ -379,7 +394,8 @@ export function useEditorController() {
             if (ticket !== saveTicketRef.current) return;
             syncDraftCaches(response.draft);
             setDraft((current) => {
-              if (!current || current.id !== variables.snapshot.id) return current;
+              if (!current || current.id !== variables.snapshot.id)
+                return current;
               if (
                 current.body === variables.snapshot.body &&
                 current.title === variables.snapshot.title
@@ -411,7 +427,9 @@ export function useEditorController() {
   const scheduleAnalysis = () => {
     if (analyzeTimerRef.current) window.clearTimeout(analyzeTimerRef.current);
     analyzeTimerRef.current = window.setTimeout(() => {
-      const snapshot = draftRef.current ? cloneDraftDocument(draftRef.current) : null;
+      const snapshot = draftRef.current
+        ? cloneDraftDocument(draftRef.current)
+        : null;
       const selectionSnapshot = [...selectionRef.current] as EditorTextRange;
       if (!snapshot) return;
 
@@ -428,7 +446,8 @@ export function useEditorController() {
           onSuccess: (response, variables) => {
             if (ticket !== analyzeTicketRef.current) return;
             setDraft((current) => {
-              if (!current || current.id !== variables.snapshot.id) return current;
+              if (!current || current.id !== variables.snapshot.id)
+                return current;
               if (current.body !== variables.snapshot.body) return current;
               return { ...current, corrections: response.corrections };
             });
@@ -459,11 +478,13 @@ export function useEditorController() {
     if (!suggestionsEnabled) return;
 
     const snapshot = options?.snapshot ?? draftRef.current;
-    const selectionSnapshot = options?.selectionSnapshot ?? selectionRef.current;
+    const selectionSnapshot =
+      options?.selectionSnapshot ?? selectionRef.current;
     if (!snapshot) return;
 
     suggestionAbortRef.current?.abort();
-    if (suggestionTimerRef.current) window.clearTimeout(suggestionTimerRef.current);
+    if (suggestionTimerRef.current)
+      window.clearTimeout(suggestionTimerRef.current);
 
     const controller = new AbortController();
     suggestionAbortRef.current = controller;
@@ -556,10 +577,9 @@ export function useEditorController() {
   };
 
   const updateTitle = (title: string) => {
-    updateLocalDraft(
-      (current) => ({ ...current, title, updatedAt: "الآن" }),
-      { scheduleSave: true },
-    );
+    updateLocalDraft((current) => ({ ...current, title, updatedAt: "الآن" }), {
+      scheduleSave: true,
+    });
   };
 
   const updateBody = (body: string) => {
@@ -569,28 +589,36 @@ export function useEditorController() {
         body,
         updatedAt: "الآن",
         formatting: reconcileFormatting(current.formatting, current.body, body),
-        corrections: resolveCorrections(current.body, body, current.corrections),
+        corrections: resolveCorrections(
+          current.body,
+          body,
+          current.corrections,
+        ),
       }),
       { scheduleSave: true, scheduleAnalysis: true },
     );
   };
 
   useEffect(() => {
-    if (!draft || !suggestionsEnabled) {
-      closeSuggestions();
-      return;
-    }
+    const timer = setTimeout(() => {
+      if (!draft || !suggestionsEnabled) {
+        closeSuggestions();
+        return;
+      }
 
-    const mode = detectSuggestionMode(draft.body, selection);
-    if (!mode) {
-      closeSuggestions();
-      return;
-    }
+      const mode = detectSuggestionMode(draft.body, selection);
+      if (!mode) {
+        closeSuggestions();
+        return;
+      }
 
-    requestSuggestions(mode, {
-      snapshot: draft,
-      selectionSnapshot: selection,
-    });
+      requestSuggestions(mode, {
+        snapshot: draft,
+        selectionSnapshot: selection,
+      });
+    }, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft?.body, draft?.id, draft?.revision, selection, suggestionsEnabled]);
 
   useEffect(
@@ -632,7 +660,9 @@ export function useEditorController() {
   };
 
   const toggleExpanded = (correctionId: string) => {
-    setExpandedCorrectionId((current) => (current === correctionId ? null : correctionId));
+    setExpandedCorrectionId((current) =>
+      current === correctionId ? null : correctionId,
+    );
     setFocusedCorrectionId(correctionId);
   };
 
@@ -762,7 +792,10 @@ export function useEditorController() {
     );
   };
 
-  const setAlign = (range: EditorTextRange, align: EditorLineFormat["align"]) => {
+  const setAlign = (
+    range: EditorTextRange,
+    align: EditorLineFormat["align"],
+  ) => {
     updateLocalDraft(
       (current) => ({
         ...current,
@@ -815,7 +848,10 @@ export function useEditorController() {
             }
           }
 
-          const localResult = applyTashkeelToBody(snapshot.body, selectionSnapshot);
+          const localResult = applyTashkeelToBody(
+            snapshot.body,
+            selectionSnapshot,
+          );
           if (localResult.applied) {
             updateBody(localResult.body);
           }
@@ -856,7 +892,8 @@ export function useEditorController() {
       suggestionState.replaceRange,
       suggestion.insertText,
     );
-    const nextCaret = suggestionState.replaceRange.start + suggestion.insertText.length;
+    const nextCaret =
+      suggestionState.replaceRange.start + suggestion.insertText.length;
 
     updateLocalDraft(
       (current) => ({
@@ -915,7 +952,9 @@ export function useEditorController() {
         ? setNavigationOpen((open) => !open)
         : setCorrectionsOpen((open) => !open),
     closePanel: (panel: EditorPanel) =>
-      panel === "navigation" ? setNavigationOpen(false) : setCorrectionsOpen(false),
+      panel === "navigation"
+        ? setNavigationOpen(false)
+        : setCorrectionsOpen(false),
     toggleStrong,
     toggleEmphasis,
     applyTashkeel,
@@ -925,10 +964,18 @@ export function useEditorController() {
     requestSentenceSuggestions,
     cycleSuggestion,
     highlightSuggestion: (index: number) =>
-      setSuggestionState((current) => ({ ...current, highlightedIndex: index })),
+      setSuggestionState((current) => ({
+        ...current,
+        highlightedIndex: index,
+      })),
     applySuggestion,
     closeSuggestions,
   };
 }
 
-export { getLineFormat, getSelectedLineIndices, isRangeCovered, resolveFormattingRange };
+export {
+  getLineFormat,
+  getSelectedLineIndices,
+  isRangeCovered,
+  resolveFormattingRange,
+};

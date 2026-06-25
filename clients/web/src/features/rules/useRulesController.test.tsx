@@ -15,7 +15,10 @@ function TestHarness() {
       <span data-testid="first-title">
         {controller.visibleRules[0]?.title ?? ""}
       </span>
-      <button onClick={() => controller.setCategory("orthography")} type="button">
+      <button
+        onClick={() => controller.setCategory("orthography")}
+        type="button"
+      >
         filter-orthography
       </button>
       <button onClick={() => controller.setQuery("مؤخرًا")} type="button">

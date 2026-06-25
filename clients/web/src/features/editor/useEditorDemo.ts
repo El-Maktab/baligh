@@ -159,8 +159,16 @@ export function editorDemoReducer(
           ...draft,
           body: action.body,
           updatedAt: "الآن",
-          formatting: reconcileFormatting(draft.formatting, draft.body, action.body),
-          corrections: resolveCorrections(draft.body, action.body, draft.corrections),
+          formatting: reconcileFormatting(
+            draft.formatting,
+            draft.body,
+            action.body,
+          ),
+          corrections: resolveCorrections(
+            draft.body,
+            action.body,
+            draft.corrections,
+          ),
         })),
       };
     case "setFilter":
@@ -212,12 +220,19 @@ export function editorDemoReducer(
             ...draft,
             body: nextBody,
             updatedAt: "الآن",
-            formatting: reconcileFormatting(draft.formatting, draft.body, nextBody),
+            formatting: reconcileFormatting(
+              draft.formatting,
+              draft.body,
+              nextBody,
+            ),
             corrections: draft.corrections.map((correction) => {
               if (correction.id === action.correctionId) {
                 return { ...correction, status: "accepted" as const };
               }
-              if (correction.status === "active" && correction.span.start >= end) {
+              if (
+                correction.status === "active" &&
+                correction.span.start >= end
+              ) {
                 return {
                   ...correction,
                   span: {
@@ -284,8 +299,16 @@ export function editorDemoReducer(
             ...draft,
             body: result.body,
             updatedAt: "الآن",
-            formatting: reconcileFormatting(draft.formatting, draft.body, result.body),
-            corrections: resolveCorrections(draft.body, result.body, draft.corrections),
+            formatting: reconcileFormatting(
+              draft.formatting,
+              draft.body,
+              result.body,
+            ),
+            corrections: resolveCorrections(
+              draft.body,
+              result.body,
+              draft.corrections,
+            ),
           };
         }),
       };
@@ -293,7 +316,8 @@ export function editorDemoReducer(
       return {
         ...state,
         drafts: updateDraft(state.drafts, activeDraft.id, (draft) => {
-          const firstLine = getSelectedLineIndices(draft.body, action.range)[0] ?? 0;
+          const firstLine =
+            getSelectedLineIndices(draft.body, action.range)[0] ?? 0;
           const nextList = cycleListStyle(
             getLineFormat(draft.formatting, firstLine).list,
           );

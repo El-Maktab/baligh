@@ -18,7 +18,10 @@ function TestHarness() {
       <button onClick={() => controller.submitSearch("استنبط")} type="button">
         submit-query
       </button>
-      <button onClick={() => controller.submitSearch("كلمة مجهولة")} type="button">
+      <button
+        onClick={() => controller.submitSearch("كلمة مجهولة")}
+        type="button"
+      >
         submit-miss
       </button>
     </div>
@@ -64,7 +67,9 @@ describe("useMo3gmController", () => {
     fireEvent.click(screen.getByText("submit-miss"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("submitted-query")).toHaveTextContent("كلمة مجهولة");
+      expect(screen.getByTestId("submitted-query")).toHaveTextContent(
+        "كلمة مجهولة",
+      );
       expect(screen.getByTestId("entry-word")).toHaveTextContent("");
     });
   });
