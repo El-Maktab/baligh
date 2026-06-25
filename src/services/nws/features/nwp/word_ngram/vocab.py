@@ -4,7 +4,7 @@ Maps valid Arabic words to unique integer IDs using the GED LexiconTrieStore.
 Reserves negative IDs for special tokens (<UNK>, <BOS>, <EOS>) and punctuation.
 """
 
-from src.services.ged.features.subsystems.lexicon.trie_store import (
+from src.services.ged.detectors.lexicon.trie_store import (
     load_processed_lexicon,
 )
 
