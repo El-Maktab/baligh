@@ -19,3 +19,7 @@ MIN_LABEL_FREQUENCY = 3
 DEFAULT_LABEL = "KEEP"
 UNK_LABEL = "[UNK_EDIT]"
 PAD_LABEL = "[PAD]"
+
+# CRF Configuration
+USE_CRF = False  # Set to True to enable CRF layer
+CRF_CHECKPOINT_SUFFIX = "_crf"  # Suffix for checkpoint directories when CRF is used

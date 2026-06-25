@@ -15,10 +15,6 @@ class GECInferencePipeline:
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-
-        # Coerce id2label keys to int regardless of how the vocab was loaded.
-        # JSON deserialization always produces string keys, which would cause
-        # every pred_id lookup (int) to silently return "[UNK]".
         self.label_vocab = label_vocab
         self.label_vocab.id2label = {
             int(k): v for k, v in label_vocab.id2label.items()
@@ -47,7 +43,11 @@ class GECInferencePipeline:
                 attention_mask=attention_mask,
             )
 
-        pred_ids = outputs.logits.argmax(dim=-1)[0].tolist()
+        logits = outputs["logits"] if isinstance(outputs, dict) and "logits" in outputs else outputs.logits
+        if logits.dim() == 3:
+            pred_ids = logits.argmax(dim=-1)[0].tolist()
+        else:
+            pred_ids = logits[0].tolist()
 
         subwords = self.tokenizer.tokenizer.convert_ids_to_tokens(
             input_ids[0]

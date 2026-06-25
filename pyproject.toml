@@ -13,7 +13,8 @@ dependencies = [
     "loguru>=0.7.3",
     "marisa-trie>=1.2.1",
     "transformers>=4.43.4",
-    "accelerate>=0.21.0"
+    "accelerate>=0.21.0",
+    "pytorch-crf>=0.1.0"
 ]
 
 [dependency-groups]

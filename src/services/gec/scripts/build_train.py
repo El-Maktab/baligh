@@ -48,6 +48,7 @@ def build_train() -> None:
     save_json(id2label, ID2LABEL_PATH)
 
     print("label2id created")
+    
     # exporter = DatasetExporter()
     # exporter.export_jsonl(examples, NOPNX_TRAIN_OUTPUT)
     # exporter.export_jsonl(examples, PNX_TRAIN_OUTPUT)

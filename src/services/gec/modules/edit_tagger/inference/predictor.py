@@ -31,4 +31,4 @@ class Predictor:
 
     def correct(self, text: str) -> str:
         res = self.pipeline.predict(text)
-        return self.rewriter.rewrite_tokens(res[0], res[1])
+        return self.rewriter.apply_tag(res[0], res[1])

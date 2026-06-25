@@ -1,7 +1,20 @@
 """Text rewriting utilities for error correction."""
 
+import re
+
 from src.services.gec.modules.edit_tagger.common import Alignment
 from src.services.gec.schemas import EditOperation
+
+_TAG_RE = re.compile(r"^([KDIRMS])(?:_\[([^\]]*)\])?(\d+|\*)?$")
+
+
+def _parse_tag(tag: str) -> tuple[str, str | None]:
+    m = _TAG_RE.match(tag)
+    if m is None:
+        return "K", None
+    op = m.group(1)
+    label = m.group(2)
+    return op, label
 
 
 class Rewriter:
@@ -67,8 +80,48 @@ class Rewriter:
 
         return "".join(result)
 
-    import re
+    def apply_tag(self, token: list[str], tag: list[str]) -> str:
+        words: list[str] = []
+        current_word: list[str] = []
+        prev_op: str | None = None
 
+        for tok, t in zip(token, tag):
+            op, label = _parse_tag(t)
+            is_continuation = tok.startswith("##")
+            cleaned = tok[2:] if is_continuation else tok
 
-    def apply_tag(token: list[str], tag: list[str]) -> str:
-        pass
+            if op == "K":
+                if not is_continuation and current_word:
+                    words.append("".join(current_word))
+                    current_word = []
+                current_word.append(cleaned)
+            elif op == "D":
+                pass
+            elif op == "R":
+                if not is_continuation and current_word:
+                    words.append("".join(current_word))
+                    current_word = []
+                if label is not None:
+                    current_word.append(label)
+            elif op == "I":
+                if not is_continuation and current_word:
+                    words.append("".join(current_word))
+                    current_word = []
+                if label is not None:
+                    words.append(label)
+            elif op == "M":
+                current_word.append(cleaned)
+            elif op == "S":
+                if current_word:
+                    words.append("".join(current_word))
+                    current_word = []
+                current_word.append(cleaned)
+            else:
+                raise ValueError(f"Unsupported operation: {op}")
+
+            prev_op = op
+
+        if current_word:
+            words.append("".join(current_word))
+
+        return " ".join(words)
