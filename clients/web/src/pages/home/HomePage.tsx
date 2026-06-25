@@ -87,12 +87,11 @@ const team = [
   {
     name: "أمير أنور",
     image: "/blobs/person-blob-4.svg",
-    // portrait: "/pics/amir-2-nobg.png",
-    portrait: "/pics/akram-nobg-2.png",
+    portrait: "/pics/amir-2-nobg.png",
     portraitViewBox: "0 0 329 287",
     portraitClipPath:
       "M159.3 275.794C113.985 269.166 33.5202 223.823 16.3691 183.907C-0.782019 143.99 23.4191 64.266 56.3933 36.2968C89.3675 8.32765 171.56 6.17069 214.214 16.0915C256.869 26.0123 299.978 61.2245 312.318 95.8218C324.659 130.419 313.762 193.68 288.259 223.675",
-    portraitFrame: { x: -45, y: -110, width: 360, height: 480 },
+    portraitFrame: { x: -335, y: -318, width: 1000, height: 1333 },
     rotate: -2,
     github: "https://github.com/amir-kedis",
     linkedin: "https://www.linkedin.com/in/amir-kedis/",
@@ -100,7 +99,6 @@ const team = [
   {
     name: "أكرم هاني",
     image: "/blobs/person-blob-3.svg",
-    // portrait: "/pics/akram-nobg-2.png",
     portrait: "/pics/akram-nobg-2.png",
     portraitViewBox: "0 0 320 341",
     portraitClipPath:
@@ -113,12 +111,11 @@ const team = [
   {
     name: "أحمد حامد",
     image: "/blobs/person-blob-2.svg",
-    // portrait: "/pics/hamed-nobg.png",
-    portrait: "/pics/akram-nobg-2.png",
+    portrait: "/pics/hamed-nobg.png",
     portraitViewBox: "0 0 282 318",
     portraitClipPath:
       "M270.339 233.621C255.823 272.525 203.106 299.971 161.283 305.373C119.46 310.775 39.4705 304.258 19.4013 266.032C-0.667829 227.807 17.1328 118.572 40.8684 76.0192C64.6041 33.4661 127.23 11.3927 161.815 10.7136C196.401 10.0345 230.293 34.7934 248.38 71.9446",
-    portraitFrame: { x: -99, y: -120, width: 480, height: 640 },
+    portraitFrame: { x: -140, y: -190, width: 560, height: 746 },
     rotate: -3,
     github: "https://github.com/AhmedHamed3699",
     linkedin: "https://www.linkedin.com/in/ahmedhamed3699/",
@@ -126,12 +123,11 @@ const team = [
   {
     name: "سمية سعد",
     image: "/blobs/person-blob-1.svg",
-    // portrait: "/pics/somia-nobg.png",
-    portrait: "/pics/akram-nobg-2.png",
+    portrait: "/pics/somia-nobg.png",
     portraitViewBox: "0 0 322 304",
     portraitClipPath:
       "M228.059 268.879C193.921 291.432 142.079 301.814 105.852 282.762C69.6262 263.711 10.3489 194.833 10.7018 154.57C11.0546 114.308 72.7785 63.982 107.969 41.1865C143.16 18.3911 188.061 0.088439 221.847 17.7977C255.633 35.5069 309.649 105.595 310.684 147.442",
-    portraitFrame: { x: -64, y: -185, width: 450, height: 600 },
+    portraitFrame: { x: 15, y: -50, width: 280, height: 373 },
     rotate: 3,
     github: "https://github.com/somiaelshemy",
     linkedin: "https://www.linkedin.com/in/somia-elshemy-a252a834b/",
