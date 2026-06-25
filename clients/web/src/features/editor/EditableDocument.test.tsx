@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 
 import { EditableDocument } from "./EditableDocument";
 import { applyEditorInput } from "./inputOperations";
-import type { MockCorrection } from "./types";
+import type { Correction } from "./types";
 
-const correction: MockCorrection = {
+const correction: Correction = {
   id: "correction-1",
   category: "spelling",
   status: "active",
-  span: [3, 7],
+  span: { start: 3, end: 7 },
   title: "تصحيح",
   lineLabel: "السطر 1",
   original: "جميل",

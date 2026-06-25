@@ -14,6 +14,22 @@
   background: var(--ds-color-canvas);
 }
 
+.editor-page--loading {
+  display: grid;
+  place-items: center;
+}
+
+.editor-page__loading-state {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  color: var(--ds-color-text-muted);
+}
+
+.editor-page__spinner {
+  animation: editor-spin 1s linear infinite;
+}
+
 .editor-page button,
 .editor-page input,
 .editor-page [contenteditable] {
@@ -303,12 +319,76 @@
 }
 
 .editor-page__workspace {
+  position: relative;
   grid-area: workspace;
   display: flex;
   min-width: 0;
   min-height: 0;
   flex-direction: column;
   background: var(--ds-color-surface);
+}
+
+.editor-page__suggestions {
+  position: fixed;
+  z-index: 20;
+  width: min(19rem, calc(100vw - 2rem));
+  padding: 0.55rem;
+  border: 1px solid
+    color-mix(in srgb, var(--ds-color-primary) 22%, var(--ds-color-border));
+  border-radius: calc(var(--ds-radius-sm) + 0.1rem);
+  background: color-mix(in srgb, var(--ds-color-surface) 94%, white 6%);
+  box-shadow: 0 18px 48px
+    color-mix(in srgb, var(--ds-color-text) 11%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.editor-page__suggestions-header {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  color: var(--ds-color-text-muted);
+  font-size: 0.72rem;
+}
+
+.editor-page__suggestions-list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.editor-page__suggestion-item {
+  display: grid;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-sm);
+  color: var(--ds-color-text);
+  background: transparent;
+  text-align: start;
+  cursor: pointer;
+}
+
+.editor-page__suggestion-item > strong {
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.editor-page__suggestion-item > span {
+  color: var(--ds-color-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.editor-page__suggestion-item[data-active] {
+  border-color: color-mix(in srgb, var(--ds-color-primary) 45%, transparent);
+  background: var(--ds-color-primary-soft);
+}
+
+@keyframes editor-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .editor-page__toolbar-row {
@@ -366,6 +446,16 @@
   );
   color: var(--ds-color-primary-strong);
   background: var(--ds-color-primary-soft);
+}
+
+.editor-page__toolbar-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.1;
+  transform: translateY(0.04em);
 }
 
 .editor-page__toolbar-divider {

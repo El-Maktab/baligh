@@ -149,9 +149,9 @@ test("editor body and presentation controls are interactive", async ({
   await page.goto("/editor");
 
   const editor = page.getByRole("textbox", { name: "محتوى النص" });
-  const initialLineCount = await editor
-    .locator(".editor-page__text-line")
-    .count();
+  const lineLocator = editor.locator(".editor-page__text-line");
+  await expect.poll(async () => lineLocator.count()).toBeGreaterThan(1);
+  const initialLineCount = await lineLocator.count();
   await editor.click();
   await page.keyboard.press("End");
   await page.keyboard.type(" نص تجريبي");
@@ -159,9 +159,7 @@ test("editor body and presentation controls are interactive", async ({
   await page.keyboard.press("Enter");
   await page.keyboard.type("سطر إضافي");
   await expect(editor.getByText("سطر إضافي", { exact: true })).toBeVisible();
-  await expect(editor.locator(".editor-page__text-line")).toHaveCount(
-    initialLineCount + 1,
-  );
+  await expect(lineLocator).toHaveCount(initialLineCount + 1);
 
   const strongControl = page.getByRole("button", {
     name: "عرض النص بخط عريض",
@@ -171,9 +169,7 @@ test("editor body and presentation controls are interactive", async ({
   await expect(
     editor.locator(".editor-page__text-line:has([data-strong])"),
   ).toHaveCount(1);
-  expect(
-    await editor.locator(".editor-page__text-line").count(),
-  ).toBeGreaterThan(1);
+  expect(await lineLocator.count()).toBeGreaterThan(1);
   if (testInfo.project.name === "mobile-chromium") {
     await page.getByRole("button", { name: "المسودات" }).click();
     await expect(

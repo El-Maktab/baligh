@@ -6,18 +6,12 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
 import { Button, Input, SearchField } from "react-aria-components";
 
 import { motionPresets } from "../../design-system";
+import { useRulesController } from "../../features/rules/useRulesController";
+import type { GrammarRule, RuleCategory } from "../../features/rules/types";
 import { ReferenceHeader } from "../../shared/reference/ReferenceHeader";
-import {
-  filterGrammarRules,
-  grammarRules,
-  ruleCategories,
-  type GrammarRule,
-  type RuleCategory,
-} from "./rulesData";
 import "../reference.css";
 
 const categoryLabels: Record<RuleCategory, string> = {
@@ -75,10 +69,16 @@ function RuleCard({ rule, index }: { rule: GrammarRule; index: number }) {
 }
 
 export function RulesPage() {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<"all" | RuleCategory>("all");
   const reduceMotion = useReducedMotion();
-  const visibleRules = filterGrammarRules(grammarRules, query, category);
+  const {
+    categories,
+    category,
+    isHydrating,
+    query,
+    setCategory,
+    setQuery,
+    visibleRules,
+  } = useRulesController();
 
   return (
     <main className="reference-page rules-page">
@@ -120,7 +120,7 @@ export function RulesPage() {
 
         <div className="rules-browser__filter-row">
           <div className="rules-browser__filters" aria-label="فئات القواعد">
-            {ruleCategories.map((item) => (
+            {categories.map((item) => (
               <Button
                 aria-pressed={category === item.value}
                 className="rules-browser__filter"
@@ -138,7 +138,13 @@ export function RulesPage() {
           </p>
         </div>
 
-        {visibleRules.length ? (
+        {isHydrating ? (
+          <div className="reference-empty">
+            <Search aria-hidden="true" size={28} />
+            <h2>جار تجهيز القواعد</h2>
+            <p>نحمّل فئات القواعد وبطاقاتها الآن.</p>
+          </div>
+        ) : visibleRules.length ? (
           <div className="rules-grid">
             {visibleRules.map((rule, index) => (
               <RuleCard index={index} key={rule.id} rule={rule} />

@@ -8,22 +8,20 @@ import {
   type ReactNode,
 } from "react";
 
-import type {
-  EditorFormatting,
-  EditorTextRange,
-  MockCorrection,
-} from "./types";
+import type { Correction, EditorFormatting, EditorTextRange } from "./types";
+import { getLineFormat } from "./editorState";
 import { applyEditorInput } from "./inputOperations";
-import { getLineFormat } from "./useEditorDemo";
 
 type EditableDocumentProps = {
   body: string;
-  corrections: MockCorrection[];
+  corrections: Correction[];
   focusedCorrectionId: string | null;
   formatting: EditorFormatting;
   onBodyChange: (body: string) => void;
   onCorrectionFocus: (correctionId: string) => void;
   onSelectionChange: (range: EditorTextRange) => void;
+  onEditorKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+  onCaretRectChange?: (rect: DOMRect | null) => void;
 };
 
 function getLineStart(body: string, lineIndex: number) {
@@ -142,7 +140,7 @@ function renderLineContent(
   body: string,
   line: string,
   lineStart: number,
-  corrections: MockCorrection[],
+  corrections: Correction[],
   formatting: EditorFormatting,
 ) {
   if (line.length === 0) return <br />;
@@ -150,15 +148,16 @@ function renderLineContent(
   const activeCorrections = corrections.filter(
     (correction) =>
       correction.status === "active" &&
-      correction.span[0] < lineEnd &&
-      correction.span[1] > lineStart &&
-      body.slice(...correction.span) === correction.original,
+      correction.span.start < lineEnd &&
+      correction.span.end > lineStart &&
+      body.slice(correction.span.start, correction.span.end) ===
+        correction.original,
   );
   const boundaries = new Set([lineStart, lineEnd]);
 
   for (const correction of activeCorrections) {
-    boundaries.add(Math.max(lineStart, correction.span[0]));
-    boundaries.add(Math.min(lineEnd, correction.span[1]));
+    boundaries.add(Math.max(lineStart, correction.span.start));
+    boundaries.add(Math.min(lineEnd, correction.span.end));
   }
   for (const ranges of [formatting.strong, formatting.emphasis]) {
     for (const [start, end] of ranges) {
@@ -177,7 +176,7 @@ function renderLineContent(
     const end = points[index + 1] ?? lineEnd;
     const text = body.slice(start, end);
     const correction = activeCorrections.find(
-      (entry) => entry.span[0] <= start && entry.span[1] >= end,
+      (entry) => entry.span.start <= start && entry.span.end >= end,
     );
     const strong = rangeContains(formatting.strong, start, end);
     const emphasis = rangeContains(formatting.emphasis, start, end);
@@ -214,7 +213,7 @@ function renderLineContent(
 
 function renderDocument(
   body: string,
-  corrections: MockCorrection[],
+  corrections: Correction[],
   focusedCorrectionId: string | null,
   formatting: EditorFormatting,
 ) {
@@ -231,8 +230,8 @@ function renderDocument(
     const containsFocusedCorrection = corrections.some(
       (correction) =>
         correction.id === focusedCorrectionId &&
-        correction.span[0] <= lineStart + line.length &&
-        correction.span[1] >= lineStart,
+        correction.span.start <= lineStart + line.length &&
+        correction.span.end >= lineStart,
     );
     const currentStart = lineStart;
     lineStart += line.length + 1;
@@ -263,6 +262,8 @@ export function EditableDocument({
   onBodyChange,
   onCorrectionFocus,
   onSelectionChange,
+  onEditorKeyDown,
+  onCaretRectChange,
 }: EditableDocumentProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<EditorTextRange>([0, 0]);
@@ -292,6 +293,16 @@ export function EditableDocument({
     if (!range) return;
     selectionRef.current = range;
     onSelectionChange(range);
+    const selection = window.getSelection();
+    if (!selection?.rangeCount || range[0] !== range[1]) {
+      onCaretRectChange?.(null);
+      return;
+    }
+    const selectionRange = selection.getRangeAt(0).cloneRange();
+    const rect =
+      selectionRange.getClientRects()[0] ??
+      selectionRange.getBoundingClientRect();
+    onCaretRectChange?.(rect.width === 0 && rect.height === 0 ? null : rect);
   };
 
   const applyInput = (target: HTMLDivElement, inputType: string, data = "") => {
@@ -339,6 +350,8 @@ export function EditableDocument({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    onEditorKeyDown?.(event);
+    if (event.defaultPrevented) return;
     if (event.key === "Escape") event.currentTarget.blur();
   };
 
