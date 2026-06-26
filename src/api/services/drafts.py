@@ -81,7 +81,10 @@ async def get_draft(draft_id: str) -> DraftDocument | None:
 
 
 async def update_draft(
-    draft_id: str, title: str | None = None, body: str | None = None
+    draft_id: str,
+    title: str | None = None,
+    body: str | None = None,
+    corrections: list[dict] | None = None,
 ) -> DraftDocument | None:
     """Update a draft."""
     coll = _get_collection()
@@ -90,11 +93,21 @@ async def update_draft(
         update_fields["title"] = title
     if body is not None:
         update_fields["body"] = body
-    if not update_fields:
+    update_ops: dict = {}
+    if update_fields:
+        update_ops["$set"] = update_fields
+    if corrections is not None:
+        if "$set" not in update_ops:
+            update_ops["$set"] = {}
+        update_ops["$set"]["corrections"] = corrections
+
+    if not update_ops:
         return await get_draft(draft_id)
+
+    update_ops["$inc"] = {"revision": 1}
     result = await coll.find_one_and_update(
         {"id": draft_id},
-        {"$set": update_fields, "$inc": {"revision": 1}},
+        update_ops,
         return_document=True,
         projection={"_id": 0},
     )
@@ -121,14 +134,12 @@ async def apply_correction(
         return None
     start, end = corr.get("span", [0, 0])
     new_body = draft["body"][:start] + replacement + draft["body"][end:]
-    for c in draft["corrections"]:
-        if c.get("id") == correction_id:
-            c["status"] = "accepted"
-            c["replacement"] = replacement
+    # Remove the accepted correction from the list and keep other corrections unchanged.
+    updated_corrections = [c for c in draft["corrections"] if c.get("id") != correction_id]
     await coll.update_one(
         {"id": draft_id},
         {
-            "$set": {"body": new_body, "corrections": draft["corrections"]},
+            "$set": {"body": new_body, "corrections": updated_corrections},
             "$inc": {"revision": 1},
         },
     )
