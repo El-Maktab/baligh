@@ -116,16 +116,7 @@ async def get_suggestions(draft_id: str, payload: SuggestionRequest):
             RevisionConflictError(latest_draft=draft_to_response(draft))
         )
 
-    preproc_output = type(
-        "Obj",
-        (),
-        {"tokens": [], "morph_features": [], "current_fragment": payload.body},
-    )
-    nws_output = nws_run(
-        preproc_output,
-        mode="WAC" if payload.mode == SuggestionMode.WORD else "NWP",
-        top_k=payload.limit,
-    )
+    nws_output = nws_run(payload.body)
     if not nws_output.suggestions:
         return build_fallback_suggestions(payload)
 
