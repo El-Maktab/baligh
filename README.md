@@ -15,13 +15,39 @@
   <img src="https://img.shields.io/badge/license-proprietary-1B1B1B?style=flat-square" alt="License: proprietary">
 </p>
 
-## Disclaimer
 
-> [!IMPORTANT]
-> This project is in early stage of development :> <br>
-> Once we have a first stable release, we will update this readme with more details on how to try it out yourself. <br>
-> To follow our progress, you can give us a star :) and follow [El-Maktab](https://github.com/El-Maktab). <br>
-> If you have any questions or suggestions, please don't hesitate to reach out to us! We appreciate any feedback and support.
+https://github.com/user-attachments/assets/f5f6ddc8-5b6f-40d5-a7a4-1a9052c67ab8
+
+
+
+## How to run
+
+1. You need an environment with:
+   - UV
+   - Make
+   - MongoDB
+   - PNPM
+
+2. Run the setup make command
+
+```sh
+make setup
+```
+
+3. Create 2 env files for frontend and backend, based on the provided `.env.example` files in each directory.
+
+4. Run the server
+
+```sh
+make run-api
+```
+
+5. Run the frontend
+
+```sh
+cd clients/web/
+pnpm run dev
+```
 
 ## Project Documents
 

@@ -10,6 +10,7 @@ help:
 	@echo "============================"
 	@echo ""
 	@echo "Setup:"
+	@echo "  make setup                 Setup development environment"
 	@echo "  make install               Install all dependencies"
 	@echo "  make camel-data            Download CAMeL Tools data (morphology & disambiguation)"
 	@echo "  make ged-dict-download     Download dictionaries from our drive"
@@ -35,6 +36,10 @@ help:
 	@echo "  make pre-commit            Run pre-commit hooks on all files"
 	@echo "  make run                   Run a Python script (usage: make run SCRIPT=src/...)"
 	@echo ""
+
+setup: install camel-data ged-setup-prod nws-model-download
+	@echo "Baligh setup done"
+
 
 # Install dependencies
 install:

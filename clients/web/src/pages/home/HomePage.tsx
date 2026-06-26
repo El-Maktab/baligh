@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { BalighWordmark, motionPresets } from "../../design-system";
 import { ArabicConfettiButton } from "../../shared/ui/ArabicConfettiButton";
 import { ThemeControl } from "../../shared/ui/ThemeControl";
+import { VideoPlayerModal } from "../../shared/ui/VideoPlayerModal";
 import "./home.css";
 import { LandingCursor } from "./LandingCursor";
 
@@ -238,6 +239,7 @@ export function HomePage() {
   const reduceMotion = useReducedMotion();
   const hasFinePointer = useFinePointer();
   const navigate = useNavigate();
+  const [videoOpen, setVideoOpen] = useState(false);
 
   return (
     <main className="landing-page">
@@ -282,7 +284,11 @@ export function HomePage() {
                 <PencilLine aria-hidden="true" />
                 ابدأ الكتابة الآن
               </ArabicConfettiButton>
-              <button className="secondary-cta" type="button">
+              <button
+                className="secondary-cta"
+                type="button"
+                onClick={() => setVideoOpen(true)}
+              >
                 <CirclePlay aria-hidden="true" />
                 شاهد كيف يعمل
               </button>
@@ -475,6 +481,11 @@ export function HomePage() {
 
         <p className="supervisor">تحت إشراف دكتور أيمن أبوالحسن</p>
       </section>
+
+      <VideoPlayerModal
+        open={videoOpen}
+        onClose={() => setVideoOpen(false)}
+      />
     </main>
   );
 }
