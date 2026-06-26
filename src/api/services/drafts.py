@@ -41,9 +41,7 @@ def _get_collection():
 async def list_drafts() -> list[DraftDocument]:
     """List all drafts."""
     coll = _get_collection()
-    cursor = coll.find(
-        {}, {"_id": 0}
-    )
+    cursor = coll.find({}, {"_id": 0})
     drafts = []
     async for doc in cursor:
         drafts.append(DraftDocument(**doc))
@@ -66,11 +64,7 @@ async def create_draft(
         updatedAt=None,
         savedAt=None,
         revision=1,
-        formatting={
-            "strong": [],
-            "emphasis": [],
-            "lines": {}
-        },
+        formatting={"strong": [], "emphasis": [], "lines": {}},
         corrections=[],
     )
     await coll.insert_one(draft.model_dump(by_alias=True, exclude_none=True))
@@ -141,7 +135,9 @@ async def apply_correction(
     start, end = corr.get("span", [0, 0])
     new_body = draft["body"][:start] + replacement + draft["body"][end:]
     # Remove the accepted correction from the list and keep other corrections unchanged.
-    updated_corrections = [c for c in draft["corrections"] if c.get("id") != correction_id]
+    updated_corrections = [
+        c for c in draft["corrections"] if c.get("id") != correction_id
+    ]
     await coll.update_one(
         {"id": draft_id},
         {

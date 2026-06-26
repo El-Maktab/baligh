@@ -29,6 +29,7 @@ class AnalysisCorrection(BaseModel):
     category: str
     status: str = "active"
 
+
 class AnalyzeRequest(BaseModel):
     """Request model for the analyze endpoint."""
 
@@ -89,10 +90,7 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
             persist_corrections.append(
                 {
                     "id": f"corr-{uuid.uuid4()}",
-                    "span": {
-                        "start": edit.span[0],
-                        "end": edit.span[1]
-                    },
+                    "span": {"start": edit.span[0], "end": edit.span[1]},
                     "token_refs": edit.token_refs,
                     "correction": edit.correction,
                     "alternatives": getattr(edit, "alternatives", []),
@@ -110,13 +108,10 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
         "style": style,
     }
 
-    updated = await update_draft(
-        draft_id, body=body, corrections=persist_corrections
-    )
+    updated = await update_draft(draft_id, body=body, corrections=persist_corrections)
     if not updated:
         raise HTTPException(status_code=500, detail="Failed to update draft")
 
-    
     return AnalyzeResponse(
         analysisRevision=updated.revision,
         corrections=[AnalysisCorrection(**corr) for corr in persist_corrections],
