@@ -824,3 +824,53 @@
     scroll-behavior: auto;
   }
 }
+
+.video-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--ds-color-scrim);
+}
+
+.video-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 56rem;
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-surface);
+  box-shadow: 0 1.5rem 4rem var(--ds-color-shadow);
+  overflow: hidden;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--ds-color-scrim);
+  color: var(--ds-color-on-primary);
+  cursor: pointer;
+  transition: background var(--ds-duration-quick) var(--ds-ease-standard);
+}
+
+.video-modal-close:hover {
+  background: rgb(0 0 0 / 60%);
+}
+
+.video-modal-player {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
