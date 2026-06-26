@@ -8,12 +8,12 @@ from src.services.gec.schemas import GECInput, ModuleResult, ModuleStatus
 class GECController:
     """Orchestrates Ontology, Dictionary, and Tagger modules."""
 
-    def __init__(self, ontology, dictionary, tagger):
+    def __init__(self, ontology, dictionary, tagger=None):
         """Initialize GECController with tagger, ontology, and dictionary modules."""
         self.modules = {
             "ONTOLOGY": ontology,
             "DICTIONARY": dictionary,
-            "TAGGER": tagger,
+            # "TAGGER": tagger,
         }
 
     def run(self, request: GECInput) -> list[ModuleResult]:

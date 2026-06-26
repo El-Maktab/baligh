@@ -64,11 +64,6 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
     body = payload.body if payload.body is not None else draft.body or ""
     gec_output, ged_output = await run_in_threadpool(corrections_run, body)
 
-    logger.debug(
-        "GEC output: {}, GED output: {}",
-        gec_output.model_dump(),
-        ged_output.model_dump(),
-    )
     normalized_corrections: list[dict] = []
     matched_error_keys: set[tuple] = set()
     for candidate in gec_output.ranked_edits:

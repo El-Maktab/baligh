@@ -100,6 +100,9 @@ class RelationDiscoverer:
         """Discovers all applicable grammatical relations between tokens."""
         relations = []
 
+        for i in range(len(tokens)):
+            logger.debug("Token[{}]: {} | MorphFeatures: {}", i, tokens[i].form, morph_features[i])
+
         for i in range(len(tokens) - 1):
             if tokens[i].form in [".", ",", ";", ":", "!", "?", "\n", "\t"]:
                 continue
