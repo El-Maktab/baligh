@@ -29,33 +29,28 @@ class TaggerEngine:
         self.predictor = GECInferencePipeline(model, tokenizer, id2label)
 
     def process(self, payload: GECInput) -> ModuleResult:
-        # try:
-        tokens, tags = self.predictor.predict(payload.text)
-        new_text = self.rewriter.apply_tag(tokens, tags)
-        candidate_edits = self.form_candidates(payload, new_text)
-        print(tokens)
-        print(tags)
+        try:
+            tokens, tags = self.predictor.predict(payload.text)
+            new_text = self.rewriter.apply_tag(tokens, tags)
+            candidate_edits = self.form_candidates(payload, new_text)
 
-        print(new_text)
-        print(candidate_edits)
+            if len(candidate_edits) != 0:
+                status = ModuleStatus.INCORRECT
+            else:
+                status = ModuleStatus.CORRECT
 
-        if len(candidate_edits) != 0:
-            status = ModuleStatus.INCORRECT
-        else:
-            status = ModuleStatus.CORRECT
+            return ModuleResult(
+                module_name=ModuleName.TAG,
+                status=status,
+                candidate_edits=candidate_edits,
+            )
 
-        return ModuleResult(
-            module_name=ModuleName.TAG,
-            status=status,
-            candidate_edits=candidate_edits,
-        )
-
-    # except Exception:
-    #     return ModuleResult(
-    #         module_name=ModuleName.TAG,
-    #         status=ModuleStatus.ERROR,
-    #         candidate_edits=[],
-    #     )
+        except Exception:
+            return ModuleResult(
+                module_name=ModuleName.TAG,
+                status=ModuleStatus.ERROR,
+                candidate_edits=[],
+            )
 
     def form_candidates(
         self,

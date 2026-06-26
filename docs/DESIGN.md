@@ -31,15 +31,15 @@ Copy
 
 **Function:** Text cleaning, normalization, tokenization, and morphological analysis.
 
-| Stage | Tool/Method |
-| --- | --- |
-| Text Cleaning | Normalization rules |
-| Segmentation | Farasa |
-| Morphological Analysis | CAMeL |
-| Diacritization | Diacritization model |
+| Stage                  | Tool/Method          |
+| ---------------------- | -------------------- |
+| Text Cleaning          | Normalization rules  |
+| Segmentation           | Farasa               |
+| Morphological Analysis | CAMeL                |
+| Diacritization         | Diacritization model |
 
--   **Input:** Raw Arabic text from the user
--   **Output:** Tokenized text + Morphological features (POS tags, syntactic parse, Lemma)
+- **Input:** Raw Arabic text from the user
+- **Output:** Tokenized text + Morphological features (POS tags, syntactic parse, Lemma)
 
 ---
 
@@ -55,8 +55,8 @@ Copy
                          ┌─────────────────────┐                         │  DETECTION MODULES  │Preprocessing            │  ┌───────────────┐  │    ┌──────────────────┐Output ─────────────────▶│  │ Rule-Based    │  │    │  FUSION &        │                         │  │ Checker       │──┼───▶│  DECISION        │                         │  └───────────────┘  │    │                  │                         │  ┌───────────────┐  │    │  ┌────────────┐  │                         │  │ Pattern-Based │──┼───▶│  │Fusion Layer│  │──▶ Classified                         │  │ Matcher       │  │    │  └─────┬──────┘  │    Errors                         │  └───────────────┘  │    │        │         │                         │  ┌───────────────┐  │    │  ┌─────▼──────┐  │                         │  │ Sequence      │──┼───▶│  │Priority    │  │                         │  │ Labeler (ML)  │  │    │  │Logic       │  │                         │  └───────────────┘  │    │  └────────────┘  │                         └─────────────────────┘    └──────────────────┘
 ```
 
--   **Input:** Preprocessed text
--   **Output:** Final error list with confidence scores and explanations
+- **Input:** Preprocessed text
+- **Output:** Final error list with confidence scores and explanations
 
 ---
 
@@ -72,8 +72,8 @@ Copy
                          ┌──────────────────────────────┐                         │    CORRECTION STRATEGIES     │Preprocessing &          │  ┌────────────────────────┐  │GED Outputs ────────────▶│  │ Ontology-Based         │  │                         │  │ (Explainable)          │──┼──▶ ┌─────────────┐                         │  └────────────────────────┘  │    │  RANKING &  │                         │  ┌────────────────────────┐  │    │  EXPLANATION│                         │  │ Dictionary Lookup      │──┼──▶ │             │──▶ Corrections                         │  │ (Spelling)             │  │    │  Candidate  │                         │  └────────────────────────┘  │    │  Ranker     │                         │  ┌────────────────────────┐  │    └─────────────┘                         │  │ Text Editing Based     │──┼──▶                         │  │ (ML)                   │  │                         │  └────────────────────────┘  │                         └──────────────────────────────┘
 ```
 
--   **Input:** Preprocessed text
--   **Output:** Correction candidates
+- **Input:** Preprocessed text
+- **Output:** Correction candidates
 
 ---
 
@@ -81,8 +81,8 @@ Copy
 
 **Function:** Applies a text-editing ML approach to the correction candidates, ranks them, and generates human-readable explanations.
 
--   **Input:** Preprocessed text + Module 3 correction candidates
--   **Output:** Final ranked corrections with explanations
+- **Input:** Preprocessed text + Module 3 correction candidates
+- **Output:** Final ranked corrections with explanations
 
 ---
 
@@ -98,8 +98,8 @@ Copy
 ┌───────────────────────────────────────────────────────────────────────┐│  SMART CACHE LAYER         LOGIC CONTROL          PREPROCESSING       ││  ┌──────────────┐          ┌──────────┐           ┌────────────────┐  ││  │ Idioms Cache │          │ Cache    │    No      │ Normalization  │  ││  └──────────────┘          │ Hit?  ───┼───────────▶ → Tokenizer    │  ││  ┌──────────────┐          └────┬─────┘           └───────┬────────┘  ││  │Famous Phrases│               │ Yes                     │           ││  └──────────────┘          ┌────▼──────────┐    ┌─────────▼────────┐ ││  ┌──────────────┐          │Return Cached  │    │  MODE DETECTION   │ ││  │User Patterns │          │Result         │    │  Space? → NWP     │ ││  │(LRU)         │          └───────────────┘    │  Typing? → WAC   │ ││  └──────────────┘                               └─────────┬────────┘ │└────────────────────────────────────────────────           │          │                                                  ┌─────────▼────────┐ │                     NWP Pipeline                 │  ┌─────────────┐ │ │                 ┌───────────────────┐            │  │Next-Word    │ │ │──▶ Top-K Next Words                 │ Next-Word         │◀───────────┤  │Prediction   │ │ │                 │ Prediction Core   │            │  │Core         │ │ │                 └───────────────────┘            │  └─────────────┘ │ │                     WAC Pipeline                 │  ┌─────────────┐ │ │                 ┌───────────────────┐            │  │Trie Lookup +│ │ │──▶ Top-K Completions                 │ Trie Lookup +     │◀───────────┤  │Context-Aware│ │ │                 │ Context-Aware     │            │  │Re-ranking   │ │ │                 │ Re-ranking        │            │  └─────────────┘ │ │                 └───────────────────┘            └──────────────────┘ │
 ```
 
--   **Input:** Preprocessed text
--   **Output:** Ranked list of predicted next words (NWP) + word completions (WAC)
+- **Input:** Preprocessed text
+- **Output:** Ranked list of predicted next words (NWP) + word completions (WAC)
 
 ---
 
@@ -107,21 +107,21 @@ Copy
 
 **Function:** REST API backend + web frontend with live text editor.
 
--   **Input:** User text input + outputs from all modules
--   **Output:** Web UI with a live Arabic text editor (+ optional browser extension)
+- **Input:** User text input + outputs from all modules
+- **Output:** Web UI with a live Arabic text editor (+ optional browser extension)
 
 ---
 
 ## Deliverables Summary
 
-| # | Module | Function | % Libs |
-| --- | --- | --- | --- |
-| 1 | Preprocessing Module | Text cleaning, normalization, tokenization, morphological analysis | 10% |
-| 2 | GED Engine | Error detection (Rules + Patterns + ML + Fusion) | 20% |
-| 3 | GEC (Ontology & Dictionary-Based) | Correction candidates via grammar ontology + spelling dictionary | 20% |
-| 4 | GEC (Text Editing & Ranking) | Text editing (ML) + candidate ranking + explanation generation | 15% |
-| 5 | NWS Module | Next word suggestion (NWP + WAC) | 30% |
-| 6 | API & GUI | REST API + Frontend web editor | 20% |
+| #   | Module                            | Function                                                           | % Libs |
+| --- | --------------------------------- | ------------------------------------------------------------------ | ------ |
+| 1   | Preprocessing Module              | Text cleaning, normalization, tokenization, morphological analysis | 10%    |
+| 2   | GED Engine                        | Error detection (Rules + Patterns + ML + Fusion)                   | 20%    |
+| 3   | GEC (Ontology & Dictionary-Based) | Correction candidates via grammar ontology + spelling dictionary   | 20%    |
+| 4   | GEC (Text Editing & Ranking)      | Text editing (ML) + candidate ranking + explanation generation     | 15%    |
+| 5   | NWS Module                        | Next word suggestion (NWP + WAC)                                   | 30%    |
+| 6   | API & GUI                         | REST API + Frontend web editor                                     | 20%    |
 
 ---
 
@@ -149,11 +149,11 @@ A log of design questions discussed and the decisions made, with rationale.
 
 **Options considered:**
 
-| Option | Description |
-| --- | --- |
-| A — Diacritize first | Run a diacritizer on the raw/segmented text, then feed the diacritized text into the morphological analyzer |
-| B — Morph analysis first | Run CAMeL to get multiple morphological candidates per token, then use diacritization to disambiguate |
-| C — Joint (interleaved) | Treat them as a single step; CAMeL internally resolves both simultaneously |
+| Option                   | Description                                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| A — Diacritize first     | Run a diacritizer on the raw/segmented text, then feed the diacritized text into the morphological analyzer |
+| B — Morph analysis first | Run CAMeL to get multiple morphological candidates per token, then use diacritization to disambiguate       |
+| C — Joint (interleaved)  | Treat them as a single step; CAMeL internally resolves both simultaneously                                  |
 
 **Decision: Option C (joint/interleaved) — effectively Option B in implementation.**
 
@@ -161,10 +161,10 @@ A log of design questions discussed and the decisions made, with rationale.
 
 Diacritization and morphological analysis are **mutually dependent** — this is the fundamental chicken-and-egg problem in Arabic NLP:
 
--   To diacritize correctly you need morphological context (is `كتب` a verb or a noun?).
--   To pick the right morphological analysis you need the diacritization (which reading is correct in context?).
+- To diacritize correctly you need morphological context (is `كتب` a verb or a noun?).
+- To pick the right morphological analysis you need the diacritization (which reading is correct in context?).
 
-Modern tools like CAMeL handle this jointly: the morphological analyzer produces **multiple candidate analyses**, each with its own diacritized form, and a **disambiguation step** (context-aware, using the surrounding tokens) selects the best candidate. The winning candidate *is* the diacritization — they are resolved in one pass, not two sequential steps.
+Modern tools like CAMeL handle this jointly: the morphological analyzer produces **multiple candidate analyses**, each with its own diacritized form, and a **disambiguation step** (context-aware, using the surrounding tokens) selects the best candidate. The winning candidate _is_ the diacritization — they are resolved in one pass, not two sequential steps.
 
 Running an independent diacritizer first (Option A) would be redundant and potentially harmful: it would force a single diacritization choice before the morphological analyzer has seen the context, and any error there propagates forward.
 
@@ -191,9 +191,9 @@ Input is instantaneous — the last token is almost always unfinished. Sending i
 
 **Word boundary signals** — a word is considered complete if followed by any delimiter:
 
--   Whitespace (space, newline)
--   Arabic punctuation: `، ؟ ؛`
--   Latin/shared punctuation: `. , ! ? ; : " ' ( ) [ ] { } - —`
+- Whitespace (space, newline)
+- Arabic punctuation: `، ؟ ؛`
+- Latin/shared punctuation: `. , ! ? ; : " ' ( ) [ ] { } - —`
 
 **Split logic:**
 
@@ -217,7 +217,7 @@ Input: "ذهب الطلاب إلى المدرس"Completed prefix: "ذهب الط
 
 **Additional rules:**
 
--   GED must never flag the current fragment — an unfinished word cannot be an error.
--   Delimiters are word-completion signals but not context boundaries — the completed prefix flows as one unit into preprocessing regardless of internal punctuation.
+- GED must never flag the current fragment — an unfinished word cannot be an error.
+- Delimiters are word-completion signals but not context boundaries — the completed prefix flows as one unit into preprocessing regardless of internal punctuation.
 
 **Deferred:** When the cursor is not at the end of the input (mid-sentence editing), the incomplete token is at the cursor position, not the last character. Detecting this requires the client to send a cursor offset alongside the text. This is a GUI/API layer concern and is out of scope for the preprocessing module.

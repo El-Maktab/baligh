@@ -83,45 +83,65 @@ class Rewriter:
         return "".join(result)
 
     def apply_tag(self, token: list[str], tag: list[str]) -> str:
-        """Apply subword-level edit tags to produce corrected text."""
-        words: list[str] = []
-        current_word: list[str] = []
+        """Apply a sequence of edit tags to a list of tokens."""
+        TAG_SEQ_RE = re.compile(r"([KDIRMS])(?:_\[([^\]]*)\])?(\d+|\*)?")
+        words = []
+        current_word_parts: list[str] = []
 
-        for tok, t in zip(token, tag, strict=False):
-            op, label = _parse_tag(t)
-            is_continuation = tok.startswith("##")
-            cleaned = tok[2:] if is_continuation else tok
-
-            if op == "K":
-                if not is_continuation and current_word:
-                    words.append("".join(current_word))
-                    current_word = []
-                current_word.append(cleaned)
-            elif op == "D":
-                pass
-            elif op == "R":
-                if not is_continuation and current_word:
-                    words.append("".join(current_word))
-                    current_word = []
-                if label is not None:
-                    current_word.append(label)
-            elif op == "I":
-                if not is_continuation and current_word:
-                    words.append("".join(current_word))
-                    current_word = []
-                if label is not None:
-                    words.append(label)
-            elif op == "M":
-                current_word.append(cleaned)
-            elif op == "S":
-                if current_word:
-                    words.append("".join(current_word))
-                    current_word = []
-                current_word.append(cleaned)
+        for t, t_tag in zip(token, tag):
+            if t.startswith("##"):
+                is_subword = True
+                clean_t = t[2:]
             else:
-                raise ValueError(f"Unsupported operation: {op}")
+                is_subword = False
+                clean_t = t
 
-        if current_word:
-            words.append("".join(current_word))
+            if not is_subword and current_word_parts:
+                words.append("".join(current_word_parts))
+                current_word_parts = []
 
-        return " ".join(words)
+            ops = []
+            for m in TAG_SEQ_RE.finditer(t_tag):
+                ops.append((m.group(1), m.group(2), m.group(3)))
+
+            explicit_len = 0
+            for op, label, quant in ops:
+                if op != "I":
+                    if quant is None:
+                        explicit_len += 1
+                    elif quant != "*":
+                        explicit_len += int(quant)
+
+            star_len = max(0, len(clean_t) - explicit_len)
+
+            res = []
+            cursor = 0
+            for op, label, quant in ops:
+                if op == "I":
+                    if label is not None:
+                        res.append(label)
+                else:
+                    if quant == "*":
+                        step = star_len
+                        star_len = 0
+                    elif quant is None:
+                        step = 1
+                    else:
+                        step = int(quant)
+
+                    actual_step = min(step, max(0, len(clean_t) - cursor))
+                    sub = clean_t[cursor : cursor + actual_step]
+                    cursor += actual_step
+
+                    if op == "K":
+                        res.append(sub)
+                    elif op == "R":
+                        if label is not None:
+                            res.append(label)
+
+            current_word_parts.append("".join(res))
+
+        if current_word_parts:
+            words.append("".join(current_word_parts))
+
+        return " ".join([w for w in words if w])
