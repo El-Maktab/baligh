@@ -62,17 +62,10 @@ ged-ml-model-download:
 
 # Download NWS models
 nws-model-download:
-	@echo "Checking for huggingface-cli..."
-	@if ! uv run which huggingface-cli > /dev/null 2>&1; then \
-		echo "⚙️ huggingface-cli not found in the environment. Installing huggingface_hub..."; \
-		uv pip install "huggingface_hub[cli]"; \
-	fi
-	@echo "Downloading NWS models from Hugging Face..."
 	@mkdir -p src/services/nws/data
-	uv run huggingface-cli download akramhany65/nws_models \
+	uv run --with huggingface-hub hf download akramhany65/nws_models \
 		--repo-type model \
-		--local-dir src/services/nws/data \
-		--local-dir-use-symlinks False
+		--local-dir src/services/nws/data
 	@echo "Download complete! Models are ready in src/services/nws/data"
 
 # Download GED evaluation datasets
