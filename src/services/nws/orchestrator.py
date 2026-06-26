@@ -32,7 +32,7 @@ class NWSOrchestrator:
         self.wac = wac_model
         self.min_cache_confidence = min_cache_confidence
 
-    def predict(self, input_data: NWSInput) -> NWSOutput:
+    def predict(self, input_data: NWSInput, debug: bool = False) -> NWSOutput:
         """Route the input to the appropriate cache or ML model."""
         # 1. Build cache key
         cache_key = self.cache_manager.build_key(
@@ -43,6 +43,11 @@ class NWSOrchestrator:
         # 2. Lookup in Cache Layer (Tier 1 -> Tier 2 -> Tier 3)
         cached_suggestions = self.cache_manager.lookup(cache_key)
         if cached_suggestions is not None:
+            if debug:
+                source = (
+                    cached_suggestions[0].source if cached_suggestions else "unknown"
+                )
+                print(f"[DEBUG NWS] Cache HIT from {source}")
             # Slices to top_k just in case cache held more
             return NWSOutput(
                 mode=input_data.mode,
@@ -66,6 +71,11 @@ class NWSOrchestrator:
 
         elif input_data.mode == "NWP":
             model_results = self.nwp.predict(context_text, top_k=input_data.top_k)
+
+        if debug:
+            print(f"[DEBUG NWS] Cache MISS - Evaluated using {input_data.mode} model")
+            for rank, (word, score) in enumerate(model_results):
+                print(f"[DEBUG NWS]   -> {rank}: {word} (score: {score:.4f})")
 
         # 5. Format to Suggestions
         suggestions = []
