@@ -240,7 +240,6 @@ class ConstraintValidator:
             return violations
 
         elif relation.relation_name == "مضاف_اليه":
-
             violations = []
 
             source_num = source_internal.number

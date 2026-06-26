@@ -12,7 +12,7 @@ def test_explanation_subject_verb_case():
     """Test explanation for subject case mismatch."""
     generator = ExplanationGenerator()
     expl = generator.generate_explanation(
-        "subject_verb",
+        f"{BASE_URI}فاعل",
         {"case": "nominative"},
         {"case": "accusative"},
     )
@@ -23,7 +23,7 @@ def test_explanation_subject_verb_number():
     """Test explanation for verb preceding plural subject (number mismatch)."""
     generator = ExplanationGenerator()
     expl = generator.generate_explanation(
-        "subject_verb",
+        f"{BASE_URI}فاعل",
         {"number": "singular"},
         {"number": "plural"},
     )
@@ -49,7 +49,7 @@ def test_explanation_noun_adjective():
     """Test explanation for noun-adjective agreement mismatch."""
     generator = ExplanationGenerator()
     expl = generator.generate_explanation(
-        "noun_adjective",
+        f"{BASE_URI}نعت",
         {"gender": "feminine"},
         {"gender": "masculine"},
     )
@@ -96,7 +96,7 @@ def test_explanation_idafa():
     """Test explanation for Idafa sound masculine plural nun deletion."""
     generator = ExplanationGenerator()
     expl = generator.generate_explanation(
-        "idafa",
+        f"{BASE_URI}مضاف_اليه",
         {"nun_deletion": "true"},
         {"number": "plural", "gender": "masculine"},
     )

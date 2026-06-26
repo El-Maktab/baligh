@@ -235,10 +235,7 @@ class CandidateGenerator:
                 token_forms = list(zip(token_indices, combination, strict=False))
                 sentence = self._build_sentence(tokens, token_forms)
 
-                min_conf = min(
-                    token_alternatives[tidx][0][2]
-                    for tidx in token_indices
-                )
+                min_conf = min(token_alternatives[tidx][0][2] for tidx in token_indices)
 
                 complete_sentences.append(
                     {

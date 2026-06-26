@@ -45,8 +45,7 @@ class RankingEngine:
         scored_candidates = []
 
         for candidate in candidates:
-            dist_raw = levenshtein_distance(
-                original_sentence, candidate.correction)
+            dist_raw = levenshtein_distance(original_sentence, candidate.correction)
             dist_strip = levenshtein_distance(
                 strip_diacritics(original_sentence),
                 strip_diacritics(candidate.correction),
@@ -54,8 +53,7 @@ class RankingEngine:
 
             dist = (dist_raw + dist_strip) / 2.0
             lev_score = 1.0 / (1.0 + dist)
-            composite_score = (lev_score * 0.7) + \
-                (candidate.edit_confidence * 0.3)
+            composite_score = (lev_score * 0.7) + (candidate.edit_confidence * 0.3)
 
             scored_candidates.append((candidate, composite_score))
 

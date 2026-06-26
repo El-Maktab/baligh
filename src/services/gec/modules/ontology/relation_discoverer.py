@@ -272,7 +272,6 @@ class RelationDiscoverer:
 
         return relations
 
-
     def _calculate_priority(
         self,
         rel_name: str,
