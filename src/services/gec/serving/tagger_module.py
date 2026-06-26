@@ -1,11 +1,16 @@
 """Edit-tagger GEC correction module."""
 
+from pathlib import Path
+
+from transformers import AutoModelForTokenClassification
+
 from src.services.gec.modules.edit_tagger.engine import TaggerEngine
 from src.services.gec.schemas import (
     GECInput,
     ModuleResult,
 )
 from src.services.gec.serving.module import GECModule
+from src.services.gec.utils.string_utils import Tokenizer
 
 
 class EditTaggerService(GECModule):
@@ -13,8 +18,15 @@ class EditTaggerService(GECModule):
 
     def __init__(self):
         """Initialize EditTaggerService."""
-        self.tagger_engine = TaggerEngine()
+        best_model_path = Path(
+            "src/services/gec/models/gec_models/edit_tagger_v1/checkpoint-3642"
+        )
+        inference_model = AutoModelForTokenClassification.from_pretrained(
+            best_model_path
+        )
+        tokenizer = Tokenizer()
+        self.tagger_engine = TaggerEngine(model=inference_model, tokenizer=tokenizer)
 
-    def run(self, input_txt: GECInput) -> ModuleResult:
+    def run(self, payload: GECInput) -> ModuleResult:
         """Run the tagger module and return candidate edits."""
-        return self.tagger_engine.process(input_txt=input_txt)
+        return self.tagger_engine.process(input_txt=payload)

@@ -11,7 +11,7 @@ class GECInferencePipeline:
         self,
         model,
         tokenizer: Tokenizer,
-        label_vocab,
+        id2label,
         device: str = "cpu",
     ):
         """Initialize the inference pipeline.
@@ -26,8 +26,7 @@ class GECInferencePipeline:
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-        self.label_vocab = label_vocab
-        self.label_vocab.id2label = {int(k): v for k, v in label_vocab.id2label.items()}
+        self.id2label = {int(k): v for k, v in id2label.items()}
 
         self.model.to(device)
         self.model.eval()
@@ -35,7 +34,7 @@ class GECInferencePipeline:
     def predict(
         self,
         text: str,
-    ) -> tuple[list[float], list[str], list[str]]:
+    ) -> tuple[list[str], list[str]]:
         """Predict subword tags for a text string.
 
         Returns:
@@ -62,7 +61,7 @@ class GECInferencePipeline:
         else:
             pred_ids = logits[0].tolist()
 
-        conf = logits[pred_ids]
+        # conf = logits[pred_ids]
         subwords = self.tokenizer.tokenizer.convert_ids_to_tokens(input_ids[0])
 
         filtered_subwords = []
@@ -79,10 +78,10 @@ class GECInferencePipeline:
             filtered_subwords.append(subword)
 
             filtered_labels.append(
-                self.label_vocab.id2label.get(
+                self.id2label.get(
                     pred_id,
                     "[UNK]",
                 )
             )
 
-        return conf, filtered_subwords, filtered_labels
+        return filtered_subwords, filtered_labels
