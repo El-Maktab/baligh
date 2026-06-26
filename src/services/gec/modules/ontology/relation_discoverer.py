@@ -101,7 +101,13 @@ class RelationDiscoverer:
         relations = []
 
         for i in range(len(tokens) - 1):
+            if tokens[i].form in [".", ",", ";", ":", "!", "?", "\n", "\t"]:
+                continue
+
             for j in range(i + 1, len(tokens)):
+                if tokens[j].form in [".", ",", ";", ":", "!", "?", "\n", "\t"]:
+                    break
+
                 relations.extend(self._check_pair(i, j, morph_features))
                 relations.extend(self._check_pair(j, i, morph_features))
 

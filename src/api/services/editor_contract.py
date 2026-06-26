@@ -542,6 +542,25 @@ def taxonomy_from_error(
     )
 
 
+def _ged_explanation_fallback(error_span: ErrorSpan | None) -> str | None:
+    """Return a GED-first explanation, including generic tier-3 fallbacks."""
+    if error_span is None:
+        return None
+
+    if error_span.explanation_text:
+        return error_span.explanation_text
+
+    return {
+        ErrorCategory.ORTHOGRAPHY: "رصد المدقق الإملائي هذا الموضع ويقترح مراجعته.",
+        ErrorCategory.MORPHOLOGY: "رصد المدقق الصرفي هذا الموضع ويقترح مراجعته.",
+        ErrorCategory.SYNTAX: "رصد المدقق النحوي هذا الموضع ويقترح مراجعته.",
+        ErrorCategory.SEMANTICS: "رصد المدقق هذا الاستعمال ويقترح مراجعته.",
+        ErrorCategory.PUNCTUATION: "رصد المدقق علامة ترقيم في هذا الموضع ويقترح مراجعته.",
+        ErrorCategory.MERGE: "رصد المدقق أن هذا الموضع يحتاج إلى دمج.",
+        ErrorCategory.SPLIT: "رصد المدقق أن هذا الموضع يحتاج إلى فصل.",
+    }.get(error_span.category)
+
+
 def normalize_candidate_edit(
     correction_id: str,
     body: str,
@@ -554,7 +573,11 @@ def normalize_candidate_edit(
     taxonomy = taxonomy_from_error(module_name, error_span)
     original = body[span.start : span.end]
     replacement = candidate.correction
-    explanation = candidate.explanation or "اقتراح آلي لتحسين هذا الموضع."
+    explanation = (
+        _ged_explanation_fallback(error_span)
+        or candidate.explanation
+        or "اقتراح آلي لتحسين هذا الموضع."
+    )
     taxonomy_label = taxonomy.label.replace("_", " ")
 
     return EditorCorrection(
@@ -604,7 +627,7 @@ def normalize_error_detection(
         title=title,
         lineLabel=get_line_label(body, span),
         original=body[span.start : span.end],
-        explanation=error_span.explanation_text
+        explanation=_ged_explanation_fallback(error_span)
         or "تم رصد هذا الموضع دون اقتراح تصحيح مباشر.",
         ruleLabel=taxonomy.rule_label,
         taxonomyCode=taxonomy.code,
