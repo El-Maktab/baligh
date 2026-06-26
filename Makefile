@@ -1,4 +1,8 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict-download ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate nws-model-download pre-commit
+.PHONY: \
+	help install format lint type-check test all clean pre-commit \
+	camel-data ged-dict-download ged-lexicon ged-ml-datasets \
+	ged-ml-model-download ged-eval-datasets ged-evaluate ged-setup-prod \
+	nws-model-download
 
 # Default target
 help:
@@ -12,6 +16,7 @@ help:
 	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
 	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
 	@echo "  make nws-model-download    Download NWS models from Hugging Face"
+	@echo "  make ged-setup-prod        Prepare GED runtime dependencies for production"
 	@echo ""
 	@echo "GED commands:"
 	@echo "  make ged-evaluate          Evaluate all GED detectors"
@@ -45,8 +50,8 @@ camel-data:
 # Download GED dictionaries
 ged-dict-download:
 	@echo "Downloading GED dictionaries..."
-	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
-	uv run --with gdown gdown -O src/services/ged/features/subsystems/lexicon/dictionary/ 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
+	uv run --with gdown gdown -O src/services/ged/detectors/lexicon/dictionary/ 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
+	uv run --with gdown gdown -O src/services/ged/detectors/lexicon/dictionary/ 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
 
 # Download GED ml datasets
 ged-ml-datasets:
@@ -68,6 +73,10 @@ nws-model-download:
 		--local-dir src/services/nws/data
 	@echo "Download complete! Models are ready in src/services/nws/data"
 
+# Prepare GED runtime dependencies
+ged-setup-prod: ged-dict-download ged-lexicon ged-ml-model-download
+	@echo "GED production setup complete!"
+
 # Download GED evaluation datasets
 ged-eval-datasets:
 	@echo "Downloading GED evaluation datasets..."
@@ -81,7 +90,7 @@ ged-evaluate:
 # Build processed GED lexicon tries
 ged-lexicon:
 	@echo "Building GED lexicon trie resources..."
-	uv run python -m src.services.ged.features.subsystems.lexicon.processor
+	uv run python -m src.services.ged.detectors.lexicon.processor
 
 # Format code
 format:
