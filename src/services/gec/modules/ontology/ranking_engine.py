@@ -28,62 +28,6 @@ def levenshtein_distance(s1: str, s2: str) -> int:
 class RankingEngine:
     """Ranks grammatical candidates using composite confidence scoring."""
 
-    def rank_candidates(
-        self,
-        candidates: list[CandidateEdit],
-        original_token: str,
-    ) -> list[CandidateEdit]:
-        """Ranks candidates using composite scoring and updates their confidence/ranks.
-
-        Args:
-            candidates: List of proposed CandidateEdit objects.
-            original_token: The original word before correction.
-
-        Returns:
-            Sorted list of candidates with updated ranks and confidence.
-        """
-        scored_candidates = []
-
-        for candidate in candidates:
-            # 1. Levenshtein Distance score
-            dist_raw = levenshtein_distance(original_token, candidate.correction)
-            dist_strip = levenshtein_distance(
-                strip_diacritics(original_token), strip_diacritics(candidate.correction)
-            )
-
-            dist = (dist_raw + dist_strip) / 2.0
-            lev_score = 1.0 / (1.0 + dist)
-
-            # 2. Modification Count score (number of character edits)
-            mod_score = 1.0 / (
-                1.0 + abs(len(original_token) - len(candidate.correction))
-            )
-
-            # 4. Constraint quality (default to 1.0)
-            constraint_score = 1.0
-
-            # Weighted composite (weights configurable, Levenshtein dominates)
-            weights = {
-                "levenshtein": 0.6,
-                "modifications": 0.1,
-                "rule_confidence": 0.15,
-                "constraint_quality": 0.15,
-            }
-
-            composite_confidence = (
-                weights["levenshtein"] * lev_score
-                + weights["modifications"] * mod_score
-                + weights["constraint_quality"] * constraint_score
-            )
-
-            scored_candidates.append((candidate, composite_confidence))
-
-        # Sort candidates descending by composite_score
-        ranked_pairs = sorted(scored_candidates, key=lambda pair: pair[1], reverse=True)
-        ranked = [pair[0] for pair in ranked_pairs]
-
-        return ranked
-
     def rank_complete_sentences(
         self,
         candidates: list[CandidateEdit],
@@ -101,31 +45,24 @@ class RankingEngine:
         scored_candidates = []
 
         for candidate in candidates:
-            # Calculate Levenshtein distance from original sentence
-            dist_raw = levenshtein_distance(original_sentence, candidate.correction)
+            dist_raw = levenshtein_distance(
+                original_sentence, candidate.correction)
             dist_strip = levenshtein_distance(
                 strip_diacritics(original_sentence),
                 strip_diacritics(candidate.correction),
             )
 
-            # Average the two distances
             dist = (dist_raw + dist_strip) / 2.0
-
-            # Convert to score (closer = higher score)
             lev_score = 1.0 / (1.0 + dist)
-
-            # Blend with edit_confidence from the candidate
-            composite_score = (lev_score * 0.7) + (candidate.edit_confidence * 0.3)
+            composite_score = (lev_score * 0.7) + \
+                (candidate.edit_confidence * 0.3)
 
             scored_candidates.append((candidate, composite_score))
 
-        # Sort by composite score descending
         scored_candidates.sort(key=lambda x: x[1], reverse=True)
 
-        # Assign ranks and update confidence
         ranked = []
         for candidate, score in scored_candidates:
-            # Blend the score with original confidence
             candidate.edit_confidence = (score * 0.7) + (
                 candidate.edit_confidence * 0.3
             )
