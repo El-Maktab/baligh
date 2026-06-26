@@ -4,7 +4,7 @@ Provides endpoints to list, create, retrieve, and update drafts.
 """
 
 from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from src.api.services.drafts import (
     create_draft,
     delete_draft,
@@ -44,20 +44,36 @@ class DraftResponse(BaseModel):
     formatting: dict = Field(default_factory=dict)
     corrections: list[dict] = Field(default_factory=list)
 
-    class Config:
-        """Configuration for the DraftResponse model."""
-
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-@router.get("/", response_model=list[DraftResponse])
+class DraftSummaryResponse(BaseModel):
+    """Draft summary model used by the list endpoint."""
+
+    id: str
+    title: str
+    stageLabel: str
+    updatedAt: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DraftUpdateResponse(BaseModel):
+    """Draft update response expected by the frontend contract."""
+
+    draft: DraftResponse
+    persistedRevision: int
+    savedAt: str
+
+
+@router.get("", response_model=list[DraftSummaryResponse])
 async def list_all_drafts():
     """List all drafts."""
     drafts = await list_drafts()
     return drafts
 
 
-@router.post("/", response_model=DraftResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=DraftResponse, status_code=status.HTTP_201_CREATED)
 async def create_new_draft(payload: DraftCreateRequest):
     """Create a new draft."""
     draft = await create_draft(title=payload.title, body=payload.body)
@@ -73,13 +89,17 @@ async def get_draft_by_id(draft_id: str):
     return draft
 
 
-@router.patch("/{draft_id}", response_model=DraftResponse)
+@router.patch("/{draft_id}", response_model=DraftUpdateResponse)
 async def update_existing_draft(draft_id: str, payload: DraftUpdateRequest):
     """Update an existing draft."""
     draft = await update_draft(draft_id, title=payload.title, body=payload.body)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
-    return draft
+    return DraftUpdateResponse(
+        draft=draft,
+        persistedRevision=draft.revision,
+        savedAt=draft.savedAt or "",
+    )
 
 
 # Delete a draft
