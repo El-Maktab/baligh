@@ -55,6 +55,7 @@ class DraftDocument(BaseModel):
 DEFAULT_DRAFT_TITLE = "مسودة جديدة"
 DEFAULT_DRAFT_BODY = "اكتب النص هنا..."
 DEFAULT_STAGE_LABEL = "جاهز للربط"
+_mongo_client: AsyncIOMotorClient | None = None
 
 
 def _now_iso() -> str:
@@ -107,10 +108,31 @@ def _build_seed_draft() -> DraftDocument:
     )
 
 
+def init_mongo_client(client: AsyncIOMotorClient) -> None:
+    """Register the shared Motor client for repository calls."""
+    global _mongo_client
+    _mongo_client = client
+
+
+def close_mongo_client() -> None:
+    """Close and clear the shared Motor client when this module owns it."""
+    global _mongo_client
+    if _mongo_client is not None:
+        _mongo_client.close()
+        _mongo_client = None
+
+
+def _get_client() -> AsyncIOMotorClient:
+    """Return the shared Motor client, creating one lazily if needed."""
+    global _mongo_client
+    if _mongo_client is None:
+        _mongo_client = AsyncIOMotorClient(settings.mongodb_uri)
+    return _mongo_client
+
+
 def _get_collection():
     """Get the drafts collection."""
-    client = AsyncIOMotorClient(settings.mongodb_uri)
-    db = client.get_default_database()
+    db = _get_client().get_default_database()
     return db["drafts"]
 
 
