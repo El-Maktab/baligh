@@ -42,7 +42,7 @@ class RankerService:
         ]
 
         aggregated: dict[int, list] = {}
-        for error_id, _ in enumerate(inp.errors_span, start=1):
+        for error_id, _ in enumerate(inp.errors_span):
             aggregated[error_id] = []
 
         for module_result in valid_corrections:
@@ -50,7 +50,7 @@ class RankerService:
                 continue
             name = module_result.module_name
             for candidate in module_result.candidate_edits:
-                for error_id, error_span in enumerate(inp.errors_span, start=1):
+                for error_id, error_span in enumerate(inp.errors_span):
                     if self._matches(candidate, error_span):
                         aggregated[error_id].append((name, candidate))
                         break
