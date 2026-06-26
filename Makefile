@@ -1,4 +1,4 @@
-.PHONY: help install format lint type-check test all clean camel-data ged-dict-download ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate pre-commit
+.PHONY: help install format lint type-check test all clean camel-data ged-dict-download ged-lexicon ged-ml-datasets ged-ml-model-download ged-eval-datasets ged-evaluate nws-model-download pre-commit
 
 # Default target
 help:
@@ -11,6 +11,7 @@ help:
 	@echo "  make ged-dict-download     Download dictionaries from our drive"
 	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
 	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
+	@echo "  make nws-model-download    Download NWS models from Hugging Face"
 	@echo ""
 	@echo "GED commands:"
 	@echo "  make ged-evaluate          Evaluate all GED detectors"
@@ -58,6 +59,14 @@ ged-ml-model-download:
 	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-morph" \
 		--repo-type model \
 		--local-dir "artifacts/ged/ml/crf-surface-morph-v2/v0.2.0"
+
+# Download NWS models
+nws-model-download:
+	@mkdir -p src/services/nws/data
+	uv run --with huggingface-hub hf download akramhany65/nws_models \
+		--repo-type model \
+		--local-dir src/services/nws/data
+	@echo "Download complete! Models are ready in src/services/nws/data"
 
 # Download GED evaluation datasets
 ged-eval-datasets:
