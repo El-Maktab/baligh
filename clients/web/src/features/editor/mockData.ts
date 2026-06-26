@@ -1,5 +1,9 @@
 import type { EditorDraft } from "./types";
 
+export const DEFAULT_DRAFT_TITLE = "مسودة جديدة";
+
+export const DEFAULT_DRAFT_BODY = "اكتب النص هنا...";
+
 export const SEEDED_DRAFTS: EditorDraft[] = [
   {
     id: "draft-1",

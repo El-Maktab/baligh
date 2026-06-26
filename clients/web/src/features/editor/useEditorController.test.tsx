@@ -9,6 +9,7 @@ import {
   EditorApiProvider,
   type EditorApi,
 } from "./api";
+import { DEFAULT_DRAFT_BODY, DEFAULT_DRAFT_TITLE } from "./mockData";
 import { useEditorController } from "./useEditorController";
 
 function TestHarness() {
@@ -38,6 +39,9 @@ function TestHarness() {
         type="button"
       >
         edit-title
+      </button>
+      <button onClick={() => controller.addDraft()} type="button">
+        add-draft
       </button>
       <button onClick={() => controller.updateBody("الم")} type="button">
         word-body
@@ -97,6 +101,40 @@ describe("useEditorController", () => {
       },
       { timeout: 2_500 },
     );
+  });
+
+  it("creates a draft with the default title and body", async () => {
+    let createPayload: { title?: string; body?: string } | null = null;
+    const baseApi = createMockEditorApi();
+    const capturingApi: EditorApi = {
+      ...baseApi,
+      createDraft: async (payload, signal) => {
+        createPayload = payload;
+        return baseApi.createDraft(payload, signal);
+      },
+    };
+
+    renderHarness(capturingApi);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("active-title")).toHaveTextContent("عن المحبة");
+    });
+
+    fireEvent.click(screen.getByText("add-draft"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("active-title")).toHaveTextContent(
+        DEFAULT_DRAFT_TITLE,
+      );
+      expect(screen.getByTestId("active-body")).toHaveTextContent(
+        DEFAULT_DRAFT_BODY,
+      );
+    });
+
+    expect(createPayload).toEqual({
+      title: DEFAULT_DRAFT_TITLE,
+      body: DEFAULT_DRAFT_BODY,
+    });
   });
 
   it("loads word suggestions, cycles them, applies one, and can close the menu", async () => {

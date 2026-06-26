@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { EditorApiError, useEditorApi } from "./api";
+import { DEFAULT_DRAFT_BODY, DEFAULT_DRAFT_TITLE } from "./mockData";
 import {
   applyTashkeelToBody,
   cloneDraftDocument,
@@ -201,7 +202,13 @@ export function useEditorController() {
 
   const addDraftMutation = useMutation({
     mutationFn: ({ signal }: { signal?: AbortSignal }) =>
-      api.createDraft({}, signal),
+      api.createDraft(
+        {
+          title: DEFAULT_DRAFT_TITLE,
+          body: DEFAULT_DRAFT_BODY,
+        },
+        signal,
+      ),
     onSuccess: (createdDraft) => {
       queryClient.setQueryData<DraftSummary[]>(
         editorQueryKeys.drafts,
