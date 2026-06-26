@@ -60,4 +60,4 @@ env/
 /src/services/nws/data
 /src/services/ged/features/subsystems/lexicon/dictionary
 /src/services/gec/data/edit_tagger/
-/src/services/gec/models/gec_models
+/src/services/gec/models/
