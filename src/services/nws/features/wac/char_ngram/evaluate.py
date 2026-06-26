@@ -4,14 +4,8 @@ import argparse
 import json
 import logging
 import sys
-from pathlib import Path
-
-current_dir = Path(__file__).resolve().parent
-while current_dir.name and not (current_dir / "pyproject.toml").exists():
-    current_dir = current_dir.parent
-sys.path.append(str(current_dir))  # noqa: E402
-
 from collections import defaultdict
+from pathlib import Path  # noqa: E402
 
 from src.services.nws.features.wac.char_ngram.dataset import (  # noqa: E402
     generate_prefix_pairs,

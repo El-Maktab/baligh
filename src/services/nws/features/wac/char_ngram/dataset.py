@@ -17,6 +17,7 @@ def clean_text_for_lm(text: str) -> str:
 
 
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +30,7 @@ def get_eval_stream(
     """Get a streaming iterator over the dataset split."""
     if dataset_name == "lstm":
         logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
-        from pathlib import Path
-
-        current_dir = Path(__file__).resolve().parent
-        while current_dir.name and not (current_dir / "pyproject.toml").exists():
-            current_dir = current_dir.parent
-
-        data_file = (
-            current_dir / f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt"
-        )
+        data_file = Path(f"src/services/nws/data/ar_corpus/corpus_{split_type}.txt")
         if not data_file.exists():
             raise FileNotFoundError(f"LSTM corpus not found at {data_file}")
 

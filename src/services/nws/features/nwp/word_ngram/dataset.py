@@ -28,12 +28,7 @@ def get_eval_stream(
     if dataset_name == "wiki_dump":
         logger.info(f"Streaming from local Wikipedia dump for {split_type} split...")
 
-        # Traverse up to project root to find data dir correctly regardless of where script is run
-        current_dir = Path(__file__).resolve().parent
-        while current_dir.name and not (current_dir / "pyproject.toml").exists():
-            current_dir = current_dir.parent
-
-        data_dir = current_dir / "src/services/nws/data/ar_corpus"
+        data_dir = Path("src/services/nws/data/ar_corpus")
 
         if not data_dir.exists():
             raise FileNotFoundError(f"Local dataset not found at {data_dir}")
@@ -63,13 +58,7 @@ def get_eval_stream(
     if dataset_name == "kaggle":
         logger.info(f"Streaming from Kaggle corpus output for {split_type} split...")
 
-        current_dir = Path(__file__).resolve().parent
-        while current_dir.name and not (current_dir / "pyproject.toml").exists():
-            current_dir = current_dir.parent
-
-        data_file = (
-            current_dir / f"src/services/nws/data/kaggle_corpus/corpus_{split_type}.txt"
-        )
+        data_file = Path(f"src/services/nws/data/kaggle_corpus/corpus_{split_type}.txt")
 
         if not data_file.exists():
             raise FileNotFoundError(f"Kaggle corpus not found at {data_file}")
@@ -84,13 +73,7 @@ def get_eval_stream(
     if dataset_name == "lstm":
         logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
 
-        current_dir = Path(__file__).resolve().parent
-        while current_dir.name and not (current_dir / "pyproject.toml").exists():
-            current_dir = current_dir.parent
-
-        data_file = (
-            current_dir / f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt"
-        )
+        data_file = Path(f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt")
 
         if not data_file.exists():
             raise FileNotFoundError(f"LSTM corpus not found at {data_file}")

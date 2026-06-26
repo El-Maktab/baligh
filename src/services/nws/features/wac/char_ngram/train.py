@@ -9,11 +9,6 @@ import logging
 import sys
 from pathlib import Path
 
-current_dir = Path(__file__).resolve().parent
-while current_dir.name and not (current_dir / "pyproject.toml").exists():
-    current_dir = current_dir.parent
-sys.path.append(str(current_dir))  # noqa: E402
-
 from src.services.nws.features.wac.char_ngram.counter import NGramCounter  # noqa: E402
 from src.services.nws.features.wac.char_ngram.dataset import (
     get_eval_stream,  # noqa: E402

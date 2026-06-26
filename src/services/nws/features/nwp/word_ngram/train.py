@@ -2,13 +2,7 @@
 
 import argparse
 import logging
-import sys
 from pathlib import Path
-
-current_dir = Path(__file__).resolve().parent
-while current_dir.name and not (current_dir / "pyproject.toml").exists():
-    current_dir = current_dir.parent
-sys.path.append(str(current_dir))
 
 from src.services.nws.features.nwp.word_ngram.counter import NGramCounter
 from src.services.nws.features.nwp.word_ngram.dataset import get_eval_stream
