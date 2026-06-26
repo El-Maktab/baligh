@@ -47,7 +47,7 @@ def preprocess(input: PreprocessingInput) -> PreprocessingOutput:
 
     # 2. Word Boundary Detection
     completed_prefix, current_fragment, mode = split_word_boundary(
-        normalized_text, input.cursor_offset
+        normalized_text, None # no support for current_cursor for now
     )
 
     # 3. Segmentation (completed prefix only)

@@ -5,10 +5,7 @@ or Word Autocomplete (WAC) mode, splitting the text into a completed prefix
 and an optional active word fragment.
 
 Note:
-    cursor_offset is reserved for future mid-sentence editing support and is
-    NOT implemented yet. Any non-None value raises NotImplementedError.
-    When cursor_offset is implemented the convention should be: cursor_offset = i means
-    the cursor sits between text[i-1] and text[i] (standard Python slice semantics).
+    cursor_offset is not supported for now.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -19,7 +16,6 @@ Authors:
 
 from typing import Literal
 
-# Delimiter set defined in the contract:
 # - whitespace (space, tab, newline, etc...)
 # - arabic punctuation: ، ؟ ؛
 # - shared punctuation: . , ! ? ; : " ' ( ) [ ] { } - —
@@ -31,14 +27,12 @@ def split_word_boundary(
 ) -> tuple[str, str | None, Literal["NWP", "WAC"]]:
     """Splits input text into a completed prefix, an active fragment, and a mode.
 
-    determines if the word at the cursor is complete (NWP mode) or incomplete
-    (WAC mode). cursor_offset is NOT SUPPORTED for now.
+    determines if the word being written is complete (NWP mode) or incomplete
+    (WAC mode).
 
     Args:
         text: The raw or normalized input text.
-        cursor_offset: Reserved for future mid-sentence editing support.
-            Must be None in the current phase, passing any other value raises
-            NotImplementedError.
+        cursor_offset: NOT SUPP for now.
 
     Returns:
         A tuple of (completed_prefix, current_fragment, mode) where:
@@ -54,16 +48,15 @@ def split_word_boundary(
 
     left_text = text
 
+    # NWP
     if not left_text:
         return "", None, "NWP"
 
     last_char = left_text[-1]
     if last_char in DELIMITERS:
-        # the character before the cursor is a delimiter, meaning the word is complete.
         return left_text, None, "NWP"
 
-    # if above not true, then the word before the cursor is incomplete (WAC mode).
-    # so we scan backward for the nearest delimiter to find where the fragment starts.
+    # WAC
     last_delimiter_idx = -1
     for idx in range(len(left_text) - 1, -1, -1):
         if left_text[idx] in DELIMITERS:

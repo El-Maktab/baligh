@@ -1,21 +1,14 @@
 """Morphological analysis service for Baligh preprocessing.
 
-This module uses CAMeL Tools' morphological analyzer and MLE disambiguator
+This module uses CAMeL Tools morphological analyzer and MLE disambiguator
 to produce MorphAnalysis candidates for each token in the completed prefix.
 
-Design decisions:
+NOTE:
     - The disambiguated result is always placed at index 0 with
         is_disambiguated=True. All other unique analyzer candidates follow
         with is_disambiguated=False.
-    - Deduplication: We skip the disambiguated value from the results of the analyzer
-        if it is generated again by it. The match key is (diac, pos, lex) which
-        should be distinctive within one word.
-    - CAMeL's lex field maps to our lemma (base/dictionary form).
-        CAMeL's diac field maps to our diacritized (fully diacritized
-        surface form of the token). They are always distinct for inflected words.
     - Punctuation tokens (CAMeL pos=punc) receive lemma=None and
-        diacritized=None per the contract.
-    - Both CAMeL singletons use double-checked locking for thread safety.
+        diacritized=None.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -45,13 +38,7 @@ _disambiguator_lock = threading.Lock()
 
 
 def _get_analyzer() -> "Analyzer":
-    """Returns the shared Analyzer instance, initialising it if needed.
-
-    Uses double-checked locking so only one thread create the object.
-
-    Returns:
-        The process-wide Analyzer backed by the built-in MorphologyDB.
-    """
+    """Returns the shared Analyzer instance, initialising it if needed."""
     global _analyzer
     if _analyzer is None:
         with _analyzer_lock:
@@ -65,13 +52,7 @@ def _get_analyzer() -> "Analyzer":
 
 
 def _get_disambiguator() -> "MLEDisambiguator":
-    """Returns the shared MLEDisambiguator instance, initialising it if needed.
-
-    Uses double-checked locking so only one thread create the object.
-
-    Returns:
-        The process-wide MLEDisambiguator loaded with the pre-trained model.
-    """
+    """Returns the shared MLEDisambiguator instance, initialising it if needed."""
     global _disambiguator
     if _disambiguator is None:
         with _disambiguator_lock:
@@ -86,7 +67,7 @@ def _get_disambiguator() -> "MLEDisambiguator":
 # Tag mapping tables (CAMeL abbreviated values -> our human-readable schema)
 #############################################################################
 
-# CAMeL POS tags that have no direct equivalent default to uppercase raw value.
+# CAMeL POS tags that have no direct equivalent default to uppercase raw value
 _POS_MAP: dict[str, str] = {
     # Noun: General noun (ex. كتاب، شجرة)
     "noun": "NOUN",
@@ -137,9 +118,7 @@ _NUM_MAP: dict[str, str | None] = {
     "s": "singular",
     "d": "dual",
     "p": "plural",
-    # Not applicable grammatical number
     "na": None,
-    # Undetermined grammatical number
     "u": None,
 }
 
@@ -150,44 +129,37 @@ _PER_MAP: dict[str, str | None] = {
     "2": "second",
     # (he/she/they)
     "3": "third",
-    # Not applicable grammatical person
     "na": None,
-    # Undetermined grammatical person
     "u": None,
 }
 
 _CAS_MAP: dict[str, str | None] = {
-    # (Marfu')
+    # (Marfu)
     "n": "nominative",
     # (Mansoub)
     "a": "accusative",
     # (Majrour)
     "g": "genitive",
-    # Undetermined grammatical case
     "u": None,
-    # Not applicable grammatical case
     "na": None,
 }
 
 _VOX_MAP: dict[str, str | None] = {
-    # Active (Ma'rouf)
+    # Active (Ma3rouf)
     "a": "active",
     # Passive (Majhool)
     "p": "passive",
-    # Not applicable voice
     "na": None,
 }
 
 _MOD_MAP: dict[str, str | None] = {
-    # (Marfu' for verbs)
+    # (Marfu3 for verbs)
     "i": "indicative",
     # (Mansoub for verbs)
     "s": "subjunctive",
     # (Majzoum for verbs)
     "j": "jussive",
-    # Not applicable grammatical mood
     "na": None,
-    # Undetermined grammatical mood
     "u": None,
 }
 
@@ -195,24 +167,21 @@ _MOD_MAP: dict[str, str | None] = {
 _ASP_MAP: dict[str, str | None] = {
     # Past tense (Madi)
     "p": "past",
-    # Present/Future tense (Mudari')
+    # Present/Future tense (Mudari3)
     "i": "present",
-    # Imperative mood/tense (Amr)
+    # Imperative mood/tense (2mr)
     "c": "imperative",
-    # Not applicable tense/aspect
     "na": None,
 }
 
 _STT_MAP: dict[str, str | None] = {
-    # (Ma'rifah, ex. with Al-)
+    # (Ma3rifah, ex. with Al-)
     "d": "definite",
     # (Nakirah, ex. with Tanween)
     "i": "indefinite",
     # Construct state (Idafah context)
     "c": None,
-    # Not applicable state
     "na": None,
-    # Undetermined state
     "u": None,
 }
 
@@ -227,19 +196,7 @@ def _map_analysis(
     token_index: int,
     is_disambiguated: bool,
 ) -> MorphAnalysis:
-    """Converts a raw CAMeL analysis dict into a MorphAnalysis object.
-
-    Args:
-        camel_dict: A dict produced by CAMeL's Analyzer.analyze() or taken
-            from ScoredAnalysis.analysis inside a DisambiguatedWord.
-        token_index: Index of the Token this analysis belongs to.
-        is_disambiguated: True if this is the MLEDisambiguator's selected
-            candidate for the token.
-
-    Returns:
-        A MorphAnalysis with all fields mapped from CAMeL's abbreviated values
-        to the human-readable values defined in the contract.
-    """
+    """Converts a raw CAMeL analysis dict into a MorphAnalysis object."""
     pos_raw = camel_dict.get("pos", "")
     pos = _POS_MAP.get(pos_raw, pos_raw.upper())
     is_punc = pos == "PUNC"
@@ -314,13 +271,10 @@ def analyze(tokens: list[Token]) -> list[list[MorphAnalysis]]:
             # Index 0: the disambiguated best candidate.
             candidates.append(_map_analysis(disambig_dict, token.index, True))
 
-        # add all analyzer values. any value that is identical to the
-        # disambiguated one will be filtered out below.
         for c in all_candidates:
             candidates.append(_map_analysis(c, token.index, False))
 
-        # Final deduplication at the mapped-schema level, it is used to make
-        # sure that no 2 entries in candidates have the same identical values.
+        # Remove any repeated values
         seen: set[tuple] = set()
         deduped: list[MorphAnalysis] = []
         for ma in candidates:

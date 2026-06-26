@@ -1,22 +1,8 @@
 """Text segmentation service for Baligh preprocessing.
 
-This module uses Farasa's Arabic segmenter to split completed tokens into
-their component morphemes (clitics + stem) and produce Token objects with
-precise character offsets on both the normalized text and the original raw text.
-
-Design decisions:
-    - One Token per whitespace-delimited word or punctuation mark (Design B).
-      Farasa's +-split output is used only to derive affix_structure
-      stored on the Token. (NOTE: clitics are NOT split into separate tokens)
-    - Farasa is run in interactive mode so the JVM stays alive across calls.
-      This is appropriate because each request carries a short sentence fragment
-      rather than a large document.
-    - Token.form is taken from normalized_text (semantically equivalent to the
-      original surface).
-    - Sequential alignment: Farasa output tokens are matched character-by-
-      character against the normalized prefix to derive norm_span, the
-      norm_to_orig_map then translates each norm_span into a span on the
-      original raw text.
+Uses Farasa to split completed tokens into their component morphemes
+(clitics + stem) and produce Token objects with character offsets
+on both the normalized text and the original raw text.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -48,13 +34,7 @@ _segmenter_lock = threading.Lock()
 # the type FarasaSegmenter is written as strings so that python don't evaluate
 # it at runtime (would result in error)
 def _get_segmenter() -> "FarasaSegmenter":
-    """Returns the shared FarasaSegmenter instance, initialising it if needed.
-
-    Uses double-checked locking so only one thread imports and initializes the object.
-
-    Returns:
-        The process-wide FarasaSegmenter running in interactive mode.
-    """
+    """Returns the shared FarasaSegmenter instance, initialising it if needed."""
     global _segmenter  # to access the module level _segmenter
     if _segmenter is None:
         with _segmenter_lock:
@@ -72,14 +52,6 @@ def _get_segmenter() -> "FarasaSegmenter":
 
 def _build_affix_structure(farasa_word: str) -> str | None:
     """Derives the affix_structure tag string from a Farasa word chunk.
-
-    Farasa represents a segmented word as a +-joined string, ex.
-    "و+ب+ال+مدرس+ة".  This function takes known prefix clitics from the
-    left and known suffix clitics from the right, everything remaining in the
-    middle is collapsed into a single STEM tag.
-
-    Punctuation words contain no + and do not match any clitic, so they
-    receive None.
 
     Args:
         farasa_word: A single space-free token from Farasa's output, possibly
@@ -122,27 +94,21 @@ def _build_affix_structure(farasa_word: str) -> str | None:
         if not matched:
             break
 
-    # everything remaining between left and right (inclusive) is the stem.
+    # take stem.
     stem_parts = segments[left : right + 1]
 
+    # Invalid state
     if not stem_parts:
-        # entire word was consumed by clitics - no stem found.  this should
-        # not happen for valid Arabic text, but we check anyways.
         return None
 
-    # join back the remaining segments as they represent the stem.
     stem_str = "".join(stem_parts)
 
-    # Punctuation check: check if the stem contains at least one Arabic letter.
-    # Arabic letters span U+0621-U+064A (basic Arabic alphabet).
+    # Handle punctuation
     has_arabic_letter = False
     for ch in stem_str:
         if "\u0621" <= ch <= "\u064a":
             has_arabic_letter = True
             break
-
-    # if the stem contains no arabic letters and no clitics were found too,
-    # this is a punctuation token, return None.
     if not has_arabic_letter and not tags and not suffix_tags:
         return None
 
@@ -152,12 +118,9 @@ def _build_affix_structure(farasa_word: str) -> str | None:
 
 
 def _canonicalize_for_alignment(text: str) -> str:
-    """Removes or normalizes characters that Farasa implicitly corrects.
-
-    Used for the SequenceMatcher can perfectly align characters regardless of
-    Farasa's internal changes (ex. converting 'اكرم' to 'أكرم').
-    """
-    text = re.sub(r"[أإآ]", "ا", text)  # TODO: cover more alif variations
+    """Removes or normalizes characters that Farasa implicitly corrects."""
+    # TODO: mighe need to cover more shapes for chars
+    text = re.sub(r"[أإآ]", "ا", text)
     text = text.replace("ة", "ه").replace("ى", "ي")
     return text
 
@@ -230,7 +193,7 @@ def _reconstruct_farasa_segmentation(
 
     recon_parts = []
 
-    # We track the last norm_idx we processed to catch any dropped characters
+    # track the last norm_idx we processed to catch any dropped characters
     last_norm_idx = match_start - 1
 
     for fw in grouped_farasa:
@@ -260,7 +223,7 @@ def _reconstruct_farasa_segmentation(
                 norm_idx = clean_to_norm.get(clean_idx)
                 if norm_idx is not None:
                     # If we skipped some characters in the original string
-                    # (ex. dropped diacritics), append them now
+                    # (like dropped diacritics), append them now
                     if norm_idx > last_norm_idx + 1:
                         recon.append(normalized_prefix[last_norm_idx + 1 : norm_idx])
                     recon.append(normalized_prefix[norm_idx])
@@ -270,7 +233,7 @@ def _reconstruct_farasa_segmentation(
                 clean_idx += 1
         recon_parts.append("".join(recon))
 
-    # After the last word, if there are still characters left in this match, append them
+    # After the last word, append any left chars in this match
     if last_norm_idx < match_end - 1:
         if recon_parts:
             recon_parts[-1] += normalized_prefix[last_norm_idx + 1 : match_end]
@@ -291,23 +254,7 @@ def _align_tokens(
     norm_to_orig_map: list[int],
     regex_matches: list[re.Match],
 ) -> list[Token]:
-    """Aligns Farasa output tokens to regex-extracted token spans.
-
-    Maps character indices from Farasa's cleaned output back to the
-    normalized_prefix to bypass inserted/dropped characters. It reconstructs
-    the farasa_segmentation string by fetching exact user characters, which
-    perserve spelling errors that Farasa silently corrected.
-
-    Args:
-        farasa_output: The raw string returned by FarasaSegmenter.segment().
-        normalized_prefix: The original normalized text.
-        norm_to_orig_map: Character index mapping from normalized to raw text.
-        regex_matches: Pre-computed token boundaries via regex.
-
-    Returns:
-        A list of Token objects representing exactly the regex matches, populated
-        with the corresponding Farasa affix structure and segmentation.
-    """
+    """Aligns Farasa output tokens to regex-extracted token spans."""
     tokens: list[Token] = []
     token_index = 0
 
@@ -317,7 +264,7 @@ def _align_tokens(
     clean_to_norm = _build_character_mapping(farasa_clean, normalized_prefix)
     farasa_word_spans = _get_farasa_spans(farasa_words, clean_to_norm)
 
-    # Group Farasa words into the rigid regex matches
+    # group Farasa words into the rigid regex matches
     for match in regex_matches:
         match_start, match_end = match.span()
         form = normalized_prefix[match_start:match_end]
@@ -325,7 +272,7 @@ def _align_tokens(
         grouped_farasa = []
         for f in farasa_word_spans:
             if f["norm_start"] != -1:
-                # If the mapped farasa word overlaps with this regex match
+                # if the mapped farasa word overlaps with this regex match
                 if max(match_start, f["norm_start"]) < min(match_end, f["norm_end"]):
                     grouped_farasa.append(f)
 
@@ -417,19 +364,12 @@ def break_token(token: Token) -> list[tuple[str, str]] | None:
 def segment(completed_prefix: str, norm_to_orig_map: list[int]) -> list[Token]:
     """Segments the completed prefix into tokens using Farasa.
 
-    Runs Farasa on the normalized completed_prefix, derives
-    affix_structure for each token from the +-split output, and aligns
-    each token to its character offsets in both the normalized text and the
-    original raw text.
-
     Args:
         completed_prefix: The normalized text of the completed portion of the
-            user's input (everything before the current fragment), as returned
-            by the boundary detector. Must be normalized.
+            user's input (everything before the current fragment).
 
         norm_to_orig_map: The character index mapping produced by
-            normalize_with_mapping, where norm_to_orig_map[i] is the
-            index of completed_prefix[i] in the original raw text.
+            normalize_with_mapping func
 
     Returns:
         A list of Token objects ordered by their position in the text. Returns

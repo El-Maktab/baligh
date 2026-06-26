@@ -1,15 +1,8 @@
 """Text normalization service for Baligh.
 
-This module provides utilities to normalize Arabic text (Unicode NFKC (Normalization
-Form Compatibility Composition) and whitespace consolidation) while maintaining
-a mapping of character indices back to the original raw text.
-
-Note:
-    The canonicalize_* utilities (canonicalize_alif, canonicalize_ya,
-    canonicalize_ta_marbuta) are intentionally NOT applied during main text
-    normalization. The reason is becuase they will hide errors in the words,
-    where some modules like the GED and GEC, would need the text as it is unmodified,
-    so these features should only be used in the NWS module.
+Does a normalization using Unicode NFKC (Normalization
+Form Compatibility Composition) and whitespace consolidation.
+It also maintains a mapping from normalized text to original one.
 
 References:
 - docs/contracts/preprocessing-contract.md
@@ -36,10 +29,6 @@ def normalize_text(text: str) -> str:
 
 def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     """Normalizes text and computes a character index mapping back to original text.
-
-    Consolidates multiple consecutive spaces into a single space, applies NFKC
-    Unicode normalization, and maps each character in the resulting normalized
-    string to its corresponding index in the original string.
 
     Args:
         text: The raw input text.
@@ -68,8 +57,6 @@ def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     final_to_orig: list[int] = []
     in_whitespace = False
 
-    # Loop over the nfkc_text, only take one whitespace between each 2 chars and
-    # append it's orig index to final_to_orig else ignore any in between whitespaces.
     for idx, char in enumerate(nfkc_text):
         orig_idx = nfkc_to_orig[idx]
         if char.isspace():
@@ -86,62 +73,3 @@ def normalize_with_mapping(text: str) -> tuple[str, list[int]]:
     final_to_orig.append(len(text))
 
     return normalized_text, final_to_orig
-
-
-def canonicalize_alif(text: str) -> str:
-    """Canonicalizes Alif variants to plain Alif.
-
-    This function must ONLY be applied to the current_fragment (the incomplete
-    word being typed). It would help the NWS module to predict the next word.
-
-    Warning:
-        Never apply this to the completed prefix or normalized_text.
-
-    Args:
-        text: The incomplete word fragment being typed by the user.
-
-    Returns:
-        The incomplet word with normlaized Alif values.
-    """
-    alif_map = {
-        "أ": "ا",
-        "إ": "ا",
-        "آ": "ا",
-    }
-    return "".join(alif_map.get(char, char) for char in text)
-
-
-def canonicalize_ya(text: str) -> str:
-    """Canonicalizes Alif Maqsura (ى) to Ya (ي).
-
-    This function must ONLY be applied to the current_fragment (the incomplete
-    word being typed). It helps the NWS module in the predictions it make.
-
-    Warning:
-        Never apply this to the completed prefix or normalized_text.
-
-    Args:
-        text: The incomplete word fragment being typed by the user.
-
-    Returns:
-        The fragment with Alif Maqsura (ى) replaced by Ya (ي).
-    """
-    return text.replace("\u0649", "\u064a")
-
-
-def canonicalize_ta_marbuta(text: str) -> str:
-    """Canonicalizes Ta Marbuta (ة) to Ha (ه).
-
-    This function must ONLY be applied to the current_fragment (the incomplete
-    word being typed). It would help the NWS module to predict the next word.
-
-    Warning:
-        Never apply this to the completed prefix or normalized_text.
-
-    Args:
-        text: The incomplete word fragment being typed by the user.
-
-    Returns:
-        The fragment with Ta Marbuta (ة) replaced by Ha (ه).
-    """
-    return text.replace("\u0629", "\u0647")
