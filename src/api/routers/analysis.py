@@ -1,9 +1,11 @@
 """Router for the analysis endpoint."""
 
 import uuid
+from loguru import logger
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+from src.api.services.corrections import run as corrections_run
 from src.api.services.drafts import RevisionConflictError, get_draft, update_draft
 from src.api.services.editor_contract import (
     AnalyzeRequest,
@@ -13,9 +15,6 @@ from src.api.services.editor_contract import (
     normalize_candidate_edit,
     normalize_error_detection,
 )
-from src.api.services.gec import run as gec_run
-from src.api.services.corrections import run as ged_run
-from src.api.services.preprocessing import run as preprocess_run
 from src.services.ged.schemas import ErrorSpan
 
 router = APIRouter()
@@ -62,25 +61,25 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
         raise HTTPException(status_code=404, detail="Draft not found")
 
     body = payload.body if payload.body is not None else draft.body or ""
-    preprocess_output = preprocess_run(body)
-    ged_output = ged_run(preprocess_output)
-    gec_output = gec_run(preprocess_output, errors_span=ged_output.errors)
-
+    gec_output, ged_output = corrections_run(body)
+    
+    logger.debug(
+        "GEC output: {}, GED output: {}", gec_output.model_dump(), ged_output.model_dump()
+    )
     normalized_corrections: list[dict] = []
     matched_error_keys: set[tuple] = set()
-    for module_result in gec_output:
-        for candidate in module_result.candidate_edits:
-            error_span = _find_matching_error(ged_output, candidate)
-            if error_span is not None:
-                matched_error_keys.add(_error_key(error_span))
-            normalized = normalize_candidate_edit(
-                correction_id=f"corr-{uuid.uuid4()}",
-                body=body,
-                candidate=candidate,
-                module_name=module_result.module_name,
-                error_span=error_span,
-            )
-            normalized_corrections.append(normalized)
+    for candidate in gec_output.ranked_edits:
+        error_span = _find_matching_error(ged_output, candidate)
+        if error_span is not None:
+            matched_error_keys.add(_error_key(error_span))
+        normalized = normalize_candidate_edit(
+            correction_id=f"corr-{uuid.uuid4()}",
+            body=body,
+            candidate=candidate,
+            module_name=candidate.selected_module,
+            error_span=error_span,
+        )
+        normalized_corrections.append(normalized)
 
     for error_span in ged_output.errors:
         if _error_key(error_span) in matched_error_keys:

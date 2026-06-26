@@ -8,7 +8,7 @@ from src.services.ged.schemas import GEDOutput
 from src.services.ranker.schemas import RankerOutput
 
 
-def run(text: str) -> tuple[RankerOutput, GEDOutput]: 
+def run(text: str) -> tuple[RankerOutput, GEDOutput]:
     """Run the GEC and GED stages of Baligh on the input text."""
     baligh = Baligh()
     return baligh.run(text)

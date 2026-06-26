@@ -50,7 +50,7 @@ class RankerService:
                 continue
             name = module_result.module_name
             for candidate in module_result.candidate_edits:
-                for error_id, error_span in enumerate(inp.errors_span):
+                for error_id, error_span in enumerate(inp.errors_span, start=1):
                     if self._matches(candidate, error_span):
                         aggregated[error_id].append((name, candidate))
                         break
@@ -121,6 +121,9 @@ class RankerService:
                 correction=cand.correction,
                 selected_module=mod_name.value,
                 final_score=score,
+                edit_confidence=cand.edit_confidence,
+                explanation=cand.explanation,
+                alternatives=cand.alternatives,
             )
             ranked_edits.append(re)
             mod = mod_name.value

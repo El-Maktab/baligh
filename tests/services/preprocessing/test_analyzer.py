@@ -201,7 +201,7 @@ def test_analyze_no_duplicate_analyses():
     """No two MorphAnalysis candidates for the same token should be identical."""
     tokens = [_make_token(0, "ذهب")]
     result = analyze(tokens)
-    seen: set[tuple] = set()
+    seen = set()
     for c in result[0]:
         key = (
             c.lemma,
