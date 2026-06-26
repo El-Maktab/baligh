@@ -8,7 +8,7 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from src.api.services.drafts import get_draft, update_draft
-from src.api.services.gec import run as gec_run
+from src.api.services.edits import run as gec_run
 from src.api.services.ged import run as ged_run
 from src.api.services.preprocessing import run as preprocess_run
 from src.services.gec.schemas import CandidateEdit, ModuleName

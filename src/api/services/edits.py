@@ -16,12 +16,7 @@ from src.services.gec.schemas import GECInput, GECOutput, ModuleResult
 
 
 def run(preproc_output) -> GECOutput:
-    """Run the three GEC modules and return a ``GECOutput``.
-
-    ``preproc_output`` is a ``PreprocessingOutput`` instance that contains the
-    ``errors_span`` information required by the GEC modules. For simplicity we
-    construct a minimal ``GECInput`` with the fields that the modules expect.
-    """
+    """Run the three GEC modules and return a GECOutput."""
     # Build a very simple GECInput – the actual schema may contain more fields.
     gec_input = GECInput(
         text=preproc_output.text,
