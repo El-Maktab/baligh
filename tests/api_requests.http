@@ -11,27 +11,27 @@ Content-Type: application/json
 
 {
   "title": "Test Draft",
-  "body": "هذا نص اختبار للـ draft."
+  "body": "هذه نص تجريبي مبدأي."
 }
 
 ### 3. Get a draft (replace <DRAFT_ID> after creation)
-GET {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d HTTP/1.1
+GET {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956 HTTP/1.1
 
 ### 4. Update a draft (partial update)
-PATCH {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d HTTP/1.1
+PATCH {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956 HTTP/1.1
 Content-Type: application/json
 
 {
   "title": "Updated Title",
-  "body": "تم تحديث النص داخل الـ draft."
+  "body": "النص بعد التعديث."
 }
 
 ### 5. Run analysis on a draft
-POST {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d/analyze HTTP/1.1
+POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/analyze HTTP/1.1
 Content-Type: application/json
 
 {
-  "body": "هذا نص لتجربة التحليل.",
+  "body": "هذا نص لتغربة التحليل.",
   "selection": null,
   "caret": null,
   "clientRevision": null,
@@ -39,16 +39,16 @@ Content-Type: application/json
 }
 
 ### 6. Accept a correction (replace <CORRECTION_ID>)
-POST {{baseUrl}}/api/v1/drafts/draft-77bac399-3024-423d-8844-f1ef7ec1a32d/corrections/<CORRECTION_ID>/accept HTTP/1.1
+POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/corrections/corr-4fbd8aff-5901-43e8-96d3-02a15c78daaa/accept HTTP/1.1
 Content-Type: application/json
 
 {
-  "body": "النص بعد القبول",
+  "body": "لتجربة",
   "clientRevision": null
 }
 
 ### 7. Ignore a correction (replace <CORRECTION_ID>)
-POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/corrections/<CORRECTION_ID>/ignore HTTP/1.1
+POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/corrections/corr-13bc3491-3992-4dcf-8808-9aab2571db8b/ignore HTTP/1.1
 Content-Type: application/json
 
 {
