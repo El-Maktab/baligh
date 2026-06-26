@@ -16,11 +16,12 @@ from src.api.services.editor_contract import (
 from src.api.services.gec import run as gec_run
 from src.api.services.ged import run as ged_run
 from src.api.services.preprocessing import run as preprocess_run
+from src.services.ged.schemas import ErrorSpan
 
 router = APIRouter()
 
 
-def _find_matching_error(ged_output, candidate) -> object | None:
+def _find_matching_error(ged_output, candidate) -> ErrorSpan | None:
     """Pick the closest GED error span for a candidate edit."""
     errors = getattr(ged_output, "errors", [])
     for error in errors:
