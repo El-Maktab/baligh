@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from src.api.services.drafts import (
     create_draft,
+    delete_draft,
     get_draft,
     list_drafts,
     update_draft,
@@ -79,3 +80,16 @@ async def update_existing_draft(draft_id: str, payload: DraftUpdateRequest):
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
     return draft
+
+
+# Delete a draft
+@router.delete("/{draft_id}", status_code=204)
+async def delete_existing_draft(draft_id: str):
+    """Delete a draft by its ID.
+    Returns HTTP 204 No Content on success.
+    """
+    deleted = await delete_draft(draft_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    # No content response
+    return

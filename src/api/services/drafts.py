@@ -42,7 +42,7 @@ async def list_drafts() -> list[DraftDocument]:
     """List all drafts."""
     coll = _get_collection()
     cursor = coll.find(
-        {}, {"_id": 0, "id": 1, "title": 1, "stageLabel": 1, "updatedAt": 1}
+        {}, {"_id": 0}
     )
     drafts = []
     async for doc in cursor:
@@ -56,18 +56,24 @@ async def create_draft(
     """Create a new draft."""
     coll = _get_collection()
     draft_id = f"draft-{uuid.uuid4()}"
+    doc_body = body if body is not None else ""
+    doc_title = title if title is not None else ""
     draft = DraftDocument(
         id=draft_id,
-        title=title,
-        body=body,
+        title=doc_title,
+        body=doc_body,
         stageLabel="",
         updatedAt=None,
         savedAt=None,
         revision=1,
-        formatting={},
+        formatting={
+            "strong": [],
+            "emphasis": [],
+            "lines": {}
+        },
         corrections=[],
     )
-    await coll.insert_one(draft.dict(by_alias=True, exclude_none=True))
+    await coll.insert_one(draft.model_dump(by_alias=True, exclude_none=True))
     return draft
 
 
@@ -147,6 +153,15 @@ async def apply_correction(
     if updated:
         return DraftDocument(**updated)
     return None
+
+
+async def delete_draft(draft_id: str) -> bool:
+    """Delete a draft by its ID.
+    Returns True if a document was deleted, False otherwise.
+    """
+    coll = _get_collection()
+    result = await coll.delete_one({"id": draft_id})
+    return result.deleted_count > 0
 
 
 async def ignore_correction(draft_id: str, correction_id: str) -> DraftDocument | None:
