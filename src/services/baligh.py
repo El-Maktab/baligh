@@ -72,7 +72,7 @@ class Baligh:
 
         self.ranker = RankerService()
 
-    def run(self, input_text) -> tuple[RankerOutput, GEDOutput]:
+    def run(self, input_text: str) -> tuple[RankerOutput, GEDOutput]:
         """Run the full Baligh pipeline on input text."""
         preprocessing_input = PreprocessingInput(text=input_text)
         preprocessing_output: PreprocessingOutput = preprocess(preprocessing_input)
@@ -103,12 +103,14 @@ class Baligh:
 
         return ranker_output, ged_output
 
-    def run_nws(self, preprocessed: PreprocessingOutput, curr_frag) -> NWSOutput:
+    def run_nws(self, input_text: str) -> NWSOutput:
         """Run the NWS"""
+        preprocessing_input = PreprocessingInput(text=input_text)
+        preprocessing_output: PreprocessingOutput = preprocess(preprocessing_input)
         nws_input = NWSInput(
-            tokens=preprocessed.tokens,
-            morph_features=preprocessed.morph_features,
-            current_fragment=curr_frag,
-            mode=preprocessed.mode,
+            tokens=preprocessing_output.tokens,
+            morph_features=preprocessing_output.morph_features,
+            current_fragment=preprocessing_output.current_fragment,
+            mode=preprocessing_output.mode,
         )
         return self.nws.predict(nws_input)
