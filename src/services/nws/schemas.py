@@ -55,8 +55,7 @@ class NWSInput(BaseModel):
             always first.
         current_fragment: Incomplete word being typed, None in NWP mode.
         mode: Routing signal ("NWP" or "WAC").
-        top_k: Maximum number of suggestions to return (defult 5), note that sometimes
-            we might return fewer results than 5 if no more values exist.
+        top_k: Maximum number of suggestions to return (defult 5).
     """
 
     tokens: list[Token]
