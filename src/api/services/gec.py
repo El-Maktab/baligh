@@ -15,7 +15,7 @@ from src.services.gec.modules.ontology.engine import OntologyEngine
 from src.services.gec.schemas import GECInput, GECOutput, ModuleResult
 
 
-def run(preproc_output) -> GECOutput:
+def run(preproc_output, errors_span=None) -> GECOutput:
     """Run the three GEC modules and return a ``GECOutput``.
 
     ``preproc_output`` is a ``PreprocessingOutput`` instance that contains the
@@ -27,7 +27,7 @@ def run(preproc_output) -> GECOutput:
         text=preproc_output.text,
         tokens=preproc_output.tokens,
         morph_features=preproc_output.morph_features,
-        errors_span=getattr(preproc_output, "errors_span", []),
+        errors_span=errors_span or getattr(preproc_output, "errors_span", []),
     )
     ontology_engine = OntologyEngine()
     dictionary_engine = DictionaryEngine()

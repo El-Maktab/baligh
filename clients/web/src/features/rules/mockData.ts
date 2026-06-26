@@ -5,6 +5,7 @@ export const ruleCategories: RuleCategoryOption[] = [
   { value: "all", label: "الكل" },
   { value: "syntax", label: "النحو" },
   { value: "orthography", label: "الإملاء" },
+  { value: "punctuation", label: "الترقيم" },
   { value: "semantics", label: "الاستعمال" },
 ];
 
@@ -68,6 +69,18 @@ export const grammarRules: GrammarRule[] = [
     incorrect: "قرأت كتاباً مفيداً.",
     correct: "قرأت كتابًا مفيدًا.",
     note: "تأتي الفتحتان فوق الحرف المنوّن: الباء والدال هنا.",
+  },
+  {
+    id: "PC_SPACE_BEFORE_PUNC",
+    category: "punctuation",
+    subtype: "spacing",
+    tier: "tier_1_rule_derived",
+    title: "اتصال علامات الترقيم بما قبلها",
+    explanation:
+      "تلتصق علامات الترقيم العربية مباشرة بالكلمة السابقة، ولا تسبقها مسافة.",
+    incorrect: "وصل الطالب ، ثم جلس .",
+    correct: "وصل الطالب، ثم جلس.",
+    note: "تُترك المسافة بعد العلامة عند متابعة الجملة لا قبلها.",
   },
   {
     id: "SE_DECADES_IYAT",

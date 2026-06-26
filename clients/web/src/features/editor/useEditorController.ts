@@ -74,8 +74,10 @@ function isRevisionConflict(error: unknown): error is EditorApiError {
 }
 
 function extractLatestDraft(error: EditorApiError) {
-  const payload = error.payload as { latestDraft?: DraftDocument } | undefined;
-  return payload?.latestDraft;
+  const payload = error.payload as
+    | { latestDraft?: DraftDocument; detail?: { latestDraft?: DraftDocument } }
+    | undefined;
+  return payload?.latestDraft ?? payload?.detail?.latestDraft;
 }
 
 function buildDraftSummary(draft: DraftDocument): DraftSummary {
@@ -153,6 +155,10 @@ export function useEditorController() {
   const saveTicketRef = useRef(0);
   const analyzeTicketRef = useRef(0);
   const suggestionTicketRef = useRef(0);
+  const saveInFlightRef = useRef(false);
+  const analyzeInFlightRef = useRef(false);
+  const pendingSaveAfterCurrentRef = useRef(false);
+  const pendingAnalysisAfterCurrentRef = useRef(false);
 
   useEffect(() => {
     draftRef.current = draft;
@@ -235,6 +241,7 @@ export function useEditorController() {
         {
           title: snapshot.title,
           body: snapshot.body,
+          formatting: snapshot.formatting,
           clientRevision: snapshot.revision,
         },
         signal,
@@ -370,6 +377,33 @@ export function useEditorController() {
     loadDraft(latestDraft);
   };
 
+  const rebaseLocalDraftOnLatest = (
+    latestDraft: DraftDocument,
+    options?: {
+      useServerCorrections?: boolean;
+    },
+  ) => {
+    setDraft((current) => {
+      if (!current || current.id !== latestDraft.id) {
+        return cloneDraftDocument(latestDraft);
+      }
+
+      const useServerCorrections =
+        options?.useServerCorrections === true &&
+        current.body === latestDraft.body;
+
+      return {
+        ...current,
+        revision: latestDraft.revision,
+        savedAt: latestDraft.savedAt,
+        stageLabel: latestDraft.stageLabel,
+        corrections: useServerCorrections
+          ? latestDraft.corrections
+          : current.corrections,
+      };
+    });
+  };
+
   const closeSuggestions = () => {
     suggestionAbortRef.current?.abort();
     if (suggestionTimerRef.current) {
@@ -379,17 +413,35 @@ export function useEditorController() {
     setSuggestionState(defaultSuggestionState());
   };
 
+  const cancelAnalysis = (nextState: AnalysisState = "idle") => {
+    analyzeAbortRef.current?.abort();
+    if (analyzeTimerRef.current) {
+      window.clearTimeout(analyzeTimerRef.current);
+      analyzeTimerRef.current = null;
+    }
+    pendingAnalysisAfterCurrentRef.current = false;
+    analyzeInFlightRef.current = false;
+    setAnalysisState(nextState);
+    setAnalysisError(null);
+  };
+
   const scheduleSave = () => {
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
     saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = null;
+      if (saveInFlightRef.current) {
+        pendingSaveAfterCurrentRef.current = true;
+        return;
+      }
+
       const snapshot = draftRef.current
         ? cloneDraftDocument(draftRef.current)
         : null;
       if (!snapshot) return;
 
-      saveAbortRef.current?.abort();
       const controller = new AbortController();
       saveAbortRef.current = controller;
+      saveInFlightRef.current = true;
       const ticket = ++saveTicketRef.current;
       setSaveState("saving");
       setSaveError(null);
@@ -421,10 +473,29 @@ export function useEditorController() {
             if (controller.signal.aborted) return;
             if (isRevisionConflict(error)) {
               const latestDraft = extractLatestDraft(error);
-              if (latestDraft) hydrateLatestDraft(latestDraft);
+              if (latestDraft) {
+                rebaseLocalDraftOnLatest(latestDraft);
+                scheduleSave();
+                return;
+              }
             }
             setSaveState("error");
             setSaveError("تعذر حفظ التغييرات. أعد المحاولة.");
+          },
+          onSettled: () => {
+            if (saveAbortRef.current === controller) {
+              saveAbortRef.current = null;
+            }
+            saveInFlightRef.current = false;
+            if (pendingSaveAfterCurrentRef.current) {
+              pendingSaveAfterCurrentRef.current = false;
+              scheduleSave();
+              return;
+            }
+            if (pendingAnalysisAfterCurrentRef.current) {
+              pendingAnalysisAfterCurrentRef.current = false;
+              scheduleAnalysis();
+            }
           },
         },
       );
@@ -434,15 +505,25 @@ export function useEditorController() {
   const scheduleAnalysis = () => {
     if (analyzeTimerRef.current) window.clearTimeout(analyzeTimerRef.current);
     analyzeTimerRef.current = window.setTimeout(() => {
+      analyzeTimerRef.current = null;
+      if (saveTimerRef.current || saveInFlightRef.current) {
+        pendingAnalysisAfterCurrentRef.current = true;
+        return;
+      }
+      if (analyzeInFlightRef.current) {
+        pendingAnalysisAfterCurrentRef.current = true;
+        return;
+      }
+
       const snapshot = draftRef.current
         ? cloneDraftDocument(draftRef.current)
         : null;
       const selectionSnapshot = [...selectionRef.current] as EditorTextRange;
       if (!snapshot) return;
 
-      analyzeAbortRef.current?.abort();
       const controller = new AbortController();
       analyzeAbortRef.current = controller;
+      analyzeInFlightRef.current = true;
       const ticket = ++analyzeTicketRef.current;
       setAnalysisState("loading");
       setAnalysisError(null);
@@ -456,7 +537,13 @@ export function useEditorController() {
               if (!current || current.id !== variables.snapshot.id)
                 return current;
               if (current.body !== variables.snapshot.body) return current;
-              return { ...current, corrections: response.corrections };
+              const nextDraft = {
+                ...current,
+                revision: response.analysisRevision,
+                corrections: response.corrections,
+              };
+              syncDraftCaches(nextDraft);
+              return nextDraft;
             });
             setAnalysisState("ready");
           },
@@ -464,10 +551,24 @@ export function useEditorController() {
             if (controller.signal.aborted) return;
             if (isRevisionConflict(error)) {
               const latestDraft = extractLatestDraft(error);
-              if (latestDraft) hydrateLatestDraft(latestDraft);
+              if (latestDraft) {
+                rebaseLocalDraftOnLatest(latestDraft);
+                scheduleAnalysis();
+                return;
+              }
             }
             setAnalysisState("error");
             setAnalysisError("تعذر تحديث الملاحظات الآن.");
+          },
+          onSettled: () => {
+            if (analyzeAbortRef.current === controller) {
+              analyzeAbortRef.current = null;
+            }
+            analyzeInFlightRef.current = false;
+            if (pendingAnalysisAfterCurrentRef.current) {
+              pendingAnalysisAfterCurrentRef.current = false;
+              scheduleAnalysis();
+            }
           },
         },
       );
@@ -483,6 +584,7 @@ export function useEditorController() {
     },
   ) => {
     if (!suggestionsEnabled) return;
+    if (saveTimerRef.current || saveInFlightRef.current) return;
 
     const snapshot = options?.snapshot ?? draftRef.current;
     const selectionSnapshot =
@@ -540,7 +642,10 @@ export function useEditorController() {
               if (controller.signal.aborted) return;
               if (isRevisionConflict(error)) {
                 const latestDraft = extractLatestDraft(error);
-                if (latestDraft) hydrateLatestDraft(latestDraft);
+                if (latestDraft) {
+                  rebaseLocalDraftOnLatest(latestDraft);
+                  return;
+                }
               }
               setSuggestionState({
                 ...defaultSuggestionState(),
@@ -676,6 +781,8 @@ export function useEditorController() {
   const acceptCorrection = (correctionId: string) => {
     const snapshot = draftRef.current;
     if (!snapshot) return;
+    const target = snapshot.corrections.find((entry) => entry.id === correctionId);
+    if (!target || target.kind !== "correction") return;
 
     acceptCorrectionMutation.mutate(
       {
@@ -688,14 +795,29 @@ export function useEditorController() {
         onSuccess: (response) => {
           setDraft((current) => {
             if (!current || current.id !== snapshot.id) return current;
+            const acceptedCorrection = current.corrections.find(
+              (entry) => entry.id === correctionId,
+            );
+            const nextCaret = acceptedCorrection
+              && acceptedCorrection.kind === "correction"
+              ? acceptedCorrection.span.start +
+                acceptedCorrection.replacement.length
+              : selectionRef.current[0];
             const nextDraft = {
               ...current,
               body: response.draftBody,
               revision: response.persistedRevision,
               corrections: response.corrections,
+              formatting: reconcileFormatting(
+                current.formatting,
+                current.body,
+                response.draftBody,
+              ),
               updatedAt: "الآن",
             };
             syncDraftCaches(nextDraft);
+            setSelection([nextCaret, nextCaret]);
+            setAnchorRect(null);
             return nextDraft;
           });
           setExpandedCorrectionId(null);
@@ -706,7 +828,11 @@ export function useEditorController() {
         onError: (error) => {
           if (isRevisionConflict(error)) {
             const latestDraft = extractLatestDraft(error);
-            if (latestDraft) hydrateLatestDraft(latestDraft);
+            if (latestDraft) {
+              rebaseLocalDraftOnLatest(latestDraft, {
+                useServerCorrections: true,
+              });
+            }
           }
         },
       },
@@ -729,11 +855,12 @@ export function useEditorController() {
             if (!current || current.id !== snapshot.id) return current;
             const nextDraft = {
               ...current,
-              revision: current.revision + 1,
+              revision: snapshot.revision + 1,
               corrections: response.corrections,
               updatedAt: "الآن",
             };
             syncDraftCaches(nextDraft);
+            setAnchorRect(null);
             return nextDraft;
           });
           setExpandedCorrectionId(null);
@@ -757,7 +884,7 @@ export function useEditorController() {
           },
         };
       },
-      { closeSuggestions: false },
+      { closeSuggestions: false, scheduleSave: true },
     );
   };
 
@@ -773,7 +900,7 @@ export function useEditorController() {
           },
         };
       },
-      { closeSuggestions: false },
+      { closeSuggestions: false, scheduleSave: true },
     );
   };
 
@@ -795,7 +922,7 @@ export function useEditorController() {
           },
         };
       },
-      { closeSuggestions: false },
+      { closeSuggestions: false, scheduleSave: true },
     );
   };
 
@@ -814,7 +941,7 @@ export function useEditorController() {
           })),
         },
       }),
-      { closeSuggestions: false },
+      { closeSuggestions: false, scheduleSave: true },
     );
   };
 
@@ -822,6 +949,8 @@ export function useEditorController() {
     const snapshot = draftRef.current;
     const selectionSnapshot = [...selectionRef.current] as EditorTextRange;
     if (!snapshot) return;
+
+    cancelAnalysis("loading");
 
     tashkeelMutation.mutate(
       {
@@ -850,7 +979,7 @@ export function useEditorController() {
           if (isRevisionConflict(error)) {
             const latestDraft = extractLatestDraft(error);
             if (latestDraft) {
-              hydrateLatestDraft(latestDraft);
+              rebaseLocalDraftOnLatest(latestDraft);
               return;
             }
           }
@@ -861,7 +990,9 @@ export function useEditorController() {
           );
           if (localResult.applied) {
             updateBody(localResult.body);
+            return;
           }
+          setAnalysisState("error");
         },
       },
     );
@@ -907,10 +1038,13 @@ export function useEditorController() {
         ...current,
         body: nextBody,
         updatedAt: "الآن",
+        formatting: reconcileFormatting(current.formatting, current.body, nextBody),
+        corrections: resolveCorrections(current.body, nextBody, current.corrections),
       }),
       { scheduleSave: true, scheduleAnalysis: true, closeSuggestions: true },
     );
     setSelection([nextCaret, nextCaret]);
+    setAnchorRect(null);
   };
 
   const toggleSuggestionsEnabled = () => {

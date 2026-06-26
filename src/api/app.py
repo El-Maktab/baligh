@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from .config import settings
-from .routers import analysis, corrections, drafts, suggestions, tashkeel
+from .routers import analysis, corrections, drafts, rules, suggestions, tashkeel
 from .services.drafts import seed_default_draft
 
 
@@ -59,3 +59,4 @@ app.include_router(analysis.router, prefix="/api/v1/drafts", tags=["analysis"])
 app.include_router(corrections.router, prefix="/api/v1/drafts", tags=["corrections"])
 app.include_router(suggestions.router, prefix="/api/v1/drafts", tags=["suggestions"])
 app.include_router(tashkeel.router, prefix="/api/v1/drafts", tags=["tashkeel"])
+app.include_router(rules.router, prefix="/api/v1/rules", tags=["rules"])

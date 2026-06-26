@@ -1,7 +1,4 @@
-"""Draft repository using Motor (async MongoDB).
-
-Provides CRUD operations for draft documents.
-"""
+"""Draft repository using Motor (async MongoDB)."""
 
 import uuid
 from datetime import UTC, datetime
@@ -12,6 +9,31 @@ from pydantic import BaseModel, ConfigDict, Field
 from pymongo import ReturnDocument
 
 from ..config import settings
+from .editor_contract import (
+    CorrectionStatus,
+    DraftResponse,
+    draft_to_response,
+    normalize_selection,
+    normalize_stored_correction,
+    replace_text_range,
+    resolve_corrections,
+)
+
+
+class RevisionConflictError(Exception):
+    """Raised when the client revision is stale."""
+
+    def __init__(self, latest_draft: DraftResponse):
+        super().__init__("Revision conflict")
+        self.latest_draft = latest_draft
+
+
+class CorrectionNotAvailableError(Exception):
+    """Raised when a correction is missing or stale."""
+
+    def __init__(self, latest_draft: DraftResponse):
+        super().__init__("Correction not available")
+        self.latest_draft = latest_draft
 
 
 class DraftDocument(BaseModel):
@@ -51,16 +73,20 @@ def _default_formatting() -> dict[str, Any]:
 
 def _normalize_draft_payload(doc: dict[str, Any]) -> DraftDocument:
     """Normalize a draft document read from MongoDB."""
+    body = doc.get("body") or ""
     normalized = {
         "id": doc["id"],
         "title": doc.get("title") or DEFAULT_DRAFT_TITLE,
-        "body": doc.get("body") or "",
+        "body": body,
         "stageLabel": doc.get("stageLabel") or DEFAULT_STAGE_LABEL,
         "updatedAt": doc.get("updatedAt") or "الآن",
         "savedAt": doc.get("savedAt") or _now_iso(),
         "revision": doc.get("revision", 1),
         "formatting": doc.get("formatting") or _default_formatting(),
-        "corrections": doc.get("corrections") or [],
+        "corrections": [
+            normalize_stored_correction(body, correction)
+            for correction in (doc.get("corrections") or [])
+        ],
     }
     return DraftDocument(**normalized)
 
@@ -132,36 +158,51 @@ async def update_draft(
     draft_id: str,
     title: str | None = None,
     body: str | None = None,
+    formatting: dict[str, Any] | None = None,
     corrections: list[dict] | None = None,
+    client_revision: int | None = None,
 ) -> DraftDocument | None:
     """Update a draft."""
     coll = _get_collection()
-    update_fields = {}
-    touched_content = False
-    if title is not None:
-        update_fields["title"] = title
-        touched_content = True
-    if body is not None:
-        update_fields["body"] = body
-        touched_content = True
-    update_ops: dict = {}
-    if update_fields:
-        update_ops["$set"] = update_fields
-    if corrections is not None:
-        if "$set" not in update_ops:
-            update_ops["$set"] = {}
-        update_ops["$set"]["corrections"] = corrections
-        touched_content = True
+    current = await coll.find_one({"id": draft_id}, {"_id": 0})
+    if not current:
+        return None
+    if client_revision is not None and client_revision != current.get("revision", 1):
+        raise RevisionConflictError(
+            draft_to_response(_normalize_draft_payload(current))
+        )
 
-    if not update_ops:
-        return await get_draft(draft_id)
+    draft = _normalize_draft_payload(current)
+    next_title = draft.title if title is None else title
+    next_body = draft.body if body is None else body
+    next_formatting = draft.formatting if formatting is None else formatting
+    next_corrections = draft.corrections if corrections is None else corrections
 
-    if touched_content:
-        update_ops.setdefault("$set", {})
-        update_ops["$set"]["updatedAt"] = "الآن"
-        update_ops["$set"]["savedAt"] = _now_iso()
+    if body is not None and body != draft.body:
+        next_corrections = resolve_corrections(draft.body or "", body, next_corrections)
 
-    update_ops["$inc"] = {"revision": 1}
+    content_changed = next_title != draft.title or next_body != draft.body
+    changed = (
+        content_changed
+        or next_formatting != draft.formatting
+        or next_corrections != draft.corrections
+    )
+    if not changed:
+        return draft
+
+    update_payload = {
+        "title": next_title,
+        "body": next_body,
+        "formatting": next_formatting,
+        "corrections": next_corrections,
+    }
+    if content_changed:
+        update_payload["updatedAt"] = "الآن"
+        update_payload["savedAt"] = _now_iso()
+
+    update_ops: dict[str, Any] = {"$set": update_payload}
+    if content_changed:
+        update_ops["$inc"] = {"revision": 1}
     result = await coll.find_one_and_update(
         {"id": draft_id},
         update_ops,
@@ -174,37 +215,99 @@ async def update_draft(
 
 
 async def apply_correction(
-    draft_id: str, correction_id: str, replacement: str
+    draft_id: str,
+    correction_id: str,
+    client_revision: int | None = None,
+    body: str | None = None,
 ) -> DraftDocument | None:
-    """Replace the text span of a correction with 'replacement'.
-
-    The original correction dict must contain ``span``: [start, end].
-    """
+    """Apply a correction replacement to the draft body."""
     coll = _get_collection()
-    draft = await coll.find_one(
-        {"id": draft_id}, {"_id": 0, "body": 1, "corrections": 1, "revision": 1}
+    current = await coll.find_one(
+        {"id": draft_id},
+        {
+            "_id": 0,
+            "id": 1,
+            "title": 1,
+            "body": 1,
+            "stageLabel": 1,
+            "updatedAt": 1,
+            "savedAt": 1,
+            "revision": 1,
+            "formatting": 1,
+            "corrections": 1,
+        },
     )
-    if not draft:
+    if not current:
         return None
-    corr = next((c for c in draft["corrections"] if c.get("id") == correction_id), None)
-    if not corr:
-        return None
-    span = corr.get("span", {})
-    if isinstance(span, dict):
-        start = span.get("start", 0)
-        end = span.get("end", 0)
-    else:
-        start, end = span
-    new_body = draft["body"][:start] + replacement + draft["body"][end:]
-    # Remove the accepted correction from the list and keep other corrections unchanged.
-    updated_corrections = [
-        c for c in draft["corrections"] if c.get("id") != correction_id
-    ]
+    draft = _normalize_draft_payload(current)
+    if client_revision is not None and client_revision != draft.revision:
+        raise RevisionConflictError(draft_to_response(draft))
+
+    next_body = body if body is not None else draft.body or ""
+    next_corrections = draft.corrections
+    if next_body != (draft.body or ""):
+        next_corrections = resolve_corrections(
+            draft.body or "", next_body, next_corrections
+        )
+
+    correction = next(
+        (entry for entry in next_corrections if entry.get("id") == correction_id),
+        None,
+    )
+    if (
+        not correction
+        or correction.get("status") == CorrectionStatus.STALE.value
+        or correction.get("kind") == "detection"
+        or correction.get("actionable") is False
+    ):
+        raise CorrectionNotAvailableError(
+            draft_to_response(
+                draft.model_copy(
+                    update={"body": next_body, "corrections": next_corrections}
+                )
+            )
+        )
+
+    span = normalize_selection(correction["span"])
+    if next_body[span.start : span.end] != correction.get("original", ""):
+        refreshed = draft.model_copy(
+            update={"body": next_body, "corrections": next_corrections}
+        )
+        raise CorrectionNotAvailableError(draft_to_response(refreshed))
+
+    updated_body = replace_text_range(
+        next_body, span, correction.get("replacement", "")
+    )
+    delta = len(correction.get("replacement", "")) - (span.end - span.start)
+    updated_corrections = []
+    for entry in next_corrections:
+        if entry.get("id") == correction_id:
+            updated_corrections.append(
+                {**entry, "status": CorrectionStatus.ACCEPTED.value}
+            )
+            continue
+        entry_span = entry.get("span", {})
+        if (
+            entry.get("status") == CorrectionStatus.ACTIVE.value
+            and entry_span.get("start", 0) >= span.end
+        ):
+            updated_corrections.append(
+                {
+                    **entry,
+                    "span": {
+                        "start": entry_span["start"] + delta,
+                        "end": entry_span["end"] + delta,
+                    },
+                }
+            )
+            continue
+        updated_corrections.append(entry)
+
     await coll.update_one(
         {"id": draft_id},
         {
             "$set": {
-                "body": new_body,
+                "body": updated_body,
                 "corrections": updated_corrections,
                 "updatedAt": "الآن",
                 "savedAt": _now_iso(),
@@ -227,20 +330,38 @@ async def delete_draft(draft_id: str) -> bool:
     return result.deleted_count > 0
 
 
-async def ignore_correction(draft_id: str, correction_id: str) -> DraftDocument | None:
+async def ignore_correction(
+    draft_id: str,
+    correction_id: str,
+    client_revision: int | None = None,
+) -> DraftDocument | None:
     """Ignore a correction."""
     coll = _get_collection()
-    draft = await coll.find_one({"id": draft_id}, {"_id": 0, "corrections": 1})
-    if not draft:
+    current = await coll.find_one({"id": draft_id}, {"_id": 0})
+    if not current:
         return None
-    for c in draft["corrections"]:
-        if c.get("id") == correction_id:
-            c["status"] = "ignored"
+    draft = _normalize_draft_payload(current)
+    if client_revision is not None and client_revision != draft.revision:
+        raise RevisionConflictError(draft_to_response(draft))
+
+    updated_corrections = []
+    found = False
+    for correction in draft.corrections:
+        if correction.get("id") == correction_id:
+            updated_corrections.append(
+                {**correction, "status": CorrectionStatus.IGNORED.value}
+            )
+            found = True
+        else:
+            updated_corrections.append(correction)
+    if not found:
+        raise CorrectionNotAvailableError(draft_to_response(draft))
+
     await coll.update_one(
         {"id": draft_id},
         {
             "$set": {
-                "corrections": draft["corrections"],
+                "corrections": updated_corrections,
                 "updatedAt": "الآن",
                 "savedAt": _now_iso(),
             },

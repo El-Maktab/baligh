@@ -238,6 +238,7 @@ export function createMockEditorApi(
 
       const nextBody = payload.body ?? draft.body;
       const nextTitle = payload.title ?? draft.title;
+      const nextFormatting = payload.formatting ?? draft.formatting;
       draft.corrections = resolveCorrections(
         draft.body,
         nextBody,
@@ -245,6 +246,7 @@ export function createMockEditorApi(
       );
       draft.body = nextBody;
       draft.title = nextTitle;
+      draft.formatting = nextFormatting;
       draft.updatedAt = "الآن";
       draft.savedAt = new Date().toISOString();
       draft.revision += 1;
@@ -291,7 +293,11 @@ export function createMockEditorApi(
       const correction = draft.corrections.find(
         (entry) => entry.id === correctionId,
       );
-      if (!correction || correction.status === "stale") {
+      if (
+        !correction ||
+        correction.status === "stale" ||
+        correction.kind !== "correction"
+      ) {
         throw new EditorApiError("Correction not available", 409, {
           latestDraft: cloneStoredDraft(draft),
         });
@@ -312,6 +318,7 @@ export function createMockEditorApi(
       );
       if (
         !refreshed ||
+        refreshed.kind !== "correction" ||
         draft.body.slice(refreshed.span.start, refreshed.span.end) !==
           refreshed.original
       ) {

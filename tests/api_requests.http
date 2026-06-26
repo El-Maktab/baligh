@@ -34,10 +34,11 @@ POST {{baseUrl}}/api/v1/drafts/draft-95422fdf-db9b-4a50-aaff-65b7eb8e2b34/analyz
 Content-Type: application/json
 
 {
-  "selection": null,
-  "caret": null,
-  "clientRevision": null,
-  "categories": []
+  "body": "هذا النص يحتوى على خطأ.",
+  "selection": { "start": 23, "end": 23 },
+  "caret": 23,
+  "clientRevision": 1,
+  "categories": ["spelling", "grammar", "style"]
 }
 
 ### 7. Accept a correction (replace <CORRECTION_ID>)
@@ -45,8 +46,8 @@ POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/correc
 Content-Type: application/json
 
 {
-  "body": "لتجربة",
-  "clientRevision": null
+  "body": "هذا النص يحتوى على خطأ.",
+  "clientRevision": 1
 }
 
 ### 8. Ignore a correction (replace <CORRECTION_ID>)
@@ -54,8 +55,7 @@ POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/correc
 Content-Type: application/json
 
 {
-  "body": "النص بعد التجاهل",
-  "clientRevision": null
+  "clientRevision": 1
 }
 
 ### 9. Get suggestions for a draft
@@ -63,12 +63,12 @@ POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/suggestions HTTP/1.1
 Content-Type: application/json
 
 {
-  "body": "النص الحالي للـ draft",
-  "selection": null,
-  "caret": null,
-  "clientRevision": null,
+  "body": "الكتابة هي الم",
+  "selection": { "start": 14, "end": 14 },
+  "caret": 14,
+  "clientRevision": 1,
   "mode": "word",
-  "top_k": 5
+  "limit": 3
 }
 
 ### 10. Apply Tashkeel (diacritization) to a draft
@@ -76,9 +76,9 @@ POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/tashkeel HTTP/1.1
 Content-Type: application/json
 
 {
-  "body": "النص بدون تشكيل",
-  "selection": null,
-  "clientRevision": null
+  "body": "كتب بليغ نصا",
+  "selection": { "start": 0, "end": 12 },
+  "clientRevision": 1
 }
 
 # ---------------------------------------------------------------
