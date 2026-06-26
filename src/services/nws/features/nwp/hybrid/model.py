@@ -81,5 +81,16 @@ class HybridArabicPredictor:
             :top_k
         ]
 
-        # Strip out the scores if we just want the words, but returning tuples is better for evaluation
-        return top_results
+        if not top_results:
+            return []
+
+        # Softmax normalization over the top-K candidates
+        max_score = top_results[0][1]
+        exp_scores = [math.exp(score - max_score) for _, score in top_results]
+        sum_exp = sum(exp_scores)
+
+        normalized_results = []
+        for (word, _), exp_s in zip(top_results, exp_scores, strict=True):
+            normalized_results.append((word, exp_s / sum_exp))
+
+        return normalized_results
