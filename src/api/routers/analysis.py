@@ -54,7 +54,11 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
 
-    preproc = preprocess_run(payload.body)
+    if payload.body:
+        body = payload.body
+    else:
+        body = draft.body if draft.body else ""
+    preproc = preprocess_run(body)
     _ = ged_run(preproc)
     gec_output = gec_run(preproc)
 
@@ -103,7 +107,7 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
     }
 
     updated = await update_draft(
-        draft_id, body=payload.body, corrections=persist_corrections
+        draft_id, body=body, corrections=persist_corrections
     )
     if not updated:
         raise HTTPException(status_code=500, detail="Failed to update draft")
