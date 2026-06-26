@@ -13,13 +13,14 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from .config import settings
 from .routers import analysis, corrections, drafts, rules, suggestions, tashkeel
-from .services.drafts import seed_default_draft
+from .services.drafts import close_mongo_client, init_mongo_client, seed_default_draft
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan manager for the FastAPI application."""
     client: AsyncIOMotorClient = AsyncIOMotorClient(settings.mongodb_uri)
+    init_mongo_client(client)
     db = client.get_default_database()
 
     if "drafts" not in await db.list_collection_names():
@@ -30,7 +31,7 @@ async def lifespan(app: FastAPI):
     await seed_default_draft()
     app.state.mongo_client = client
     yield
-    client.close()
+    close_mongo_client()
 
 
 app = FastAPI(
