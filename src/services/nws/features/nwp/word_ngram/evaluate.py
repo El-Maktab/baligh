@@ -12,7 +12,7 @@ while current_dir.name and not (current_dir / "pyproject.toml").exists():
     current_dir = current_dir.parent
 sys.path.append(str(current_dir))
 
-from src.services.nws.evaluation.nwp.word_ngram.dataset import get_eval_stream
+from src.services.nws.features.nwp.word_ngram.dataset import get_eval_stream
 from src.services.nws.features.nwp.word_ngram.model import WordNGramLM
 from src.services.nws.features.nwp.word_ngram.serializer import load_ngram_model
 from src.services.nws.features.nwp.word_ngram.tokenizer import tokenize_text

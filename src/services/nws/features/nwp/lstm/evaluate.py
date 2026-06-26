@@ -4,8 +4,8 @@ import random
 
 import torch
 from loguru import logger
+from src.services.nws.features.nwp.lstm.fetch_wiki_mad import normalise_arabic
 from src.services.nws.features.nwp.lstm.model import LSTMNWPModel
-from src.services.nws.scripts.nwp.lstm.fetch_wiki_mad import normalise_arabic
 from tqdm import tqdm
 
 

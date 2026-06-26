@@ -9,15 +9,15 @@ current_dir = Path(__file__).resolve().parent
 while current_dir.name and not (current_dir / "pyproject.toml").exists():
     current_dir = current_dir.parent
 sys.path.append(str(current_dir))  # noqa: E402
-from src.services.nws.evaluation.wac.char_ngram.dataset import (  # noqa: E402
+from src.services.nws.features.wac.char_ngram.counter import NGramCounter  # noqa: E402
+from src.services.nws.features.wac.char_ngram.dataset import (  # noqa: E402
     generate_prefix_pairs,
     get_eval_stream,
 )
-from src.services.nws.evaluation.wac.char_ngram.metrics import (  # noqa: E402
+from src.services.nws.features.wac.char_ngram.metrics import (  # noqa: E402
     compute_perplexity,
     mean_reciprocal_rank,
 )
-from src.services.nws.features.wac.char_ngram.counter import NGramCounter  # noqa: E402
 from src.services.nws.features.wac.char_ngram.model import CharNGramLM  # noqa: E402
 from src.services.nws.features.wac.char_ngram.smoother import (
     KneserNeySmoother,  # noqa: E402

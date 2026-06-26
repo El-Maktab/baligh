@@ -13,7 +13,7 @@ sys.path.append(str(current_dir))  # noqa: E402
 
 from collections import defaultdict
 
-from src.services.nws.evaluation.wac.char_ngram.dataset import (  # noqa: E402
+from src.services.nws.features.wac.char_ngram.dataset import (  # noqa: E402
     generate_prefix_pairs,
     get_eval_stream,
 )
