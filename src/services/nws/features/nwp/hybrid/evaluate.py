@@ -1,5 +1,9 @@
-import json
-import os
+"""Evaluation script for the Hybrid NWP model.
+
+Authors:
+    Akram Hany
+"""
+
 import random
 
 import torch
@@ -13,10 +17,7 @@ from tqdm import tqdm
 
 
 def run_hybrid_evaluation(num_samples: int = 2000, seed: int = 42):
-    """Evaluates the HybridArabicPredictor on a random sample of word-level contexts
-    from the test set. We sample to save time since word-by-word decoding is slower
-    than batched tensor inference.
-    """
+    """Evaluates the HybridArabicPredictor on a random sample of word-level contexts."""
     random.seed(seed)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -25,29 +26,26 @@ def run_hybrid_evaluation(num_samples: int = 2000, seed: int = 42):
     base_dir = "src/services/nws/data"
     test_file = f"{base_dir}/lstm_corpus/corpus_test.txt"
 
-    # 1. Load the Word N-Gram Model
-    logger.info("Loading N-Gram Model...")
+    # Load N-Gram
+    logger.info("Loading N-Gram model.")
     ngram_data = load_ngram_model(f"{base_dir}/word_ngram_lm_lstm.msgpack.gz")
     kn_model = WordNGramLM(ngram_data)
 
-    # 2. Load the LSTM Model
-    logger.info("Loading LSTM Model...")
+    # Load LSTM
+    logger.info("Loading LSTM model.")
     neural_model = LSTMNWPModel(
         model_path=f"{base_dir}/best_model.pt",
         sp_model_path=f"{base_dir}/arabic_bpe.model",
     )
 
-    # 3. Initialize Hybrid Predictor
     hybrid = HybridArabicPredictor(neural_model, kn_model)
 
-    # 4. Prepare Context-Target pairs from Test Set
-    logger.info("Extracting context-target pairs from test set...")
+    logger.info("Extracting pairs.")
     pairs = []
-
     with open(test_file, encoding="utf-8") as f:
         for line in f:
             words = line.strip().split()
-            # We need at least 2 words to form a context + target
+            # Need 2+ words
             if len(words) < 2:
                 continue
 
@@ -55,28 +53,21 @@ def run_hybrid_evaluation(num_samples: int = 2000, seed: int = 42):
                 context = " ".join(words[:i]) + " "
                 target = words[i]
 
-                # Exclude boundary markers if they bleed into target
                 if target in ("<s>", "</s>"):
                     continue
 
                 pairs.append((context, target))
 
-    logger.info(f"Total word-level pairs available: {len(pairs)}")
+    logger.info(f"Total pairs: {len(pairs)}")
 
-    # Randomly sample to keep evaluation time reasonable (e.g., 2000 words)
     sampled_pairs = random.sample(pairs, min(num_samples, len(pairs)))
-    logger.info(
-        f"Evaluating Hybrid Predictor on {len(sampled_pairs)} sampled contexts..."
-    )
+    logger.info(f"Evaluating {len(sampled_pairs)} pairs.")
 
-    # Metrics
     top_1 = 0
     top_3 = 0
     top_5 = 0
 
-    # 5. Run Evaluation Loop
     for context, target in tqdm(sampled_pairs, desc="Evaluating Hybrid"):
-        # Normalise the context string but PRESERVE the trailing space!
         norm_context = normalise_arabic(context)
         if context.endswith(" "):
             norm_context += " "
@@ -93,7 +84,6 @@ def run_hybrid_evaluation(num_samples: int = 2000, seed: int = 42):
         if norm_target in pred_words[:5]:
             top_5 += 1
 
-    # Calculate Percentages
     acc_1 = top_1 / len(sampled_pairs)
     acc_3 = top_3 / len(sampled_pairs)
     acc_5 = top_5 / len(sampled_pairs)
@@ -103,24 +93,6 @@ def run_hybrid_evaluation(num_samples: int = 2000, seed: int = 42):
     print(f"Top-3 Word Accuracy: {acc_3:.2%}")
     print(f"Top-5 Word Accuracy: {acc_5:.2%}")
 
-    # Save Report
-    report_dir = "artifacts/nws/evaluation/nwp"
-    os.makedirs(report_dir, exist_ok=True)
-    report_path = os.path.join(report_dir, "hybrid_report.json")
-
-    report = {
-        "samples_evaluated": len(sampled_pairs),
-        "top_1_accuracy": acc_1,
-        "top_3_accuracy": acc_3,
-        "top_5_accuracy": acc_5,
-    }
-
-    with open(report_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=4)
-
-    print(f"Report saved to {report_path}")
-
 
 if __name__ == "__main__":
-    # Feel free to increase num_samples for a more exhaustive test!
     run_hybrid_evaluation(num_samples=2500)
