@@ -104,11 +104,11 @@ class RelationDiscoverer:
             logger.debug("Token[{}]: {} | MorphFeatures: {}", i, tokens[i].form, morph_features[i])
 
         for i in range(len(tokens) - 1):
-            if tokens[i].form in [".", ",", ";", ":", "!", "?", "\n", "\t"]:
+            if tokens[i].form in [".", ",", ";", ":", "!", "?"]:
                 continue
 
             for j in range(i + 1, len(tokens)):
-                if tokens[j].form in [".", ",", ";", ":", "!", "?", "\n", "\t"]:
+                if tokens[j].form in [".", ",", ";", ":", "!", "?"]:
                     break
 
                 relations.extend(self._check_pair(i, j, morph_features))

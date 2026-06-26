@@ -37,8 +37,8 @@ class Baligh:
         """Initialize Baligh with all service controllers."""
         ontology = OntologyService()
         dictionary = DictionaryService()
-        # tagger = EditTaggerService()
-        self.gec = GECController(ontology, dictionary)
+        tagger = EditTaggerService()
+        self.gec = GECController(ontology, dictionary, tagger)
 
         rule_detector = RuleBasedDetector()
         lexicon_detector = LexiconDetector()
