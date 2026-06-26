@@ -20,14 +20,6 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Install dev dependencies
-        run: uv sync --group dev
-
-      - name: Overwrite PyTorch with CPU-only version for CI
-        run: |
-          uv pip uninstall torch
-          uv pip install torch --index-url https://download.pytorch.org/whl/cpu
-
       - name: Cache NLP Data (Farasa & CAMeL Tools)
         uses: actions/cache@v4
         with:
@@ -37,6 +29,14 @@ jobs:
           key: ${{ runner.os }}-nlp-data-v2-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-nlp-data-v2-
+
+      - name: Install dev dependencies
+        run: uv sync --group dev
+
+      - name: Overwrite PyTorch with CPU-only version for CI
+        run: |
+          uv pip uninstall torch
+          uv pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Download CAMeL Tools Data
         run: |
