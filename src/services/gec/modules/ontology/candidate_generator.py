@@ -283,10 +283,8 @@ class CandidateGenerator:
         if not complete_sentences:
             return []
 
-        full_span = (0, sum(len(token.form) + 1 for token in tokens) - 1)
-        all_token_refs = list(range(len(tokens)))
-
-        edits = []
+        sentence_edits = []
+        metadata_by_edit_id: dict[int, tuple[list[tuple[int, str]], str | None]] = {}
         for cs in complete_sentences:
             sentence = cs["sentence"]
             token_forms = cs["token_forms"]
@@ -298,13 +296,49 @@ class CandidateGenerator:
                 explanation = token_explanations.get(first_tidx)
 
             edit = CandidateEdit(
-                span=full_span,
-                token_refs=all_token_refs,
+                span=(0, len(original_sentence)),
+                token_refs=list(range(len(tokens))),
                 correction=sentence,
                 edit_confidence=confidence,
                 explanation=explanation,
             )
-            edits.append(edit)
+            sentence_edits.append(edit)
+            metadata_by_edit_id[id(edit)] = (token_forms, explanation)
 
-        ranked = self._ranking_engine.rank_complete_sentences(edits, original_sentence)
-        return ranked
+        ranked_sentences = self._ranking_engine.rank_complete_sentences(
+            sentence_edits, original_sentence
+        )
+        return [
+            self._localize_ranked_edit(
+                tokens=tokens,
+                token_forms=metadata_by_edit_id[id(edit)][0],
+                confidence=edit.edit_confidence,
+                explanation=metadata_by_edit_id[id(edit)][1],
+            )
+            for edit in ranked_sentences
+        ]
+
+    def _localize_ranked_edit(
+        self,
+        tokens: list[Token],
+        token_forms: list[tuple[int, str]],
+        confidence: float,
+        explanation: str | None,
+    ) -> CandidateEdit:
+        """Convert a sentence-level correction into a localized candidate edit."""
+        token_indices = [token_index for token_index, _ in token_forms]
+        first_token = min(token_indices)
+        last_token = max(token_indices)
+        replacement_forms = dict(token_forms)
+        replacement = " ".join(
+            replacement_forms.get(index, tokens[index].form)
+            for index in range(first_token, last_token + 1)
+        )
+
+        return CandidateEdit(
+            span=(tokens[first_token].span[0], tokens[last_token].span[1]),
+            token_refs=token_indices,
+            correction=replacement,
+            edit_confidence=confidence,
+            explanation=explanation,
+        )

@@ -3,7 +3,7 @@
 Following the paper methodology: generates ALL possible syntactically correct
 sentences, then compares with original to find corrections.
 
-Each candidate edit contains a FULL SENTENCE correction with all tokens.
+Each candidate edit is localized to the changed token span.
 """
 
 from src.core.schemas import MorphAnalysis, Token
@@ -36,7 +36,8 @@ def test_subject_verb_mismatch():
 
     Input: كتبوا المهندسون -> Expected: كتب المهندسون
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -84,12 +85,9 @@ def test_subject_verb_mismatch():
     assert len(result.candidate_edits) >= 1
 
     edit = result.candidate_edits[0]
-    # Full sentence span and all token references
-    assert edit.span == (0, 15)
-    assert edit.token_refs == [0, 1]
-    # Correction should be the full corrected sentence
-    assert "كتب" in edit.correction
-    assert "المهندسون" in edit.correction
+    assert edit.span == (0, 5)
+    assert edit.token_refs == [0]
+    assert edit.correction == "كتب"
     assert edit.explanation == "إذا تقدم الفعل على الفاعل، لزم إفراده"
 
 
@@ -98,7 +96,8 @@ def test_noun_adjective_mismatch():
 
     Input: سيارة سريع -> Expected: سيارة سريعة
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -147,9 +146,9 @@ def test_noun_adjective_mismatch():
     assert len(result.candidate_edits) >= 1
 
     edit = result.candidate_edits[0]
-    assert edit.span == (0, 10)
-    assert edit.token_refs == [0, 1]
-    assert "سريعة" in edit.correction
+    assert edit.span == (6, 10)
+    assert edit.token_refs == [1]
+    assert edit.correction == "سريعة"
     assert edit.explanation == "النعت يتبع المنعوت في التذكير والتأنيث"
 
 
@@ -158,7 +157,8 @@ def test_idafa_mismatch():
 
     Input: معلمون المدرسة -> Expected: معلمو المدرسة
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -207,10 +207,9 @@ def test_idafa_mismatch():
     assert len(result.candidate_edits) >= 1
 
     edit = result.candidate_edits[0]
-    assert edit.span == (0, 14)
-    assert edit.token_refs == [0, 1]
-    assert "معلمو" in edit.correction
-    assert "المدرسة" in edit.correction
+    assert edit.span == (0, 6)
+    assert edit.token_refs == [0]
+    assert edit.correction == "معلمو"
     assert edit.explanation == "تحذف نون جمع المذكر السالم عند الإضافة"
 
 
@@ -219,7 +218,8 @@ def test_subject_case_mismatch():
 
     Input: جاء المهندسين -> Expected: جاء المهندسون
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -267,10 +267,9 @@ def test_subject_case_mismatch():
     assert len(result.candidate_edits) >= 1
 
     edit = result.candidate_edits[0]
-    assert edit.span == (0, 13)
-    assert edit.token_refs == [0, 1]
-    assert "المهندسون" in edit.correction
-    assert "جاء" in edit.correction
+    assert edit.span == (4, 13)
+    assert edit.token_refs == [1]
+    assert edit.correction == "المهندسون"
     assert edit.explanation == "الفاعل يجب أن يكون مرفوعاً ولكن وجد منصوباً"
 
 
@@ -283,7 +282,8 @@ def test_unflagged_noun_adjective_mismatch():
     GED missed the error, but the ontology scan should catch it
     with lower confidence (0.5).
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -341,7 +341,8 @@ def test_unflagged_subject_verb_mismatch():
     GED missed the verb-subject agreement error, but the ontology
     scan should detect it with lower confidence.
 
-    Following the paper: returns full sentence correction.
+    Following the paper: ranks full sentence candidates internally, then returns
+    the changed token span.
     """
     engine = OntologyEngine()
 
@@ -481,7 +482,7 @@ def test_subject_verb_gender_mismatch_generates_multiple_candidates():
     - قال الطالب (verb changed to masculine)
     - قالت الطالبة (subject changed to feminine)
 
-    Following the paper: returns multiple full sentence candidates.
+    Following the paper: may rank multiple sentence candidates internally.
     """
     engine = OntologyEngine()
 
@@ -541,7 +542,8 @@ def test_subject_object_correctness():
     Input: قرأ الطالبين الكتابان (incorrect case on both subject and object)
     Expected: Generates corrected sentences with proper cases
 
-    Following the paper: returns full sentence corrections.
+    Following the paper: ranks full sentence candidates internally, then returns
+    localized corrections.
     """
     engine = OntologyEngine()
 
@@ -600,10 +602,9 @@ def test_subject_object_correctness():
     assert result.status == ModuleStatus.INCORRECT
     assert len(result.candidate_edits) >= 1
 
-    # Should generate at least one corrected full sentence
+    # Should generate at least one localized correction
     edit = result.candidate_edits[0]
-    # Span covers full sentence (0 to end of text)
-    assert edit.span[0] == 0
-    assert edit.span[1] > 0
-    assert edit.token_refs == [0, 1, 2]
-    assert "قرأ" in edit.correction
+    assert edit.span[0] >= 0
+    assert edit.span[1] > edit.span[0]
+    assert len(edit.token_refs) >= 1
+    assert edit.correction != ""

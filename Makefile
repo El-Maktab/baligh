@@ -18,6 +18,7 @@ help:
 	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
 	@echo "  make nws-model-download    Download NWS models from Hugging Face"
 	@echo "  make text-editing-models   Download text editing models from Drive"
+	@echo "  make text-editing-datasets Download text editing datasets from Drive"
 	@echo "  make ged-setup-prod        Prepare GED runtime dependencies for production"
 	@echo ""
 	@echo "GED commands:"
@@ -85,6 +86,13 @@ text-editing-models:
 	@echo "Downloading text editing models..."
 	uv run --with gdown gdown -O src/services/gec/models/ --folder 1ilLnP8Dt_cSGPzwhFmbq8K8I7XJTMgzu
 	@echo "Download complete! Models are ready in src/services/gec/models/"
+
+# Download text editing datasets
+text-editing-datasets:
+	@echo "Downloading text editing datasets..."
+	uv run --with gdown gdown -O src/services/gec/data/edit_tagger/processed --folder 1NZ_9dUUi3FTFWKOyGliMVfza5lKmmgH-
+	@echo "Download complete! Datasets are ready in src/services/gec/data/edit_tagger/processed"
+
 
 # Prepare GED runtime dependencies
 ged-setup-prod: ged-dict-download ged-lexicon ged-ml-model-download
