@@ -15,6 +15,11 @@
   <img src="https://img.shields.io/badge/license-proprietary-1B1B1B?style=flat-square" alt="License: proprietary">
 </p>
 
+
+https://github.com/user-attachments/assets/f5f6ddc8-5b6f-40d5-a7a4-1a9052c67ab8
+
+
+
 ## How to run
 
 1. You need an environment with:
