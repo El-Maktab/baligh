@@ -27,6 +27,6 @@ class EditTaggerService(GECModule):
         tokenizer = Tokenizer()
         self.tagger_engine = TaggerEngine(model=inference_model, tokenizer=tokenizer)
 
-    def run(self, payload: GECInput) -> ModuleResult:
+    def run(self, input: GECInput) -> ModuleResult:
         """Run the tagger module and return candidate edits."""
-        return self.tagger_engine.process(input_txt=payload)
+        return self.tagger_engine.process(payload=input)

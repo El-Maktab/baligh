@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.services.gec.schemas import ModuleName, ModuleStatus
+from src.services.ranker.config import RankerConfig
 from src.services.ranker.schemas import (
     RankedEdit,
     RankerInput,
@@ -21,9 +22,9 @@ _MODULE_PRIORITY = {
 class RankerService:
     """Scores and selects the best candidate edits from GEC modules."""
 
-    def __init__(self, config) -> None:
+    def __init__(self) -> None:
         """Initialize RankerService with a scoring configuration."""
-        self.config = config
+        self.config = RankerConfig()
 
     def rank(self, inp: RankerInput) -> RankerOutput:
         """Rank candidate edits and return the best corrections."""
@@ -49,7 +50,7 @@ class RankerService:
                 continue
             name = module_result.module_name
             for candidate in module_result.candidate_edits:
-                for error_id, error_span in enumerate(inp.errors_span):
+                for error_id, error_span in enumerate(inp.errors_span, start=1):
                     if self._matches(candidate, error_span):
                         aggregated[error_id].append((name, candidate))
                         break
@@ -120,6 +121,9 @@ class RankerService:
                 correction=cand.correction,
                 selected_module=mod_name.value,
                 final_score=score,
+                edit_confidence=cand.edit_confidence,
+                explanation=cand.explanation,
+                alternatives=cand.alternatives,
             )
             ranked_edits.append(re)
             mod = mod_name.value

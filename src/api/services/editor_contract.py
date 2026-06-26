@@ -7,9 +7,10 @@ from enum import StrEnum
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
-from src.services.gec.schemas import CandidateEdit, ModuleName
+from src.services.gec.schemas import ModuleName
 from src.services.ged.schemas import ErrorCategory, ErrorSpan
 from src.services.nws.schemas import Suggestion as NWSSuggestion
+from src.services.ranker.schemas import RankedEdit
 
 
 class CorrectionBucket(StrEnum):
@@ -544,7 +545,7 @@ def taxonomy_from_error(
 def normalize_candidate_edit(
     correction_id: str,
     body: str,
-    candidate: CandidateEdit,
+    candidate: RankedEdit,
     module_name: ModuleName,
     error_span: ErrorSpan | None = None,
 ) -> dict:

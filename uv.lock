@@ -216,17 +216,6 @@ wheels = [
 ]
 
 [[package]]
-name = "arramooz-pysqlite"
-version = "0.4.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyarabic" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/d4/9794baabccc4ad00c1b63571f66c041709963b57b595a3cb441789138758/arramooz_pysqlite-0.4.2-py3-none-any.whl", hash = "sha256:9c7234e1822908963e6539ac97aa6dd31f21583e5550d5cfe5d9ac1726b08ef6", size = 6343402, upload-time = "2023-07-12T06:26:47.553Z" },
-]
-
-[[package]]
 name = "ast-serialize"
 version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -290,7 +279,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "accelerate" },
-    { name = "arramooz-pysqlite" },
     { name = "camel-tools" },
     { name = "farasapy" },
     { name = "fastapi" },
@@ -301,9 +289,9 @@ dependencies = [
     { name = "msgpack" },
     { name = "pyarabic" },
     { name = "pydantic" },
-    { name = "pytorch-crf" },
     { name = "pydantic-settings" },
     { name = "python-dotenv" },
+    { name = "pytorch-crf" },
     { name = "pyyaml" },
     { name = "scikit-learn" },
     { name = "sentencepiece" },
@@ -329,7 +317,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", specifier = ">=0.21.0" },
-    { name = "arramooz-pysqlite" },
     { name = "camel-tools", specifier = ">=1.5.7" },
     { name = "farasapy", specifier = ">=0.1.1" },
     { name = "fastapi", specifier = ">=0.115.0" },
@@ -340,9 +327,9 @@ requires-dist = [
     { name = "msgpack", specifier = ">=1.1.0" },
     { name = "pyarabic" },
     { name = "pydantic", specifier = ">=2.13.4" },
-    { name = "pytorch-crf", specifier = ">=0.1.0" },
     { name = "pydantic-settings", specifier = ">=2.0.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "pytorch-crf", specifier = ">=0.1.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "scikit-learn", specifier = ">=1.7.0" },
     { name = "sentencepiece", specifier = ">=0.2.0" },
@@ -886,7 +873,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.138.0"
+version = "0.138.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -895,9 +882,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5b/58/ff455d9fe47c60abadb34b9e05a304b1f05f5ab8000ac01565156b6f5e43/fastapi-0.138.0.tar.gz", hash = "sha256:d445a4877636ad191e7053e08c9bf98cb921a6756776848400bb773d1740c061", size = 419240, upload-time = "2026-06-20T01:18:05.259Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/c9/5e8defe249899c0dc900643695fc07829a67fc88b4ff2cdb03fcbdbf5a4b/fastapi-0.138.1.tar.gz", hash = "sha256:96e3702dce09ee0dce48856135620d3d865ca684a79fe7513fd7b13a12f82862", size = 419646, upload-time = "2026-06-25T15:40:42.115Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/ff/8496d9847a5fedae775eb49460722d3efaa80487854273e9647ae876218c/fastapi-0.138.0-py3-none-any.whl", hash = "sha256:b6f54fd1bd72c80b0f899f172c61a600f6f7af9b43d4d772a018f35624048cb0", size = 126779, upload-time = "2026-06-20T01:18:03.483Z" },
+    { url = "https://files.pythonhosted.org/packages/38/a9/69a6924f645eb4dd8cd625bf255b3625990eb3e14e073438a53c405dcd3e/fastapi-0.138.1-py3-none-any.whl", hash = "sha256:b994cae7ba8b82c976a728b544244de31333fa5f7d261f9a1dffe526444cae23", size = 129182, upload-time = "2026-06-25T15:40:40.771Z" },
 ]
 
 [[package]]
@@ -2890,15 +2877,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytorch-crf"
-version = "0.7.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e2/8c/aa58618f8c9cc8b2ddd22d4e700028101ec331d4c65c8cca663844a9dc24/pytorch-crf-0.7.2.tar.gz", hash = "sha256:e6456e22ccfc99a3d4fe1e03e996103b1b39e9830bf3c7e12e7a9077d3be866d", size = 5996, upload-time = "2019-02-04T01:44:15.85Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/7d/4c4688e26ea015fc118a0327e5726e6596836abce9182d3738be8ec2e32a/pytorch_crf-0.7.2-py3-none-any.whl", hash = "sha256:1b2d7d5eea3255f6e0cac09ab8b645472e76ff70d9333bc88762cf7317a4992d", size = 9501, upload-time = "2019-02-04T01:44:14.387Z" },
-]
-
-[[package]]
 name = "python-dotenv"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2908,8 +2886,8 @@ wheels = [
 ]
 
 [[package]]
-name = "pytz"
-version = "2026.2"
+name = "pytorch-crf"
+version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e2/8c/aa58618f8c9cc8b2ddd22d4e700028101ec331d4c65c8cca663844a9dc24/pytorch-crf-0.7.2.tar.gz", hash = "sha256:e6456e22ccfc99a3d4fe1e03e996103b1b39e9830bf3c7e12e7a9077d3be866d", size = 5996, upload-time = "2019-02-04T01:44:15.85Z" }
 wheels = [

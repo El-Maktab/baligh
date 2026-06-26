@@ -37,8 +37,8 @@ class Baligh:
         """Initialize Baligh with all service controllers."""
         ontology = OntologyService()
         dictionary = DictionaryService()
-        tagger = EditTaggerService()
-        self.gec = GECController(ontology, dictionary, tagger)
+        # tagger = EditTaggerService()
+        self.gec = GECController(ontology, dictionary)
 
         rule_detector = RuleBasedDetector()
         lexicon_detector = LexiconDetector()
@@ -46,7 +46,7 @@ class Baligh:
         detectors = [rule_detector, lexicon_detector, ml_detector]
         self.ged = GEDService(detectors)
 
-        curr_dir = Path(__file__).resolve()
+        curr_dir = Path(__file__).resolve().parent
         dir = curr_dir / "nws" / "data"
         ngram_data = load_ngram_model(dir / "word_ngram_lm_lstm.msgpack.gz")
         kn_model = WordNGramLM(ngram_data)
@@ -72,11 +72,9 @@ class Baligh:
 
         self.ranker = RankerService()
 
-    def run(self, input_text: str, cursor_offset: int, current_fragment):
+    def run(self, input_text) -> tuple[RankerOutput, GEDOutput]:
         """Run the full Baligh pipeline on input text."""
-        preprocessing_input = PreprocessingInput(
-            text=input_text, cursor_offset=cursor_offset
-        )
+        preprocessing_input = PreprocessingInput(text=input_text)
         preprocessing_output: PreprocessingOutput = preprocess(preprocessing_input)
 
         ged_input = GEDInput(
