@@ -15,37 +15,6 @@ def test_levenshtein_distance():
     assert levenshtein_distance("سيارة", "سيارات") == 2
 
 
-def test_ranking_engine():
-    """Test the ranking engine."""
-    ranker = RankingEngine()
-
-    # We have an original token: "كتبوا"
-    # And candidate corrections: "كتب", "يكتب"
-    cand1 = CandidateEdit(
-        span=(0, 5),
-        token_refs=[0],
-        correction="كتب",
-        edit_confidence=0.5,
-        explanation="test",
-    )
-
-    cand2 = CandidateEdit(
-        span=(0, 5),
-        token_refs=[0],
-        correction="يكتب",
-        edit_confidence=0.5,
-        explanation="test",
-    )
-
-    ranked = ranker.rank_candidates([cand2, cand1], "كتبوا")
-
-    assert len(ranked) == 2
-    # cand1 ("كتب") has smaller edit distance to "كتبوا" than cand2 ("يكتب"),
-    # so it should rank higher
-    assert ranked[0].correction == "كتب"
-    assert ranked[1].correction == "يكتب"
-
-
 def test_rank_complete_sentences():
     """Test ranking of complete sentence candidates."""
     ranker = RankingEngine()

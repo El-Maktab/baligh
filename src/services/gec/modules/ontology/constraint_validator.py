@@ -240,21 +240,13 @@ class ConstraintValidator:
             return violations
 
         elif relation.relation_name == "مضاف_اليه":
-            # For مضاف_اليه (idafa):
-            # - The مضاف (source) must be indefinite
-            # - The مضاف إليه (target) must be genitive
-            # - If مضاف is sound masculine plural or dual, nun must be deleted
-
             violations = []
 
-            # Check nun deletion for sound masculine plural or dual
             source_num = source_internal.number
             if (
                 source_num in ("plural", "dual")
                 and source_internal.gender == "masculine"
             ):
-                # For sound masculine plural/dual, check if nun should be deleted
-                # The form should be واو/ألف without نون
                 violations.append(
                     self._constraint_violation(
                         relation=relation,
@@ -267,14 +259,9 @@ class ConstraintValidator:
                     )
                 )
 
-            # Return only nun_deletion violations for idafa
-            # (case/gender/number agreement don't apply between مضاف and مضاف إليه)
             return violations
 
         elif relation.relation_name == "نعت":
-            # For نعت (adjective):
-            # source is the noun (المنعوت), target is the adjective (النعت)
-            # The adjective must agree with the noun
             if target_internal.pos != "adj":
                 return []
 
