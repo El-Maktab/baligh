@@ -6,7 +6,7 @@ from src.services.gec.schemas import (
     CandidateEdit,
     ModuleName,
 )
-from src.services.ged.schemas import ErrorCategory
+from src.services.ged.schemas import ErrorCategory, ErrorSpan
 
 
 def levenshtein(s1: str, s2: str) -> int:
@@ -29,7 +29,7 @@ def levenshtein(s1: str, s2: str) -> int:
 def score_candidate(
     candidate: CandidateEdit,
     module_name: ModuleName,
-    error_span,
+    error_span: ErrorSpan,
     original_text: str,
     tokens: list,
     peer_candidates: list,
@@ -45,7 +45,7 @@ def score_candidate(
     elif module_name == ModuleName.DICTIONARY:
         score += config.W_DICTIONARY
         alts = candidate.alternatives
-        if alts and alts[0] == candidate.correction:
+        if alts and candidate.correction in alts:
             score += config.W_FIRST_ALT
 
     score += config.W_EDIT_CONF * candidate.edit_confidence
@@ -85,7 +85,7 @@ def score_candidate(
         if other_name != module_name and other_cand.correction == candidate.correction:
             agreeing += 1
     if agreeing > 0:
-        score += config.W_AGREEMENT
+        score += config.W_AGREEMENT * agreeing
 
     if len(error_span.sources) > 1:
         score += config.W_MULTI_SRC

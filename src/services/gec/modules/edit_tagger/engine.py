@@ -28,34 +28,41 @@ class TaggerEngine:
 
         self.predictor = GECInferencePipeline(model, tokenizer, id2label)
 
-    def process(self, input_txt: GECInput) -> ModuleResult:
-        try:
-            conf, tokens, tags = self.predictor.predict(input_txt.text)
-            new_text = self.rewriter.apply_tag(tokens, tags)
-            candidate_edits = self.form_candidates(input_txt, new_text, conf)
+    def process(self, payload: GECInput) -> ModuleResult:
+        # try:
+        tokens, tags = self.predictor.predict(payload.text)
+        new_text = self.rewriter.apply_tag(tokens, tags)
+        candidate_edits = self.form_candidates(payload, new_text)
+        print(tokens)
+        print(tags)
 
-            return ModuleResult(
-                module_name=ModuleName.TAG,
-                status=ModuleStatus.CORRECT,
-                candidate_edits=candidate_edits,
-            )
-        except Exception:
-            return ModuleResult(
-                module_name=ModuleName.TAG,
-                status=ModuleStatus.ERROR,
-                candidate_edits=[],
-            )
+        print(new_text)
+        print(candidate_edits)
+
+        if len(candidate_edits) != 0:
+            status = ModuleStatus.INCORRECT
+        else:
+            status = ModuleStatus.CORRECT
+
+        return ModuleResult(
+            module_name=ModuleName.TAG,
+            status=status,
+            candidate_edits=candidate_edits,
+        )
+
+    # except Exception:
+    #     return ModuleResult(
+    #         module_name=ModuleName.TAG,
+    #         status=ModuleStatus.ERROR,
+    #         candidate_edits=[],
+    #     )
 
     def form_candidates(
         self,
         payload: GECInput,
         text: str,
-        conf,
     ) -> list[CandidateEdit]:
-        """Convert model output into CandidateEdit objects.
-
-        Placeholder implementation returns an empty list.
-        """
+        """Convert model output into CandidateEdit objects."""
         original = payload.text
         matcher = SequenceMatcher(None, original, text)
 
@@ -71,10 +78,9 @@ class TaggerEngine:
                     span=(i1, i2),
                     token_refs=token_refs,
                     correction=text[j1:j2],
-                    edit_confidence=conf,
+                    edit_confidence=0,
                 )
             )
-
         return candidates
 
     def get_token_refs(self, tokens: list[Token], start: int, end: int) -> list[int]:
