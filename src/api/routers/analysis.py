@@ -1,10 +1,10 @@
 """Router for the analysis endpoint."""
 
 import uuid
-from loguru import logger
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+from loguru import logger
 from src.api.services.corrections import run as corrections_run
 from src.api.services.drafts import RevisionConflictError, get_draft, update_draft
 from src.api.services.editor_contract import (
@@ -16,6 +16,7 @@ from src.api.services.editor_contract import (
     normalize_error_detection,
 )
 from src.services.ged.schemas import ErrorSpan
+from starlette.concurrency import run_in_threadpool
 
 router = APIRouter()
 
@@ -61,10 +62,12 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
         raise HTTPException(status_code=404, detail="Draft not found")
 
     body = payload.body if payload.body is not None else draft.body or ""
-    gec_output, ged_output = corrections_run(body)
-    
+    gec_output, ged_output = await run_in_threadpool(corrections_run, body)
+
     logger.debug(
-        "GEC output: {}, GED output: {}", gec_output.model_dump(), ged_output.model_dump()
+        "GEC output: {}, GED output: {}",
+        gec_output.model_dump(),
+        ged_output.model_dump(),
     )
     normalized_corrections: list[dict] = []
     matched_error_keys: set[tuple] = set()
