@@ -8,6 +8,31 @@ from src.services.nws.features.nwp.hybrid.model import HybridArabicPredictor
 from src.services.nws.features.wac.char_ngram.model import CharNGramLM
 from src.services.nws.schemas import NWSInput, NWSOutput, NWSSource, Suggestion
 
+import re
+
+# Arabic normalization maps based on the ML models' training corpus
+TASHKEEL = re.compile(r"[\u064B-\u065F\u0670]")
+TATWEEL = re.compile(r"\u0640")
+ALIF_MAP = str.maketrans({"\u0622": "\u0627", "\u0623": "\u0627", "\u0625": "\u0627", "\u0671": "\u0627"})
+YAA_MAP = str.maketrans({
+    "\u0649": "\u064a", "\ufeef": "\u064a", "\ufef0": "\u064a", "\ufef1": "\u064a",
+    "\ufef2": "\u064a", "\ufef3": "\u064a", "\ufef4": "\u064a"
+})
+HAA_MAP = str.maketrans({"\u0629": "\u0647"})
+
+def normalise_arabic(text: str) -> str:
+    if not text:
+        return text
+    text = TASHKEEL.sub("", text)
+    text = TATWEEL.sub("", text)
+    text = text.translate(ALIF_MAP)
+    text = text.translate(YAA_MAP)
+    text = text.translate(HAA_MAP)
+    text = re.sub(r"[^\u0600-\u06FF\u0750-\u077F\s0-9\.,!?؟\-]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 
 class NWSOrchestrator:
     """Orchestrates predictions using Caching, WAC, and NWP modules."""
@@ -67,10 +92,19 @@ class NWSOrchestrator:
                     if context_text
                     else input_data.current_fragment
                 )
+            # Normalize text to match ML models' training corpus (strips hamzas)
+            full_text = normalise_arabic(full_text)
             model_results = self.wac.predict(full_text, top_k=input_data.top_k)
 
         elif input_data.mode == "NWP":
-            model_results = self.nwp.predict(context_text, top_k=input_data.top_k)
+            # In NWP mode, the user just pressed space, so the context MUST have a trailing space.
+            # Otherwise the LSTM models might get confused about word boundaries.
+            nwp_context = context_text + " " if context_text else ""
+            nwp_context = normalise_arabic(nwp_context)
+            # Normalizer strips trailing spaces, so we must manually add it back!
+            if not nwp_context.endswith(" "):
+                nwp_context += " "
+            model_results = self.nwp.predict(nwp_context, top_k=input_data.top_k)
 
         if debug:
             print(f"[DEBUG NWS] Cache MISS - Evaluated using {input_data.mode} model")

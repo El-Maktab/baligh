@@ -107,7 +107,7 @@ def test_cache_miss_routes_to_nwp(orchestrator, mock_cache_manager, mock_nwp_mod
 
     output = orchestrator.predict(input_data)
 
-    mock_nwp_model.predict.assert_called_once_with("ذهب إلى", top_k=5)
+    mock_nwp_model.predict.assert_called_once_with("ذهب الي ", top_k=5)
 
     assert len(output.suggestions) == 2
 
@@ -158,8 +158,8 @@ def test_nwp_no_tokens_empty_string(orchestrator, mock_nwp_model):
 
     orchestrator.predict(input_data)
 
-    # Should pass empty string to NWP
-    mock_nwp_model.predict.assert_called_once_with("", top_k=5)
+    # Should pass a single space to NWP indicating a new word without context
+    mock_nwp_model.predict.assert_called_once_with(" ", top_k=5)
 
 
 RUN_INTEGRATION = os.environ.get("RUN_NWS_INTEGRATION", "0") == "1"
