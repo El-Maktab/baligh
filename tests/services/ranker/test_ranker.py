@@ -143,3 +143,124 @@ def test_rank_prefers_ged_explanation_over_gec_explanation() -> None:
     assert len(output.ranked_edits) == 1
     assert output.ranked_edits[0].correction == "كبير"
     assert output.ranked_edits[0].explanation == "تفسير GED"
+
+
+def test_rank_keeps_unmatched_ontology_candidate_with_synthetic_span() -> None:
+    """Ontology edits should survive even when GED provides no matching span."""
+    text = "الولد جميل"
+    tokens = [_token(0, "الولد", (0, 5)), _token(1, "جميل", (6, 10))]
+    candidate = CandidateEdit(
+        span=(0, 10),
+        token_refs=[0, 1],
+        correction="الولد جميلاً",
+        edit_confidence=0.8,
+        explanation="خبر إن يجب أن يكون منصوباً",
+    )
+
+    output = RankerService().rank(
+        RankerInput(
+            text=text,
+            tokens=tokens,
+            errors_span=[],
+            errors_corrections=[
+                ModuleResult(
+                    module_name=ModuleName.ONTOLOGY,
+                    status=ModuleStatus.INCORRECT,
+                    candidate_edits=[candidate],
+                )
+            ],
+        )
+    )
+
+    assert len(output.ranked_edits) == 1
+    assert output.ranked_edits[0].error_id == 0
+    assert output.ranked_edits[0].span == (0, 10)
+    assert output.ranked_edits[0].token_refs == [0, 1]
+    assert output.ranked_edits[0].correction == "الولد جميلاً"
+    assert output.ranked_edits[0].explanation == "خبر إن يجب أن يكون منصوباً"
+
+
+def test_rank_keeps_overlapping_dictionary_and_ontology_edits() -> None:
+    """Overlapping edits from different modules should both remain visible."""
+    text = "الولد جميل"
+    tokens = [_token(0, "الولد", (0, 5)), _token(1, "جميل", (6, 10))]
+    errors = [_error((6, 10), 1, "noun_adjective_agreement")]
+
+    dictionary_candidate = CandidateEdit(
+        span=(6, 10),
+        token_refs=[1],
+        correction="جميلٌ",
+        edit_confidence=0.85,
+        alternatives=["جميلٌ"],
+    )
+    ontology_candidate = CandidateEdit(
+        span=(6, 10),
+        token_refs=[1],
+        correction="جميلاً",
+        edit_confidence=0.9,
+        explanation="خبر إن يجب أن يكون منصوباً",
+    )
+
+    output = RankerService().rank(
+        RankerInput(
+            text=text,
+            tokens=tokens,
+            errors_span=errors,
+            errors_corrections=[
+                ModuleResult(
+                    module_name=ModuleName.DICTIONARY,
+                    status=ModuleStatus.INCORRECT,
+                    candidate_edits=[dictionary_candidate],
+                ),
+                ModuleResult(
+                    module_name=ModuleName.ONTOLOGY,
+                    status=ModuleStatus.INCORRECT,
+                    candidate_edits=[ontology_candidate],
+                ),
+            ],
+        )
+    )
+
+    assert len(output.ranked_edits) == 2
+    assert {edit.selected_module for edit in output.ranked_edits} == {
+        ModuleName.DICTIONARY,
+        ModuleName.ONTOLOGY,
+    }
+    assert {edit.correction for edit in output.ranked_edits} == {"جميلٌ", "جميلاً"}
+
+
+def test_rank_preserves_candidate_span_when_ged_span_is_narrower() -> None:
+    """Final ranked edits should keep the candidate span, not the GED span."""
+    text = "قرأ الطالبين الكتابان"
+    tokens = [
+        _token(0, "قرأ", (0, 3)),
+        _token(1, "الطالبين", (4, 12)),
+        _token(2, "الكتابان", (13, 21)),
+    ]
+    errors = [_error((4, 12), 1, "subject_case_agreement")]
+    candidate = CandidateEdit(
+        span=(4, 21),
+        token_refs=[1, 2],
+        correction="الطالبان الكتابين",
+        edit_confidence=0.9,
+        explanation="الفاعل يجب أن يكون مرفوعاً ولكن وجد مجروراً",
+    )
+
+    output = RankerService().rank(
+        RankerInput(
+            text=text,
+            tokens=tokens,
+            errors_span=errors,
+            errors_corrections=[
+                ModuleResult(
+                    module_name=ModuleName.ONTOLOGY,
+                    status=ModuleStatus.INCORRECT,
+                    candidate_edits=[candidate],
+                )
+            ],
+        )
+    )
+
+    assert len(output.ranked_edits) == 1
+    assert output.ranked_edits[0].span == (4, 21)
+    assert output.ranked_edits[0].correction == "الطالبان الكتابين"

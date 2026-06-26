@@ -1,7 +1,10 @@
 """Orchestrates the dictionary module's sub-components."""
 
+from collections import OrderedDict
+
 from loguru import logger
 
+from src.core.schemas import Token
 from src.services.gec.schemas import (
     CandidateEdit,
     GECInput,
@@ -17,6 +20,7 @@ from .spell_checker import SpellChecker
 
 _GED_FLAGGED_CONFIDENCE = 0.9
 _UNFLAGGED_OOV_CONFIDENCE = 0.5
+_CANDIDATE_CACHE_SIZE = 2048
 
 
 class DictionaryEngine:
@@ -34,6 +38,7 @@ class DictionaryEngine:
         )
         self.spell_checker = SpellChecker(self.arramooz_client)
         self.alternative_ranker = AlternativeRanker(self.arramooz_client)
+        self._candidate_cache: OrderedDict[tuple[str, str], list[str]] = OrderedDict()
         logger.info("DictionaryEngine initialized successfully")
 
     def close(self) -> None:
@@ -132,20 +137,8 @@ class DictionaryEngine:
             return None
 
         token = input_data.tokens[token_index]
-        candidates = self.spell_checker.generate_candidates(token)
-        if not candidates:
-            logger.warning(
-                "No spelling candidates for token '{}' at index {}",
-                token.form,
-                token_index,
-            )
-            return None
-
-        ranked_candidates = self.alternative_ranker.rank_alternatives(
-            token,
-            candidates,
-        )
-        if not ranked_candidates:
+        ranked_forms = self._get_ranked_forms(token)
+        if not ranked_forms:
             logger.warning(
                 "No ranked alternatives for token '{}' at index {}",
                 token.form,
@@ -166,8 +159,6 @@ class DictionaryEngine:
                     confidence = max(confidence, error_span.confidence)
                     break
 
-        ranked_forms = [c.form for c in ranked_candidates[:MAX_ALTERNATIVES]]
-
         return CandidateEdit(
             span=(start, end),
             token_refs=[token_index],
@@ -175,3 +166,35 @@ class DictionaryEngine:
             correction=ranked_forms[0],
             edit_confidence=min(confidence, 1.0),
         )
+
+    def _get_ranked_forms(self, token: Token) -> list[str]:
+        """Return cached ranked forms for a token surface when available."""
+        cache_key = (token.form, token.affix_structure)
+        cached = self._candidate_cache.get(cache_key)
+        if cached is not None:
+            self._candidate_cache.move_to_end(cache_key)
+            return list(cached)
+
+        candidates = self.spell_checker.generate_candidates(token)
+        if not candidates:
+            self._remember_ranked_forms(cache_key, [])
+            return []
+
+        ranked_candidates = self.alternative_ranker.rank_alternatives(
+            token,
+            candidates,
+        )
+        ranked_forms = [c.form for c in ranked_candidates[:MAX_ALTERNATIVES]]
+        self._remember_ranked_forms(cache_key, ranked_forms)
+        return list(ranked_forms)
+
+    def _remember_ranked_forms(
+        self,
+        cache_key: tuple[str, str],
+        ranked_forms: list[str],
+    ) -> None:
+        """Store ranked forms in a small LRU cache."""
+        self._candidate_cache[cache_key] = list(ranked_forms)
+        self._candidate_cache.move_to_end(cache_key)
+        if len(self._candidate_cache) > _CANDIDATE_CACHE_SIZE:
+            self._candidate_cache.popitem(last=False)
