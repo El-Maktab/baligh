@@ -72,11 +72,9 @@ class Baligh:
 
         self.ranker = RankerService()
 
-    def run(self, input_text: str, cursor_offset: int, current_fragment):
+    def run(self, input_text):
         """Run the full Baligh pipeline on input text."""
-        preprocessing_input = PreprocessingInput(
-            text=input_text, cursor_offset=cursor_offset
-        )
+        preprocessing_input = PreprocessingInput(text=input_text)
         preprocessing_output: PreprocessingOutput = preprocess(preprocessing_input)
 
         ged_input = GEDInput(

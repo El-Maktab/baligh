@@ -14,7 +14,7 @@ from src.api.services.editor_contract import (
     normalize_error_detection,
 )
 from src.api.services.gec import run as gec_run
-from src.api.services.ged import run as ged_run
+from src.api.services.corrections import run as ged_run
 from src.api.services.preprocessing import run as preprocess_run
 from src.services.ged.schemas import ErrorSpan
 
