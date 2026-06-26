@@ -113,7 +113,8 @@ class RankerService:
         module_utilization: dict[str, int] = {}
 
         for error_id, (score, mod_name, cand) in selected:
-            span = inp.errors_span[error_id].span
+            error_span = inp.errors_span[error_id]
+            span = error_span.span
             re = RankedEdit(
                 error_id=error_id,
                 span=span,
@@ -122,7 +123,7 @@ class RankerService:
                 selected_module=mod_name.value,
                 final_score=score,
                 edit_confidence=cand.edit_confidence,
-                explanation=cand.explanation,
+                explanation=error_span.explanation_text or cand.explanation,
                 alternatives=cand.alternatives,
             )
             ranked_edits.append(re)
