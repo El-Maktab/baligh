@@ -21,6 +21,8 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install dev dependencies
+        env:
+          UV_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
         run: uv sync --group dev
 
       - name: Cache NLP Data (Farasa & CAMeL Tools)
