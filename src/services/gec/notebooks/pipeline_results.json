@@ -1,0 +1,2808 @@
+[
+  {
+    "doc_id": "aj_0003006_0000012.ar",
+    "original": "لا زال كبير الشبيحه يظن ان ارواح وآلام الناس اقل كلفه من تخليه عن منصبه ، فلذلك اذا كان السوريون لا يرتضون بهذه المعادله المهينه ، فعليهم ان يهبوا هبه قويه واحده وياخذو حقوقهم من هذه العصابه عنوه ، اننا يا أحبائي ندفع ثمن اكثر من اربعين عام ومن الخنوع والذل والثمن سيكون غاليا ولكنه يستأهل هذه التضحيات",
+    "corrected": "لازال كبير الشبيحة يظن أن أرواح وآلام الناس أقل كلفة من تخليه عن منصبه ، فلذلك إذا كان السوريون لا يرتضون بهذه المعادلة المهينة ، فعليهم أن يهبوا هبة قوية واحدة ويأخذوا حقوقهم من هذه العصابة عنوة . إننا يا أحبائي ندفع ثمن أكثر من أربعين عاما ، ومن الخنوع ، والذل والثمن سيكون غاليا ولكنه يستأهل هذه التضحيات .",
+    "ranker_output": {
+      "text": "لا زال كبير الشبيحه يظن ان ارواح وآلام الناس اقل كلفه من تخليه عن منصبه ، فلذلك اذا كان السوريون لا يرتضون بهذه المعادله المهينه ، فعليهم ان يهبوا هبه قويه واحده وياخذو حقوقهم من هذه العصابه عنوه ، اننا يا أحبائي ندفع ثمن اكثر من اربعين عام ومن الخنوع والذل والثمن سيكون غاليا ولكنه يستأهل هذه التضحيات",
+      "ranked_edits": [
+        {
+          "error_id": 0,
+          "span": [
+            0,
+            2
+          ],
+          "token_refs": [
+            0
+          ],
+          "correction": "لازال",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.02
+        },
+        {
+          "error_id": 1,
+          "span": [
+            3,
+            6
+          ],
+          "token_refs": [
+            1
+          ],
+          "correction": "كبير",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 2,
+          "span": [
+            7,
+            11
+          ],
+          "token_refs": [
+            2
+          ],
+          "correction": "الشبيحة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0460714285714288
+        },
+        {
+          "error_id": 3,
+          "span": [
+            12,
+            19
+          ],
+          "token_refs": [
+            3
+          ],
+          "correction": "يظن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0407142857142857
+        },
+        {
+          "error_id": 4,
+          "span": [
+            20,
+            23
+          ],
+          "token_refs": [
+            4
+          ],
+          "correction": "أن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0716666666666668
+        },
+        {
+          "error_id": 5,
+          "span": [
+            24,
+            26
+          ],
+          "token_refs": [
+            5
+          ],
+          "correction": "أرواح",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0
+        },
+        {
+          "error_id": 6,
+          "span": [
+            27,
+            32
+          ],
+          "token_refs": [
+            6
+          ],
+          "correction": "وآلام",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.075
+        },
+        {
+          "error_id": 7,
+          "span": [
+            33,
+            38
+          ],
+          "token_refs": [
+            7
+          ],
+          "correction": "الناس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.075
+        },
+        {
+          "error_id": 8,
+          "span": [
+            39,
+            44
+          ],
+          "token_refs": [
+            8
+          ],
+          "correction": "أقل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 9,
+          "span": [
+            45,
+            48
+          ],
+          "token_refs": [
+            9
+          ],
+          "correction": "كلفة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 10,
+          "span": [
+            49,
+            53
+          ],
+          "token_refs": [
+            10
+          ],
+          "correction": "من",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 11,
+          "span": [
+            54,
+            56
+          ],
+          "token_refs": [
+            34
+          ],
+          "correction": "هذه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 12,
+          "span": [
+            57,
+            62
+          ],
+          "token_refs": [
+            12
+          ],
+          "correction": "عن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0250000000000001
+        },
+        {
+          "error_id": 13,
+          "span": [
+            63,
+            65
+          ],
+          "token_refs": [
+            13
+          ],
+          "correction": "منصبه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0
+        },
+        {
+          "error_id": 14,
+          "span": [
+            66,
+            71
+          ],
+          "token_refs": [
+            14
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0150000000000001
+        },
+        {
+          "error_id": 15,
+          "span": [
+            72,
+            73
+          ],
+          "token_refs": [
+            38
+          ],
+          "correction": "إننا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.905
+        },
+        {
+          "error_id": 16,
+          "span": [
+            74,
+            79
+          ],
+          "token_refs": [
+            16
+          ],
+          "correction": "إذا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.055
+        },
+        {
+          "error_id": 17,
+          "span": [
+            80,
+            83
+          ],
+          "token_refs": [
+            17
+          ],
+          "correction": "كان",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 18,
+          "span": [
+            84,
+            87
+          ],
+          "token_refs": [
+            18
+          ],
+          "correction": "السوريون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9841666666666666
+        },
+        {
+          "error_id": 19,
+          "span": [
+            88,
+            96
+          ],
+          "token_refs": [
+            19
+          ],
+          "correction": "لا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 21,
+          "span": [
+            100,
+            106
+          ],
+          "token_refs": [
+            21
+          ],
+          "correction": "بهذه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 22,
+          "span": [
+            107,
+            111
+          ],
+          "token_refs": [
+            56
+          ],
+          "correction": "يستأهل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666666
+        },
+        {
+          "error_id": 23,
+          "span": [
+            112,
+            120
+          ],
+          "token_refs": [
+            23
+          ],
+          "correction": "المهينة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0862500000000002
+        },
+        {
+          "error_id": 24,
+          "span": [
+            121,
+            128
+          ],
+          "token_refs": [
+            24
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0121428571428572
+        },
+        {
+          "error_id": 26,
+          "span": [
+            131,
+            137
+          ],
+          "token_refs": [
+            26
+          ],
+          "correction": "أن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 28,
+          "span": [
+            141,
+            146
+          ],
+          "token_refs": [
+            28
+          ],
+          "correction": "هبة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.075
+        },
+        {
+          "error_id": 29,
+          "span": [
+            147,
+            150
+          ],
+          "token_refs": [
+            29
+          ],
+          "correction": "قوية",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 30,
+          "span": [
+            151,
+            155
+          ],
+          "token_refs": [
+            30
+          ],
+          "correction": "واحدة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 31,
+          "span": [
+            156,
+            161
+          ],
+          "token_refs": [
+            31
+          ],
+          "correction": "ويأخذوا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0492857142857144
+        },
+        {
+          "error_id": 32,
+          "span": [
+            162,
+            168
+          ],
+          "token_refs": [
+            40
+          ],
+          "correction": "أحبائي",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 33,
+          "span": [
+            169,
+            175
+          ],
+          "token_refs": [
+            33
+          ],
+          "correction": "من",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 36,
+          "span": [
+            183,
+            190
+          ],
+          "token_refs": [
+            36
+          ],
+          "correction": "عنوة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0478571428571428
+        },
+        {
+          "error_id": 37,
+          "span": [
+            191,
+            195
+          ],
+          "token_refs": [
+            37
+          ],
+          "correction": ".",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 39,
+          "span": [
+            198,
+            202
+          ],
+          "token_refs": [
+            39
+          ],
+          "correction": "يا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 41,
+          "span": [
+            206,
+            212
+          ],
+          "token_refs": [
+            41
+          ],
+          "correction": "ندفع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 42,
+          "span": [
+            213,
+            217
+          ],
+          "token_refs": [
+            42
+          ],
+          "correction": "ثمن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 43,
+          "span": [
+            218,
+            221
+          ],
+          "token_refs": [
+            43
+          ],
+          "correction": "أكثر",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 44,
+          "span": [
+            222,
+            226
+          ],
+          "token_refs": [
+            44
+          ],
+          "correction": "من",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 46,
+          "span": [
+            230,
+            236
+          ],
+          "token_refs": [
+            46
+          ],
+          "correction": "عاما",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 47,
+          "span": [
+            237,
+            240
+          ],
+          "token_refs": [
+            47
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 48,
+          "span": [
+            252,
+            257
+          ],
+          "token_refs": [
+            50
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0150000000000001
+        },
+        {
+          "error_id": 49,
+          "span": [
+            258,
+            264
+          ],
+          "token_refs": [
+            51
+          ],
+          "correction": "والذل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0966666666666667
+        },
+        {
+          "error_id": 50,
+          "span": [
+            265,
+            270
+          ],
+          "token_refs": [
+            52
+          ],
+          "correction": "والثمن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0616666666666668
+        },
+        {
+          "error_id": 51,
+          "span": [
+            271,
+            276
+          ],
+          "token_refs": [
+            53
+          ],
+          "correction": "سيكون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 52,
+          "span": [
+            277,
+            282
+          ],
+          "token_refs": [
+            54
+          ],
+          "correction": "غاليا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 53,
+          "span": [
+            283,
+            289
+          ],
+          "token_refs": [
+            55
+          ],
+          "correction": "ولكنه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0633333333333335
+        },
+        {
+          "error_id": 55,
+          "span": [
+            294,
+            302
+          ],
+          "token_refs": [
+            57
+          ],
+          "correction": "هذه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0237500000000002
+        }
+      ],
+      "ranking_metadata": {
+        "global_confidence": 1.0373632218844986,
+        "module_utilization": {
+          "ONTOLOGY": 47
+        }
+      }
+    },
+    "num_errors": 56,
+    "num_ranked_edits": 47
+  },
+  {
+    "doc_id": "aj_0003006_0000004.ar",
+    "original": "تراهنون يا امريكان و يا اذنابهم على مارس طيب حاولوا ان تضربوا امن الشام ليوم القيامة لن تستطيعوا تعرفون لماذا لان الله تعالى يحفظها بحفظه تعالى لها على كل سننتظر و سترون كيف سنحمل الرئيس الاسد على الاكتاف وكل المقاومين سيصرخون صرخات تهو العالم من ساحة الامويين",
+    "corrected": "تراهنون يا أمريكان ويا أذنابهم على مارس ، طيب حاولوا أن تضربوا أمن الشام ، ليوم القيامة لن تستطيعون ، تعرفون لماذا ؟ لأن الله تعالى يحفظها بحفظه تعالى لها . على كل سننتظر وسترون كيف سنحمل الرئيس الأسد على الأكتاف وكل المقاومين سيصرخون صرخات تهز العالم من ساحة الأمويين .",
+    "ranker_output": {
+      "text": "تراهنون يا امريكان و يا اذنابهم على مارس طيب حاولوا ان تضربوا امن الشام ليوم القيامة لن تستطيعوا تعرفون لماذا لان الله تعالى يحفظها بحفظه تعالى لها على كل سننتظر و سترون كيف سنحمل الرئيس الاسد على الاكتاف وكل المقاومين سيصرخون صرخات تهو العالم من ساحة الامويين",
+      "ranked_edits": [
+        {
+          "error_id": 1,
+          "span": [
+            5,
+            6
+          ],
+          "token_refs": [
+            30
+          ],
+          "correction": ".",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 2,
+          "span": [
+            8,
+            10
+          ],
+          "token_refs": [
+            4
+          ],
+          "correction": "أذنابهم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9442857142857144
+        },
+        {
+          "error_id": 0,
+          "span": [
+            11,
+            18
+          ],
+          "token_refs": [
+            2
+          ],
+          "correction": "أمريكان",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.1407142857142858
+        },
+        {
+          "error_id": 3,
+          "span": [
+            24,
+            31
+          ],
+          "token_refs": [
+            5
+          ],
+          "correction": "على",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0264285714285715
+        },
+        {
+          "error_id": 4,
+          "span": [
+            32,
+            35
+          ],
+          "token_refs": [
+            6
+          ],
+          "correction": "مارس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 5,
+          "span": [
+            36,
+            40
+          ],
+          "token_refs": [
+            7
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 7,
+          "span": [
+            62,
+            65
+          ],
+          "token_refs": [
+            12
+          ],
+          "correction": "أمن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.1216666666666668
+        },
+        {
+          "error_id": 8,
+          "span": [
+            72,
+            76
+          ],
+          "token_refs": [
+            14
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 9,
+          "span": [
+            77,
+            84
+          ],
+          "token_refs": [
+            15
+          ],
+          "correction": "ليوم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0764285714285715
+        },
+        {
+          "error_id": 10,
+          "span": [
+            85,
+            87
+          ],
+          "token_refs": [
+            16
+          ],
+          "correction": "القيامة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9442857142857144
+        },
+        {
+          "error_id": 11,
+          "span": [
+            88,
+            96
+          ],
+          "token_refs": [
+            17
+          ],
+          "correction": "لن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 12,
+          "span": [
+            97,
+            103
+          ],
+          "token_refs": [
+            18
+          ],
+          "correction": "تستطيعون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0758333333333334
+        },
+        {
+          "error_id": 13,
+          "span": [
+            104,
+            109
+          ],
+          "token_refs": [
+            19
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0150000000000001
+        },
+        {
+          "error_id": 14,
+          "span": [
+            110,
+            113
+          ],
+          "token_refs": [
+            20
+          ],
+          "correction": "تعرفون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 15,
+          "span": [
+            114,
+            118
+          ],
+          "token_refs": [
+            21
+          ],
+          "correction": "لماذا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 16,
+          "span": [
+            119,
+            124
+          ],
+          "token_refs": [
+            22
+          ],
+          "correction": "؟",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0150000000000001
+        },
+        {
+          "error_id": 17,
+          "span": [
+            125,
+            131
+          ],
+          "token_refs": [
+            23
+          ],
+          "correction": "لأن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 18,
+          "span": [
+            132,
+            137
+          ],
+          "token_refs": [
+            24
+          ],
+          "correction": "الله",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.065
+        },
+        {
+          "error_id": 19,
+          "span": [
+            144,
+            147
+          ],
+          "token_refs": [
+            26
+          ],
+          "correction": "يحفظها",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 21,
+          "span": [
+            152,
+            154
+          ],
+          "token_refs": [
+            28
+          ],
+          "correction": "تعالى",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0
+        },
+        {
+          "error_id": 22,
+          "span": [
+            155,
+            161
+          ],
+          "token_refs": [
+            29
+          ],
+          "correction": "لها",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 24,
+          "span": [
+            164,
+            169
+          ],
+          "token_refs": [
+            31
+          ],
+          "correction": "على",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 25,
+          "span": [
+            170,
+            173
+          ],
+          "token_refs": [
+            32
+          ],
+          "correction": "كل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0716666666666668
+        },
+        {
+          "error_id": 26,
+          "span": [
+            174,
+            179
+          ],
+          "token_refs": [
+            33
+          ],
+          "correction": "سننتظر",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0783333333333334
+        },
+        {
+          "error_id": 27,
+          "span": [
+            180,
+            186
+          ],
+          "token_refs": [
+            34
+          ],
+          "correction": "وسترون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 28,
+          "span": [
+            187,
+            192
+          ],
+          "token_refs": [
+            35
+          ],
+          "correction": "كيف",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 30,
+          "span": [
+            197,
+            204
+          ],
+          "token_refs": [
+            37
+          ],
+          "correction": "الرئيس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0764285714285715
+        },
+        {
+          "error_id": 31,
+          "span": [
+            205,
+            208
+          ],
+          "token_refs": [
+            38
+          ],
+          "correction": "الأسد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 32,
+          "span": [
+            209,
+            218
+          ],
+          "token_refs": [
+            39
+          ],
+          "correction": "على",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0327777777777778
+        },
+        {
+          "error_id": 33,
+          "span": [
+            219,
+            226
+          ],
+          "token_refs": [
+            40
+          ],
+          "correction": "الأكتاف",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 34,
+          "span": [
+            227,
+            232
+          ],
+          "token_refs": [
+            41
+          ],
+          "correction": "وكل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 35,
+          "span": [
+            233,
+            236
+          ],
+          "token_refs": [
+            42
+          ],
+          "correction": "المقاومين",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9661111111111111
+        },
+        {
+          "error_id": 36,
+          "span": [
+            237,
+            243
+          ],
+          "token_refs": [
+            43
+          ],
+          "correction": "سيصرخون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666669
+        },
+        {
+          "error_id": 38,
+          "span": [
+            247,
+            251
+          ],
+          "token_refs": [
+            45
+          ],
+          "correction": "تهز",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 39,
+          "span": [
+            252,
+            260
+          ],
+          "token_refs": [
+            46
+          ],
+          "correction": "العالم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0675000000000001
+        }
+      ],
+      "ranking_metadata": {
+        "global_confidence": 1.0386179138321996,
+        "module_utilization": {
+          "ONTOLOGY": 35
+        }
+      }
+    },
+    "num_errors": 40,
+    "num_ranked_edits": 35
+  },
+  {
+    "doc_id": "aj_0003007_0000008.ar",
+    "original": "يشاع إعتقاد في المجال الجنائي أن اللص لا يميل غالبا إلى القتل ذلك أن بنيته النفسية تختلف عن مثيلتها لدى القاتل المجرم لكن الأحداث في سوريا دحضت كليا هذا الزعم ، فقد شهد الجميع كيف تحول لصوص النظام الأسدي الذين نهبوا البلد إلى مجرمين شرسين يقترفون أبشع أشكال الفظائع التي قل أن شهد لها تاريخ الأمم المتحضرة مثيلا",
+    "corrected": "يشاع اعتقاد في المجال الجنائي أن اللص لا يميل غالبا إلى القتل ، ذلك أن بنيته النفسية تختلف عن مثيلتها لدى القاتل المجرم ، لكن الأحداث في سوريا دحضت كليا هذا الزعم ، فقد شهد الجميع كيف تحول لصوص النظام الأسدي الذين نهبوا البلد إلى مجرمين شرسين يقترفون أبشع أشكال الفظائع التي قل أن شهد لها تاريخ الأمم المتحضرة مثيلا .",
+    "ranker_output": {
+      "text": "يشاع إعتقاد في المجال الجنائي أن اللص لا يميل غالبا إلى القتل ذلك أن بنيته النفسية تختلف عن مثيلتها لدى القاتل المجرم لكن الأحداث في سوريا دحضت كليا هذا الزعم ، فقد شهد الجميع كيف تحول لصوص النظام الأسدي الذين نهبوا البلد إلى مجرمين شرسين يقترفون أبشع أشكال الفظائع التي قل أن شهد لها تاريخ الأمم المتحضرة مثيلا",
+      "ranked_edits": [
+        {
+          "error_id": 0,
+          "span": [
+            5,
+            11
+          ],
+          "token_refs": [
+            1
+          ],
+          "correction": "اعتقاد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.1383333333333334
+        },
+        {
+          "error_id": 13,
+          "span": [
+            12,
+            14
+          ],
+          "token_refs": [
+            24
+          ],
+          "correction": "لكن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 2,
+          "span": [
+            30,
+            32
+          ],
+          "token_refs": [
+            13
+          ],
+          "correction": "ذلك",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 31,
+          "span": [
+            52,
+            55
+          ],
+          "token_refs": [
+            42
+          ],
+          "correction": "نهبوا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 1,
+          "span": [
+            62,
+            65
+          ],
+          "token_refs": [
+            12
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 3,
+          "span": [
+            69,
+            74
+          ],
+          "token_refs": [
+            14
+          ],
+          "correction": "أن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.045
+        },
+        {
+          "error_id": 4,
+          "span": [
+            75,
+            82
+          ],
+          "token_refs": [
+            15
+          ],
+          "correction": "بنيته",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 5,
+          "span": [
+            83,
+            88
+          ],
+          "token_refs": [
+            16
+          ],
+          "correction": "النفسية",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 6,
+          "span": [
+            89,
+            91
+          ],
+          "token_refs": [
+            17
+          ],
+          "correction": "تختلف",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.98
+        },
+        {
+          "error_id": 7,
+          "span": [
+            92,
+            99
+          ],
+          "token_refs": [
+            18
+          ],
+          "correction": "عن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0192857142857144
+        },
+        {
+          "error_id": 8,
+          "span": [
+            100,
+            103
+          ],
+          "token_refs": [
+            19
+          ],
+          "correction": "مثيلتها",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0026190476190477
+        },
+        {
+          "error_id": 9,
+          "span": [
+            104,
+            110
+          ],
+          "token_refs": [
+            20
+          ],
+          "correction": "لدى",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666666
+        },
+        {
+          "error_id": 10,
+          "span": [
+            111,
+            117
+          ],
+          "token_refs": [
+            21
+          ],
+          "correction": "القاتل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0883333333333334
+        },
+        {
+          "error_id": 11,
+          "span": [
+            118,
+            121
+          ],
+          "token_refs": [
+            22
+          ],
+          "correction": "المجرم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 12,
+          "span": [
+            122,
+            129
+          ],
+          "token_refs": [
+            23
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0121428571428572
+        },
+        {
+          "error_id": 14,
+          "span": [
+            133,
+            138
+          ],
+          "token_refs": [
+            25
+          ],
+          "correction": "الأحداث",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0492857142857144
+        },
+        {
+          "error_id": 15,
+          "span": [
+            139,
+            143
+          ],
+          "token_refs": [
+            26
+          ],
+          "correction": "في",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 16,
+          "span": [
+            144,
+            148
+          ],
+          "token_refs": [
+            27
+          ],
+          "correction": "سوريا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0825
+        },
+        {
+          "error_id": 17,
+          "span": [
+            149,
+            152
+          ],
+          "token_refs": [
+            28
+          ],
+          "correction": "دحضت",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 18,
+          "span": [
+            153,
+            158
+          ],
+          "token_refs": [
+            29
+          ],
+          "correction": "كليا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.065
+        },
+        {
+          "error_id": 19,
+          "span": [
+            159,
+            160
+          ],
+          "token_refs": [
+            30
+          ],
+          "correction": "هذا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9550000000000001
+        },
+        {
+          "error_id": 20,
+          "span": [
+            161,
+            164
+          ],
+          "token_refs": [
+            31
+          ],
+          "correction": "الزعم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 21,
+          "span": [
+            165,
+            168
+          ],
+          "token_refs": [
+            52
+          ],
+          "correction": "قل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 22,
+          "span": [
+            169,
+            175
+          ],
+          "token_refs": [
+            33
+          ],
+          "correction": "فقد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 23,
+          "span": [
+            176,
+            179
+          ],
+          "token_refs": [
+            34
+          ],
+          "correction": "شهد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 24,
+          "span": [
+            180,
+            184
+          ],
+          "token_refs": [
+            35
+          ],
+          "correction": "الجميع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 25,
+          "span": [
+            185,
+            189
+          ],
+          "token_refs": [
+            36
+          ],
+          "correction": "كيف",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 26,
+          "span": [
+            190,
+            196
+          ],
+          "token_refs": [
+            37
+          ],
+          "correction": "تحول",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 27,
+          "span": [
+            197,
+            203
+          ],
+          "token_refs": [
+            38
+          ],
+          "correction": "لصوص",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.055
+        },
+        {
+          "error_id": 28,
+          "span": [
+            204,
+            209
+          ],
+          "token_refs": [
+            39
+          ],
+          "correction": "النظام",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0783333333333334
+        },
+        {
+          "error_id": 29,
+          "span": [
+            210,
+            215
+          ],
+          "token_refs": [
+            40
+          ],
+          "correction": "الأسدي",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0450000000000002
+        },
+        {
+          "error_id": 30,
+          "span": [
+            216,
+            221
+          ],
+          "token_refs": [
+            41
+          ],
+          "correction": "الذين",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.095
+        },
+        {
+          "error_id": 32,
+          "span": [
+            226,
+            232
+          ],
+          "token_refs": [
+            43
+          ],
+          "correction": "البلد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666669
+        },
+        {
+          "error_id": 33,
+          "span": [
+            233,
+            238
+          ],
+          "token_refs": [
+            44
+          ],
+          "correction": "إلى",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 34,
+          "span": [
+            239,
+            246
+          ],
+          "token_refs": [
+            45
+          ],
+          "correction": "مجرمين",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0764285714285715
+        },
+        {
+          "error_id": 35,
+          "span": [
+            247,
+            251
+          ],
+          "token_refs": [
+            46
+          ],
+          "correction": "شرسين",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 36,
+          "span": [
+            252,
+            257
+          ],
+          "token_refs": [
+            47
+          ],
+          "correction": "يقترفون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 37,
+          "span": [
+            258,
+            265
+          ],
+          "token_refs": [
+            48
+          ],
+          "correction": "أبشع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0478571428571428
+        },
+        {
+          "error_id": 38,
+          "span": [
+            266,
+            270
+          ],
+          "token_refs": [
+            49
+          ],
+          "correction": "أشكال",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 39,
+          "span": [
+            271,
+            273
+          ],
+          "token_refs": [
+            50
+          ],
+          "correction": "الفظائع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9442857142857144
+        },
+        {
+          "error_id": 42,
+          "span": [
+            281,
+            284
+          ],
+          "token_refs": [
+            53
+          ],
+          "correction": "أن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 43,
+          "span": [
+            285,
+            290
+          ],
+          "token_refs": [
+            54
+          ],
+          "correction": "شهد",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 44,
+          "span": [
+            291,
+            296
+          ],
+          "token_refs": [
+            55
+          ],
+          "correction": "لها",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.055
+        },
+        {
+          "error_id": 45,
+          "span": [
+            297,
+            305
+          ],
+          "token_refs": [
+            56
+          ],
+          "correction": "تاريخ",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.04875
+        },
+        {
+          "error_id": 46,
+          "span": [
+            306,
+            311
+          ],
+          "token_refs": [
+            57
+          ],
+          "correction": "الأمم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        }
+      ],
+      "ranking_metadata": {
+        "global_confidence": 1.0399775132275133,
+        "module_utilization": {
+          "ONTOLOGY": 45
+        }
+      }
+    },
+    "num_errors": 47,
+    "num_ranked_edits": 45
+  },
+  {
+    "doc_id": "aj_0003006_0000005.ar",
+    "original": "تعجبني المظاهرات في حمص هنا وهناك مثل ما راينا في دير بعلبة طبعا كشف النظام السوري عن وجود اماكن للتعذيب و للتقطيع طبعا بالتاكيد هذه لمن يفتح محله او يجلس في بيته ولا ينزل لمظاهرة او لمن يقول عاش الوطن ابيا سالما فبالفعل واسفاه على من تبع هذه الفورة وصدقها و ساند اذيالها",
+    "corrected": "تعجبني المظاهرات في حمص هنا وهناك مثل ما رأينا في دير بعلبة ، طبعا كشف النظام السوري عن وجود أماكن للتعذيب وللتقطيع ، طبعا بالتأكيد هذه لمن يفتح محله ، أو يجلس في بيته ولا ينزل لمظاهرة ، أو لمن يقول عاش الوطن أبيا سالما ، فبالفعل وأسفاه على من تبع هذه الفورة ، وصدقها ، وساند أذيالها .",
+    "ranker_output": {
+      "text": "تعجبني المظاهرات في حمص هنا وهناك مثل ما راينا في دير بعلبة طبعا كشف النظام السوري عن وجود اماكن للتعذيب و للتقطيع طبعا بالتاكيد هذه لمن يفتح محله او يجلس في بيته ولا ينزل لمظاهرة او لمن يقول عاش الوطن ابيا سالما فبالفعل واسفاه على من تبع هذه الفورة وصدقها و ساند اذيالها",
+      "ranked_edits": [
+        {
+          "error_id": 19,
+          "span": [
+            17,
+            19
+          ],
+          "token_refs": [
+            30
+          ],
+          "correction": "أو",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 9,
+          "span": [
+            28,
+            29
+          ],
+          "token_refs": [
+            50
+          ],
+          "correction": "تبع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9550000000000001
+        },
+        {
+          "error_id": 0,
+          "span": [
+            41,
+            46
+          ],
+          "token_refs": [
+            8
+          ],
+          "correction": "رأينا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.135
+        },
+        {
+          "error_id": 1,
+          "span": [
+            60,
+            64
+          ],
+          "token_refs": [
+            12
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 2,
+          "span": [
+            65,
+            68
+          ],
+          "token_refs": [
+            13
+          ],
+          "correction": "طبعا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 3,
+          "span": [
+            69,
+            75
+          ],
+          "token_refs": [
+            14
+          ],
+          "correction": "كشف",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 4,
+          "span": [
+            76,
+            82
+          ],
+          "token_refs": [
+            15
+          ],
+          "correction": "النظام",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0883333333333334
+        },
+        {
+          "error_id": 5,
+          "span": [
+            83,
+            85
+          ],
+          "token_refs": [
+            16
+          ],
+          "correction": "السوري",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 0.9550000000000001
+        },
+        {
+          "error_id": 6,
+          "span": [
+            86,
+            90
+          ],
+          "token_refs": [
+            17
+          ],
+          "correction": "عن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 7,
+          "span": [
+            91,
+            96
+          ],
+          "token_refs": [
+            18
+          ],
+          "correction": "وجود",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0450000000000002
+        },
+        {
+          "error_id": 8,
+          "span": [
+            97,
+            104
+          ],
+          "token_refs": [
+            19
+          ],
+          "correction": "أماكن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.040714285714286
+        },
+        {
+          "error_id": 10,
+          "span": [
+            107,
+            114
+          ],
+          "token_refs": [
+            21
+          ],
+          "correction": "وللتقطيع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.135357142857143
+        },
+        {
+          "error_id": 12,
+          "span": [
+            120,
+            128
+          ],
+          "token_refs": [
+            23
+          ],
+          "correction": "طبعا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425
+        },
+        {
+          "error_id": 13,
+          "span": [
+            129,
+            132
+          ],
+          "token_refs": [
+            47
+          ],
+          "correction": "وأسفاه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 14,
+          "span": [
+            133,
+            136
+          ],
+          "token_refs": [
+            25
+          ],
+          "correction": "هذه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 15,
+          "span": [
+            137,
+            141
+          ],
+          "token_refs": [
+            26
+          ],
+          "correction": "لمن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 16,
+          "span": [
+            142,
+            146
+          ],
+          "token_refs": [
+            27
+          ],
+          "correction": "يفتح",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 17,
+          "span": [
+            147,
+            149
+          ],
+          "token_refs": [
+            28
+          ],
+          "correction": "محله",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0050000000000001
+        },
+        {
+          "error_id": 18,
+          "span": [
+            150,
+            154
+          ],
+          "token_refs": [
+            29
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 20,
+          "span": [
+            158,
+            162
+          ],
+          "token_refs": [
+            31
+          ],
+          "correction": "يجلس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 21,
+          "span": [
+            163,
+            166
+          ],
+          "token_refs": [
+            32
+          ],
+          "correction": "في",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 22,
+          "span": [
+            167,
+            171
+          ],
+          "token_refs": [
+            33
+          ],
+          "correction": "بيته",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 23,
+          "span": [
+            172,
+            179
+          ],
+          "token_refs": [
+            34
+          ],
+          "correction": "ولا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0407142857142857
+        },
+        {
+          "error_id": 26,
+          "span": [
+            187,
+            191
+          ],
+          "token_refs": [
+            37
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 27,
+          "span": [
+            192,
+            195
+          ],
+          "token_refs": [
+            38
+          ],
+          "correction": "أو",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 28,
+          "span": [
+            196,
+            201
+          ],
+          "token_refs": [
+            39
+          ],
+          "correction": "لمن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.075
+        },
+        {
+          "error_id": 29,
+          "span": [
+            202,
+            206
+          ],
+          "token_refs": [
+            40
+          ],
+          "correction": "يقول",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 30,
+          "span": [
+            207,
+            212
+          ],
+          "token_refs": [
+            41
+          ],
+          "correction": "عاش",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.055
+        },
+        {
+          "error_id": 31,
+          "span": [
+            213,
+            220
+          ],
+          "token_refs": [
+            42
+          ],
+          "correction": "الوطن",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0692857142857144
+        },
+        {
+          "error_id": 32,
+          "span": [
+            221,
+            227
+          ],
+          "token_refs": [
+            43
+          ],
+          "correction": "أبيا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.055
+        },
+        {
+          "error_id": 33,
+          "span": [
+            228,
+            231
+          ],
+          "token_refs": [
+            44
+          ],
+          "correction": "سالما",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0416666666666667
+        },
+        {
+          "error_id": 35,
+          "span": [
+            235,
+            238
+          ],
+          "token_refs": [
+            46
+          ],
+          "correction": "فبالفعل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.016904761904762
+        },
+        {
+          "error_id": 37,
+          "span": [
+            243,
+            249
+          ],
+          "token_refs": [
+            48
+          ],
+          "correction": "على",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666666
+        },
+        {
+          "error_id": 38,
+          "span": [
+            250,
+            256
+          ],
+          "token_refs": [
+            49
+          ],
+          "correction": "من",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 40,
+          "span": [
+            259,
+            263
+          ],
+          "token_refs": [
+            51
+          ],
+          "correction": "هذه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 41,
+          "span": [
+            264,
+            271
+          ],
+          "token_refs": [
+            52
+          ],
+          "correction": "الفورة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0621428571428573
+        }
+      ],
+      "ranking_metadata": {
+        "global_confidence": 1.0430588624338624,
+        "module_utilization": {
+          "ONTOLOGY": 36
+        }
+      }
+    },
+    "num_errors": 42,
+    "num_ranked_edits": 36
+  },
+  {
+    "doc_id": "aj_0003007_0000005.ar",
+    "original": "الى مشاركه 56 انت تتكلم بالعكس الاحرار هم الذين لايخافون لانهم انشقوا لرفضهم قتل الانفس البريئه اما جيشك الذي تتكلم عنه وشبيحتك هم الارانب لانه يتم جرهم الى المواجهة مع الاحرار جر مقابل 2000 ليره باليوم وهذا كل الناس بتعرفوا",
+    "corrected": "إلى مشاركة 56 ، أنت تتكلم بالعكس ، الأحرار هم الذين لا يخافون ؛ لأنهم انشقوا لرفضهم قتل الأنفس البريئة ، أما جيشك الذي تتكلم عنه وشبيحتك هم الأرانب ؛ لأنه يتم جرهم إلى المواجهة مع الأحرار جرا مقابل 2000 ليرة باليوم ، وهذا كل الناس تعرفه .",
+    "ranker_output": {
+      "text": "الى مشاركه 56 انت تتكلم بالعكس الاحرار هم الذين لايخافون لانهم انشقوا لرفضهم قتل الانفس البريئه اما جيشك الذي تتكلم عنه وشبيحتك هم الارانب لانه يتم جرهم الى المواجهة مع الاحرار جر مقابل 2000 ليره باليوم وهذا كل الناس بتعرفوا",
+      "ranked_edits": [
+        {
+          "error_id": 0,
+          "span": [
+            0,
+            3
+          ],
+          "token_refs": [
+            0
+          ],
+          "correction": "إلى",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.1216666666666668
+        },
+        {
+          "error_id": 1,
+          "span": [
+            4,
+            10
+          ],
+          "token_refs": [
+            1
+          ],
+          "correction": "مشاركة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.1383333333333334
+        },
+        {
+          "error_id": 2,
+          "span": [
+            14,
+            17
+          ],
+          "token_refs": [
+            3
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 3,
+          "span": [
+            18,
+            23
+          ],
+          "token_refs": [
+            4
+          ],
+          "correction": "أنت",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0350000000000001
+        },
+        {
+          "error_id": 4,
+          "span": [
+            24,
+            30
+          ],
+          "token_refs": [
+            5
+          ],
+          "correction": "تتكلم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0466666666666669
+        },
+        {
+          "error_id": 5,
+          "span": [
+            31,
+            38
+          ],
+          "token_refs": [
+            6
+          ],
+          "correction": "بالعكس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0621428571428573
+        },
+        {
+          "error_id": 6,
+          "span": [
+            39,
+            41
+          ],
+          "token_refs": [
+            7
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 7,
+          "span": [
+            42,
+            47
+          ],
+          "token_refs": [
+            18
+          ],
+          "correction": "الأنفس",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0783333333333334
+        },
+        {
+          "error_id": 8,
+          "span": [
+            48,
+            56
+          ],
+          "token_refs": [
+            9
+          ],
+          "correction": "هم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0175
+        },
+        {
+          "error_id": 9,
+          "span": [
+            57,
+            62
+          ],
+          "token_refs": [
+            24
+          ],
+          "correction": "تتكلم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.075
+        },
+        {
+          "error_id": 10,
+          "span": [
+            63,
+            69
+          ],
+          "token_refs": [
+            11
+          ],
+          "correction": "لا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0383333333333333
+        },
+        {
+          "error_id": 11,
+          "span": [
+            70,
+            76
+          ],
+          "token_refs": [
+            12
+          ],
+          "correction": "يخافون",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 12,
+          "span": [
+            77,
+            80
+          ],
+          "token_refs": [
+            13
+          ],
+          "correction": "؛",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 13,
+          "span": [
+            81,
+            87
+          ],
+          "token_refs": [
+            14
+          ],
+          "correction": "لأنهم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.08
+        },
+        {
+          "error_id": 14,
+          "span": [
+            88,
+            95
+          ],
+          "token_refs": [
+            15
+          ],
+          "correction": "انشقوا",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0621428571428573
+        },
+        {
+          "error_id": 15,
+          "span": [
+            96,
+            99
+          ],
+          "token_refs": [
+            16
+          ],
+          "correction": "لرفضهم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0050000000000001
+        },
+        {
+          "error_id": 16,
+          "span": [
+            100,
+            104
+          ],
+          "token_refs": [
+            17
+          ],
+          "correction": "قتل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 19,
+          "span": [
+            116,
+            119
+          ],
+          "token_refs": [
+            20
+          ],
+          "correction": "،",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 20,
+          "span": [
+            120,
+            127
+          ],
+          "token_refs": [
+            21
+          ],
+          "correction": "أما",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0264285714285715
+        },
+        {
+          "error_id": 22,
+          "span": [
+            131,
+            138
+          ],
+          "token_refs": [
+            23
+          ],
+          "correction": "الذي",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0621428571428573
+        },
+        {
+          "error_id": 24,
+          "span": [
+            144,
+            147
+          ],
+          "token_refs": [
+            25
+          ],
+          "correction": "عنه",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 25,
+          "span": [
+            148,
+            152
+          ],
+          "token_refs": [
+            31
+          ],
+          "correction": "يتم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0675000000000001
+        },
+        {
+          "error_id": 27,
+          "span": [
+            157,
+            165
+          ],
+          "token_refs": [
+            28
+          ],
+          "correction": "الأرانب",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0862500000000002
+        },
+        {
+          "error_id": 28,
+          "span": [
+            166,
+            168
+          ],
+          "token_refs": [
+            29
+          ],
+          "correction": "؛",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 31,
+          "span": [
+            180,
+            185
+          ],
+          "token_refs": [
+            32
+          ],
+          "correction": "جرهم",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0450000000000002
+        },
+        {
+          "error_id": 32,
+          "span": [
+            186,
+            190
+          ],
+          "token_refs": [
+            33
+          ],
+          "correction": "إلى",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0425000000000002
+        },
+        {
+          "error_id": 33,
+          "span": [
+            191,
+            195
+          ],
+          "token_refs": [
+            34
+          ],
+          "correction": "المواجهة",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.03
+        },
+        {
+          "error_id": 34,
+          "span": [
+            196,
+            202
+          ],
+          "token_refs": [
+            35
+          ],
+          "correction": "مع",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0216666666666667
+        },
+        {
+          "error_id": 35,
+          "span": [
+            203,
+            207
+          ],
+          "token_refs": [
+            36
+          ],
+          "correction": "الأحرار",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0317857142857143
+        },
+        {
+          "error_id": 37,
+          "span": [
+            211,
+            216
+          ],
+          "token_refs": [
+            38
+          ],
+          "correction": "مقابل",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0550000000000002
+        },
+        {
+          "error_id": 38,
+          "span": [
+            217,
+            224
+          ],
+          "token_refs": [
+            39
+          ],
+          "correction": "2000",
+          "edit_operation": "replace",
+          "selected_module": "ONTOLOGY",
+          "final_score": 1.0335714285714286
+        }
+      ],
+      "ranking_metadata": {
+        "global_confidence": 1.049660138248848,
+        "module_utilization": {
+          "ONTOLOGY": 31
+        }
+      }
+    },
+    "num_errors": 39,
+    "num_ranked_edits": 31
+  }
+]

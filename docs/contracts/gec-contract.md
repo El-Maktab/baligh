@@ -86,7 +86,7 @@ Input sentence: `"ذهبوا الطلاب الى المدرسه"`
         "span": [0, 5],
         "token_refs": [0],
         "correction": "ذهب",
-        "edit_confidence": 0.94,
+        "edit_confidence": 0.94
       }
     ]
   },
@@ -99,7 +99,7 @@ Input sentence: `"ذهبوا الطلاب الى المدرسه"`
         "token_refs": [0],
         "correction": "ذهب",
         "edit_confidence": 0.98,
-        "explanation": "إذا تقدم الفعل على الفاعل، يكون مفرداً",
+        "explanation": "إذا تقدم الفعل على الفاعل، يكون مفرداً"
       }
     ]
   },

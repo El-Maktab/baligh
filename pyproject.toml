@@ -6,8 +6,9 @@ dependencies = [
     "camel-tools>=1.5.7",
     "farasapy>=0.1.1",
     "pydantic>=2.13.4",
-    "torch>=2.4",
     "pyarabic",
+    "torch>=2.4",
+    "arramooz-pysqlite",
     "sparqlwrapper",
     "pyyaml>=6.0",
     "loguru>=0.7.3",
@@ -17,6 +18,9 @@ dependencies = [
     "sklearn-crfsuite>=0.5.0",
     "msgpack>=1.1.0",
     "sentencepiece>=0.2.0",
+    "transformers>=4.43.4",
+    "accelerate>=0.21.0",
+    "pytorch-crf>=0.1.0"
 ]
 
 [dependency-groups]
@@ -47,12 +51,13 @@ convention = "google"
 quote-style = "double"
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 files = ["src", "tests"]
 
 [[tool.mypy.overrides]]
 module = [
     "camel_tools.*",
+    "torchcrf.*",
     "farasa.*",
     "joblib",
     "marisa_trie",
@@ -63,6 +68,8 @@ module = [
     "sentencepiece.*",
     "msgpack.*",
     "onnxruntime.*",
+    "arramooz.*",
+    "transformers.*"
 ]
 ignore_missing_imports = true
 

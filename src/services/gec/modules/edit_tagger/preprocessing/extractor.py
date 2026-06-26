@@ -2,7 +2,7 @@
 
 from src.services.gec.schemas import EditOperation
 
-from .common import Alignment
+from ..common import Alignment
 
 
 class Extractor:
