@@ -84,6 +84,27 @@ describe("useEditorController", () => {
     });
   });
 
+  it("can create and activate a draft when the API starts empty", async () => {
+    renderHarness(createMockEditorApi([]));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("draft-count")).toHaveTextContent("0");
+      expect(screen.getByTestId("active-title")).toHaveTextContent("");
+    });
+
+    fireEvent.click(screen.getByText("add-draft"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("draft-count")).toHaveTextContent("1");
+      expect(screen.getByTestId("active-title")).toHaveTextContent(
+        DEFAULT_DRAFT_TITLE,
+      );
+      expect(screen.getByTestId("active-body")).toHaveTextContent(
+        DEFAULT_DRAFT_BODY,
+      );
+    });
+  });
+
   it("debounces autosave and reaches the saved state", async () => {
     renderHarness(createMockEditorApi());
 

@@ -8,10 +8,12 @@ made available to route handlers via a FastAPI dependency.
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from .config import settings
 from .routers import analysis, corrections, drafts, suggestions, tashkeel
+from .services.drafts import seed_default_draft
 
 
 @asynccontextmanager
@@ -25,6 +27,7 @@ async def lifespan(app: FastAPI):
 
     await db["drafts"].create_index("id", unique=True)
     await db["drafts"].create_index("revision")
+    await seed_default_draft()
     app.state.mongo_client = client
     yield
     client.close()
@@ -35,6 +38,19 @@ app = FastAPI(
     description="FastAPI backend for Baligh application",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

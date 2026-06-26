@@ -70,6 +70,18 @@ function DraftList({
   activeDraftId: string;
   selectDraft: (draftId: string) => void;
 }) {
+  if (drafts.length === 0) {
+    return (
+      <div className="editor-page__empty-state">
+        <span>
+          <FolderOpen aria-hidden="true" size={20} />
+        </span>
+        <strong>لا توجد مسودات بعد</strong>
+        <p>أضف نصاً جديداً لتظهره هذه القائمة.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="editor-page__draft-list" aria-label="المسودات">
       {drafts.map((draft) => (
@@ -306,16 +318,29 @@ export function EditorPage() {
     return (
       <main className="editor-page editor-page--loading">
         <div className="editor-page__loading-state">
-          <LoaderCircle
-            aria-hidden="true"
-            className="editor-page__spinner"
-            size={26}
-          />
-          <p>
-            {draftsLoading || isHydratingDraft
-              ? "جار تجهيز المحرر..."
-              : "لا توجد مسودة نشطة."}
-          </p>
+          {draftsLoading || isHydratingDraft ? (
+            <>
+              <LoaderCircle
+                aria-hidden="true"
+                className="editor-page__spinner"
+                size={26}
+              />
+              <p>جار تجهيز المحرر...</p>
+            </>
+          ) : (
+            <>
+              <FolderOpen aria-hidden="true" size={26} />
+              <strong>لا توجد مسودة نشطة</strong>
+              <p>أنشئ أول مسودة وسنفتحها لك مباشرة داخل المحرر.</p>
+              <ArabicConfettiButton
+                className="editor-page__primary-action"
+                onPress={addDraft}
+              >
+                <FilePlus2 aria-hidden="true" size={18} />
+                إضافة أول نص
+              </ArabicConfettiButton>
+            </>
+          )}
         </div>
       </main>
     );
