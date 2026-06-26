@@ -1,4 +1,8 @@
-"""Script to evaluate the Word N-Gram NWP model."""
+"""Script to evaluate the Word N-Gram NWP model.
+
+Authors:
+    Akram Hany
+"""
 
 import argparse
 import json
@@ -21,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    """Run the evaluation script for the Word N-Gram model."""
     parser = argparse.ArgumentParser(description="Evaluate Word N-Gram model.")
     parser.add_argument("--dataset", type=str, default="CALM/arwiki")
     parser.add_argument("--model", type=str, required=True)
@@ -31,11 +36,11 @@ def main():
 
     args = parser.parse_args()
 
-    logger.info(f"Loading model from {args.model}...")
+    logger.info(f"Loading model: {args.model}")
     model_data = load_ngram_model(Path(args.model))
     model = WordNGramLM(model_data)
 
-    logger.info("Building Test dataset stream...")
+    logger.info("Building test stream.")
     test_stream = get_eval_stream(dataset_name=args.dataset, split_type="test")
 
     total_log_prob = 0.0
@@ -53,9 +58,7 @@ def main():
         if i >= args.test_rows:
             break
 
-        # FIX 1: Truncate RAW TEXT before tokenizing
-        # ~6 chars per Arabic word on average -> 10,000 words ≈ 60,000 chars
-        # This avoids tokenizing 500k+ words just to throw 98% away.
+        # Truncate raw text before tokenizing.
         CHAR_LIMIT = 60_000
         text = text[:CHAR_LIMIT]
 
@@ -63,29 +66,28 @@ def main():
         if len(tokens) < 2:
             continue
 
-        # FIX 3: Sample every Nth token for prediction accuracy.
-        # This reduces predict_next() calls by 5x while retaining statistical validity.
+        # Sample tokens for accuracy metric.
         SAMPLE_EVERY = 5
 
         log_prob_sum = 0.0
         tokens_scored = 0
 
-        # FIX 2: Merge perplexity + accuracy into ONE loop.
+        # Compute perplexity and accuracy.
         for j in range(1, len(tokens)):
             max_history = model.max_n - 1
             context = tokens[max(0, j - max_history) : j]
             target = tokens[j]
 
-            # Perplexity: score every token
+            # Perplexity scoring.
             token_log_prob = model.score_token(context, target)
             log_prob_sum += token_log_prob
             tokens_scored += 1
 
-            # Accuracy: only on sampled, non-special tokens
+            # Accuracy evaluation on sampled tokens.
             if j % SAMPLE_EVERY != 0:
                 continue
 
-            # Skip predicting special tokens or punctuation for accuracy metrics
+            # Skip special tokens and punctuation.
             if (
                 target in ["<s>", "</s>", "<unk>"]
                 or target in model.vocab._reverse_punct.values()
@@ -130,7 +132,7 @@ def main():
         "mrr": (mrr_sum / prediction_events) if prediction_events else 0.0,
     }
 
-    logger.info("Evaluation Complete!")
+    logger.info("Evaluation complete")
     logger.info(json.dumps(metrics, indent=4))
 
     out_path = Path(args.output)

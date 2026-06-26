@@ -1,7 +1,7 @@
 """Dataset streaming and splitting for the Word N-Gram model.
 
-Implements an 80/10/10 modulo router to safely split massive datasets
-while maintaining streaming properties (O(1) memory).
+Authors:
+    Akram Hany
 """
 
 import logging
@@ -17,23 +17,16 @@ def get_eval_stream(
     dataset_name: str = "CALM/arwiki",
     split_type: str = "train",
 ) -> Iterator[str]:
-    """Get a streaming iterator over the dataset split.
-
-    Uses modulo routing (row_index % 10) to enforce strict splits:
-    - Train (80%): 0, 1, 2, 3, 4, 5, 6, 7
-    - Validation (10%): 8
-    - Test (10%): 9
-    """
-    # Handle Local Wikipedia Dump
+    """Get a streaming iterator over the dataset split."""
     if dataset_name == "wiki_dump":
-        logger.info(f"Streaming from local Wikipedia dump for {split_type} split...")
+        logger.info(f"Streaming local Wikipedia dump: {split_type}")
 
         data_dir = Path("src/services/nws/data/ar_corpus")
 
         if not data_dir.exists():
             raise FileNotFoundError(f"Local dataset not found at {data_dir}")
 
-        # Sort files to guarantee deterministic splits
+        # Sort files for deterministic splits.
         all_files = sorted(list(data_dir.glob("*.txt")))
 
         for i, filepath in enumerate(all_files):
@@ -51,12 +44,12 @@ def get_eval_stream(
                     if raw_text.strip():
                         yield raw_text
             except Exception as e:
-                logger.warning(f"Failed to read {filepath}: {e}")
+                logger.warning(f"Read failed {filepath}: {e}")
         return
 
     # Handle Kaggle Downloaded Corpus
     if dataset_name == "kaggle":
-        logger.info(f"Streaming from Kaggle corpus output for {split_type} split...")
+        logger.info(f"Streaming Kaggle corpus: {split_type}")
 
         data_file = Path(f"src/services/nws/data/kaggle_corpus/corpus_{split_type}.txt")
 
@@ -71,7 +64,7 @@ def get_eval_stream(
 
     # Handle LSTM Corpus
     if dataset_name == "lstm":
-        logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
+        logger.info(f"Streaming LSTM corpus: {split_type}")
 
         data_file = Path(f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt")
 
@@ -85,21 +78,17 @@ def get_eval_stream(
         return
 
     # Handle HuggingFace Datasets
-    logger.info(
-        f"Connecting to HuggingFace to stream: {dataset_name} for {split_type} split..."
-    )
+    logger.info(f"Streaming HuggingFace dataset: {dataset_name} ({split_type})")
     dataset = load_dataset(dataset_name, split="train", streaming=True)
 
     if dataset_name == "CALM/arwiki":
-        logger.info("Shuffling Wikipedia articles (buffer=10000)...")
+        logger.info("Shuffling Wikipedia articles.")
         dataset = dataset.shuffle(seed=42, buffer_size=10_000)
     else:
-        logger.info(
-            f"Skipping shuffle for {dataset_name} to guarantee instant startup."
-        )
+        logger.info(f"Skipping shuffle: {dataset_name}")
 
     for i, row in enumerate(dataset):
-        # Modulo Routing
+        # Split routing.
         modulo = i % 10
 
         if split_type == "train" and modulo >= 8:

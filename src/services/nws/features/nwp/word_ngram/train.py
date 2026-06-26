@@ -1,4 +1,8 @@
-"""Script to train the Word N-Gram NWP model."""
+"""Script to train the Word N-Gram NWP model.
+
+Authors:
+    Akram Hany
+"""
 
 import argparse
 import logging
@@ -21,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    """Run the training script for the Word N-Gram model."""
     parser = argparse.ArgumentParser(description="Train Word N-Gram model.")
     parser.add_argument(
         "--dataset", type=str, default="CALM/arwiki", help="HuggingFace dataset name"
@@ -36,7 +41,7 @@ def main():
 
     args = parser.parse_args()
 
-    logger.info(f"Starting training with max_rows={args.max_rows}, max_n={args.max_n}")
+    logger.info(f"Starting training: max_rows={args.max_rows}, max_n={args.max_n}")
 
     counter = NGramCounter(max_n=args.max_n)
     vocab = Vocabulary()
@@ -63,15 +68,15 @@ def main():
 
     pbar.close()
 
-    logger.info(f"Processed {rows_processed} rows, {words_processed} words.")
-    logger.info("Applying Kneser-Ney Smoothing and Pruning...")
+    logger.info(f"Processed {rows_processed} rows, {words_processed} words")
+    logger.info("Applying Kneser-Ney smoothing")
 
     smoother = KneserNeySmoother(counter)
     model_data = smoother.build_model(min_count=args.min_count, min_n_to_prune=3)
 
-    logger.info(f"Saving model to {args.output}...")
+    logger.info(f"Saving model: {args.output}")
     save_ngram_model(model_data, Path(args.output))
-    logger.info("Training complete!")
+    logger.info("Training complete")
 
 
 if __name__ == "__main__":
