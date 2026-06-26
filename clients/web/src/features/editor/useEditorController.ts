@@ -106,6 +106,9 @@ function detectSuggestionMode(
   const before = body.slice(0, end);
   const lastChar = before.at(-1) ?? "";
   if (/[\n.!؟،؛]/u.test(lastChar)) return "sentence";
+  if (/\s/u.test(lastChar) && /\S/u.test(before.slice(0, -1))) {
+    return "sentence";
+  }
   return /[\p{L}\p{M}]{2,}$/u.test(before) ? "word" : null;
 }
 

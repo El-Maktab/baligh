@@ -52,8 +52,14 @@ function TestHarness() {
       <button onClick={() => controller.updateBody("الم")} type="button">
         word-body
       </button>
+      <button onClick={() => controller.updateBody("مرحبا ")} type="button">
+        sentence-body-space
+      </button>
       <button onClick={() => controller.updateSelection([3, 3])} type="button">
         caret-3
+      </button>
+      <button onClick={() => controller.updateSelection([6, 6])} type="button">
+        caret-6
       </button>
       <button
         onClick={() => controller.updateSelection([0, 5])}
@@ -254,6 +260,27 @@ describe("useEditorController", () => {
 
     fireEvent.click(screen.getByText("close-suggestions"));
     expect(screen.getByTestId("suggestion-open")).toHaveTextContent("false");
+  });
+
+  it("requests sentence suggestions after typing a trailing space", async () => {
+    renderHarness(createMockEditorApi());
+
+    await waitFor(() => {
+      expect(screen.getByTestId("active-title")).toHaveTextContent("عن المحبة");
+    });
+
+    fireEvent.click(screen.getByText("sentence-body-space"));
+    fireEvent.click(screen.getByText("caret-6"));
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("suggestion-open")).toHaveTextContent("true");
+      },
+      { timeout: 1_500 },
+    );
+    expect(screen.getByTestId("suggestion-mode")).toHaveTextContent(
+      "sentence",
+    );
   });
 
   it("starts tashkeel before any queued analyze request", async () => {
