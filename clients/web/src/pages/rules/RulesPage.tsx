@@ -14,11 +14,19 @@ import type { GrammarRule, RuleCategory } from "../../features/rules/types";
 import { ReferenceHeader } from "../../shared/reference/ReferenceHeader";
 import "../reference.css";
 
-const categoryLabels: Record<RuleCategory, string> = {
+const categoryLabels: Partial<Record<RuleCategory, string>> = {
   syntax: "نحو",
   orthography: "إملاء",
+  punctuation: "ترقيم",
+  morphology: "صرف",
   semantics: "استعمال لغوي",
+  merge: "دمج",
+  split: "فصل",
 };
+
+function getCategoryLabel(category: RuleCategory) {
+  return categoryLabels[category] ?? category;
+}
 
 function RuleCard({ rule, index }: { rule: GrammarRule; index: number }) {
   const reduceMotion = useReducedMotion();
@@ -26,6 +34,9 @@ function RuleCard({ rule, index }: { rule: GrammarRule; index: number }) {
     rule.category === "orthography"
       ? "/blobs/features-blob-1.svg"
       : "/blobs/features-blob-2.svg";
+  const hasExamples = Boolean(rule.incorrect || rule.correct);
+  const hasNote = Boolean(rule.note);
+  const hasExplanation = Boolean(rule.explanation);
 
   return (
     <motion.article
@@ -43,27 +54,35 @@ function RuleCard({ rule, index }: { rule: GrammarRule; index: number }) {
         src={blobSource}
       />
       <div className="rule-card__topline">
-        <span>{categoryLabels[rule.category]}</span>
+        <span>{getCategoryLabel(rule.category)}</span>
         <BookMarked aria-hidden="true" size={19} />
       </div>
       <h2>{rule.title}</h2>
-      <p className="rule-card__explanation">{rule.explanation}</p>
+      {hasExplanation ? (
+        <p className="rule-card__explanation">{rule.explanation}</p>
+      ) : null}
 
-      <div className="rule-card__examples">
-        <div data-tone="incorrect">
-          <span>
-            <CircleX aria-hidden="true" size={17} /> تجنّب
-          </span>
-          <p>{rule.incorrect}</p>
+      {hasExamples ? (
+        <div className="rule-card__examples">
+          {rule.incorrect ? (
+            <div data-tone="incorrect">
+              <span>
+                <CircleX aria-hidden="true" size={17} /> تجنّب
+              </span>
+              <p>{rule.incorrect}</p>
+            </div>
+          ) : null}
+          {rule.correct ? (
+            <div data-tone="correct">
+              <span>
+                <Check aria-hidden="true" size={17} /> الصواب
+              </span>
+              <p>{rule.correct}</p>
+            </div>
+          ) : null}
         </div>
-        <div data-tone="correct">
-          <span>
-            <Check aria-hidden="true" size={17} /> الصواب
-          </span>
-          <p>{rule.correct}</p>
-        </div>
-      </div>
-      <p className="rule-card__note">{rule.note}</p>
+      ) : null}
+      {hasNote ? <p className="rule-card__note">{rule.note}</p> : null}
     </motion.article>
   );
 }

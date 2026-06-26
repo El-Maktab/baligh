@@ -28,7 +28,7 @@ describe("editorDemoReducer", () => {
     const draft = getActiveDraft(nextState);
     expect(draft.body).toContain("يعتني");
     expect(draft.body).not.toContain("يعتن بالتفاصيل");
-    expect(getCorrectionCounts(draft).all).toBe(3);
+    expect(getCorrectionCounts(draft).all).toBe(4);
   });
 
   it("marks unmatched active corrections as stale after direct text edits", () => {
@@ -41,7 +41,7 @@ describe("editorDemoReducer", () => {
     const draft = getActiveDraft(nextState);
     expect(
       draft.corrections.filter((correction) => correction.status === "stale"),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
   });
 
   it("shifts later correction ranges when text is inserted before them", () => {
@@ -71,8 +71,8 @@ describe("editorDemoReducer", () => {
     const corrections = getActiveDraft(nextState).corrections;
     expect(corrections[0]?.status).toBe("stale");
     expect(
-      corrections.slice(1).every(({ status }) => status === "active"),
-    ).toBe(true);
+      corrections.find((correction) => correction.id === "correction-3")?.status,
+    ).toBe("active");
   });
 
   it("applies inline formatting only to the selected range", () => {
@@ -88,6 +88,21 @@ describe("editorDemoReducer", () => {
 
     expect(formatted.drafts[0]?.formatting.strong).toEqual([[0, 7]]);
     expect(getActiveDraft(switched).formatting.strong).toEqual([]);
+  });
+
+  it("does not accept a detection-only finding as a correction", () => {
+    const state = createInitialEditorState();
+    const nextState = editorDemoReducer(state, {
+      type: "acceptCorrection",
+      correctionId: "detection-1",
+    });
+
+    expect(getActiveDraft(nextState).body).toBe(getActiveDraft(state).body);
+    expect(
+      getActiveDraft(nextState).corrections.find(
+        (correction) => correction.id === "detection-1",
+      )?.status,
+    ).toBe("active");
   });
 
   it("formats the current line when the selection is collapsed", () => {

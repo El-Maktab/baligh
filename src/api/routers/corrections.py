@@ -1,45 +1,35 @@
-"""Router for accepting or ignoring a correction.
+"""Router for accepting or ignoring a correction."""
 
-It updates the draft body and correction status via the repository.
-"""
-
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-from src.api.services.drafts import apply_correction, get_draft, ignore_correction
+from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
+from src.api.services.drafts import (
+    CorrectionNotAvailableError,
+    RevisionConflictError,
+    apply_correction,
+    get_draft,
+    ignore_correction,
+)
+from src.api.services.editor_contract import (
+    AcceptCorrectionResponse,
+    CorrectionActionRequest,
+    IgnoreCorrectionResponse,
+    RevisionConflictPayload,
+    get_correction_counts,
+)
 
 router = APIRouter()
 
 
-class AcceptCorrectionRequest(BaseModel):
-    """Request model for accepting a correction."""
-
-    body: str | None = None
-    clientRevision: int | None = None
-
-
-class AcceptCorrectionResponse(BaseModel):
-    """Response model for accepting a correction."""
-
-    draftBody: str
-    persistedRevision: int
-    corrections: list = Field(default_factory=list)
-    counts: dict = Field(default_factory=dict)
-
-
-class IgnoreCorrectionRequest(BaseModel):
-    """Request model for ignoring a correction."""
-
-    body: str | None = None
-    clientRevision: int | None = None
-
-
-class IgnoreCorrectionResponse(BaseModel):
-    """Response model for ignoring a correction."""
-
-    correctionId: str
-    status: str = "ignored"
-    corrections: list = Field(default_factory=list)
-    counts: dict = Field(default_factory=dict)
+def conflict_response(
+    error: RevisionConflictError | CorrectionNotAvailableError,
+) -> JSONResponse:
+    """Build a 409 payload the frontend can hydrate directly."""
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content=RevisionConflictPayload(latestDraft=error.latest_draft).model_dump(
+            mode="json"
+        ),
+    )
 
 
 @router.post(
@@ -47,26 +37,33 @@ class IgnoreCorrectionResponse(BaseModel):
     response_model=AcceptCorrectionResponse,
 )
 async def accept_correction(
-    draft_id: str, correction_id: str, payload: AcceptCorrectionRequest
+    draft_id: str, correction_id: str, payload: CorrectionActionRequest
 ):
     """Accept a correction for a given draft."""
     draft = await get_draft(draft_id)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
-    body = payload.body if payload.body is not None else draft.body
-    if not body:
-        raise HTTPException(status_code=400, detail="Invalid draft body")
 
-    updated = await apply_correction(draft_id, correction_id, replacement=body)
+    try:
+        updated = await apply_correction(
+            draft_id,
+            correction_id,
+            client_revision=payload.clientRevision,
+            body=payload.body,
+        )
+    except (RevisionConflictError, CorrectionNotAvailableError) as error:
+        return conflict_response(error)
+
     if not updated or not updated.body:
         raise HTTPException(
-            status_code=404, detail="Correction not found or update failed"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Correction not found or update failed",
         )
     return AcceptCorrectionResponse(
         draftBody=updated.body,
         persistedRevision=updated.revision,
         corrections=updated.corrections,
-        counts={},
+        counts=get_correction_counts(updated.corrections),
     )
 
 
@@ -75,20 +72,29 @@ async def accept_correction(
     response_model=IgnoreCorrectionResponse,
 )
 async def ignore_correction_endpoint(
-    draft_id: str, correction_id: str, payload: IgnoreCorrectionRequest
+    draft_id: str, correction_id: str, payload: CorrectionActionRequest
 ):
     """Ignore a correction for a given draft."""
     draft = await get_draft(draft_id)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
-    updated = await ignore_correction(draft_id, correction_id)
+    try:
+        updated = await ignore_correction(
+            draft_id,
+            correction_id,
+            client_revision=payload.clientRevision,
+        )
+    except (RevisionConflictError, CorrectionNotAvailableError) as error:
+        return conflict_response(error)
+
     if not updated:
         raise HTTPException(
-            status_code=404, detail="Correction not found or update failed"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Correction not found or update failed",
         )
     return IgnoreCorrectionResponse(
         correctionId=correction_id,
         status="ignored",
         corrections=updated.corrections,
-        counts={},
+        counts=get_correction_counts(updated.corrections),
     )

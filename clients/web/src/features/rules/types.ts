@@ -1,4 +1,12 @@
-export type RuleCategory = "syntax" | "orthography" | "semantics";
+export type RuleCategory =
+  | "syntax"
+  | "orthography"
+  | "punctuation"
+  | "morphology"
+  | "semantics"
+  | "merge"
+  | "split"
+  | (string & {});
 
 export type GrammarRule = {
   id: string;
