@@ -601,6 +601,28 @@ def normalize_candidate_edit(
     ).model_dump(mode="json")
 
 
+def should_expose_candidate_edit(
+    body: str,
+    candidate: RankedEdit,
+    module_name: ModuleName,
+) -> bool:
+    """Return whether a ranked candidate should be shown in the editor."""
+    if module_name != ModuleName.TAG:
+        return True
+
+    start, end = candidate.span
+    original = body[start:end]
+    replacement = candidate.correction
+
+    original_without_whitespace = "".join(
+        char for char in original if not char.isspace()
+    )
+    replacement_without_whitespace = "".join(
+        char for char in replacement if not char.isspace()
+    )
+    return original_without_whitespace != replacement_without_whitespace
+
+
 def normalize_error_detection(
     detection_id: str,
     body: str,

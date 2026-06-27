@@ -4,7 +4,6 @@ import uuid
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
-from loguru import logger
 from src.api.services.corrections import run as corrections_run
 from src.api.services.drafts import RevisionConflictError, get_draft, update_draft
 from src.api.services.editor_contract import (
@@ -14,6 +13,7 @@ from src.api.services.editor_contract import (
     get_correction_counts,
     normalize_candidate_edit,
     normalize_error_detection,
+    should_expose_candidate_edit,
 )
 from src.services.ged.schemas import ErrorSpan
 from starlette.concurrency import run_in_threadpool
@@ -70,6 +70,12 @@ async def analyze_draft(draft_id: str, payload: AnalyzeRequest):
         error_span = _find_matching_error(ged_output, candidate)
         if error_span is not None:
             matched_error_keys.add(_error_key(error_span))
+        if not should_expose_candidate_edit(
+            body=body,
+            candidate=candidate,
+            module_name=candidate.selected_module,
+        ):
+            continue
         normalized = normalize_candidate_edit(
             correction_id=f"corr-{uuid.uuid4()}",
             body=body,

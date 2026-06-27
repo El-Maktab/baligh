@@ -230,18 +230,30 @@ def test_sy_verb_subject_vso():
 
 
 def test_sy_noun_adj_definiteness():
-    """Flags an adjective whose definiteness does not match the preceding noun."""
-    noun = _T("الكتاب", (0, 6), 0)
-    adj = _T("مفيد", (7, 11), 1)
-    n_morph = _M(0, "NOUN", definiteness="definite")
-    a_morph = _M(1, "ADJ", definiteness="indefinite")
+    """Flags the safer noun-adjective definiteness mismatch direction."""
+    noun = _T("كتاب", (0, 4), 0)
+    adj = _T("المفيد", (5, 11), 1)
+    n_morph = _M(0, "NOUN", definiteness="indefinite")
+    a_morph = _M(1, "ADJ", definiteness="definite")
 
     spans = _run("SY_NOUN_ADJ_DEFINITENESS", [noun, adj], [[n_morph], [a_morph]])
 
     assert len(spans) == 1
-    assert spans[0].span == (7, 11)
+    assert spans[0].span == (5, 11)
     assert spans[0].category == ErrorCategory.SYNTAX
     assert spans[0].subtype == "noun_adjective_agreement"
+
+
+def test_sy_noun_adj_definiteness_skips_predicate_like_pair():
+    """A definite noun plus indefinite adjective can be a valid predicate."""
+    noun = _T("الكتابان", (0, 8), 0)
+    adj = _T("مفيدان", (9, 15), 1)
+    n_morph = _M(0, "NOUN", definiteness="definite", number="dual")
+    a_morph = _M(1, "ADJ", definiteness="indefinite", number="dual")
+
+    spans = _run("SY_NOUN_ADJ_DEFINITENESS", [noun, adj], [[n_morph], [a_morph]])
+
+    assert spans == []
 
 
 def test_sy_demonstrative_noun_gender():
