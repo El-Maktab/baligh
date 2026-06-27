@@ -12,11 +12,15 @@ from src.services.gec.config import (
     MIN_LABEL_FREQUENCY,
     TRAIN_COR_PATH,
     TRAIN_SENT_PATH,
+    PNX_TRAIN_OUTPUT,
+    NOPNX_TRAIN_OUTPUT,
 )
 from src.services.gec.features.common import build_feature_builder
+from src.services.gec.features.exporter import DatasetExporter
 from src.services.gec.features.feature_builder import FeatureBuilder
 from src.services.gec.features.pruner import LabelPruner
 from src.services.gec.features.vocabulary import LabelVocabularyBuilder
+from src.services.gec.modules.edit_tagger.preprocessing.segregator import Segregator
 
 
 def save_json(
@@ -40,7 +44,7 @@ def build_train() -> None:
     logger.info("examples created")
 
     pruner = LabelPruner(min_frequency=MIN_LABEL_FREQUENCY)
-
+    
     examples = pruner.prune(examples)
     logger.info("pruned")
     vocab_builder = LabelVocabularyBuilder()
@@ -52,6 +56,8 @@ def build_train() -> None:
 
     logger.info("label2id created")
 
-    # exporter = DatasetExporter()
-    # exporter.export_jsonl(examples, NOPNX_TRAIN_OUTPUT)
-    # exporter.export_jsonl(examples, PNX_TRAIN_OUTPUT)
+    exporter = DatasetExporter()
+    segregator = Segregator()
+    punc_examples, non_punc_examples = segregator.segregate(examples)
+    exporter.export_jsonl(punc_examples, NOPNX_TRAIN_OUTPUT)
+    exporter.export_jsonl(non_punc_examples, PNX_TRAIN_OUTPUT)

@@ -13,6 +13,7 @@ from src.services.gec.modules.edit_tagger.preprocessing.projector import (
     SubwordProjector,
 )
 from src.services.gec.modules.edit_tagger.preprocessing.rewriter import Rewriter
+from src.services.gec.modules.edit_tagger.preprocessing.segregator import Segregator
 
 
 class FeatureBuilder:
@@ -89,6 +90,7 @@ class FeatureBuilder:
                 self.extractor,
                 self.compressor,
             )
+
             processed_results.append(examp)
             all_results.append(examp)
             if (
