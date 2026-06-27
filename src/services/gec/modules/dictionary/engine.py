@@ -155,6 +155,9 @@ class DictionaryEngine:
 
     def _get_ranked_forms(self, token: Token) -> list[str]:
         """Return cached ranked forms for a token surface when available."""
+        if not token.form or not token.affix_structure:
+            logger.warning("Token missing form or affix_structure: {}", token)
+            return []
         cache_key = (token.form, token.affix_structure)
         cached = self._candidate_cache.get(cache_key)
         if cached is not None:

@@ -18,9 +18,7 @@ class EditTaggerService(GECModule):
 
     def __init__(self):
         """Initialize EditTaggerService."""
-        best_model_path = Path(
-            "src/services/gec/models/edit_tagger_v1/checkpoint-3642"
-        )
+        best_model_path = Path("src/services/gec/models/edit_tagger_v1/checkpoint-3642")
         inference_model = AutoModelForTokenClassification.from_pretrained(
             best_model_path
         )

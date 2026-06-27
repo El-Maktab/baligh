@@ -2,7 +2,6 @@
 
 from src.api.services.baligh_singleton import get_baligh
 from src.services.nws.schemas import NWSOutput
-from src.services.preprocessing.schemas import PreprocessingOutput
 
 
 def run(input_text: str) -> NWSOutput:

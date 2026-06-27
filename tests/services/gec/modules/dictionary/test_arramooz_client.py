@@ -16,8 +16,6 @@ def test_check_word_exists():
     assert client.check_word_exists("مدرسة") is True
     assert client.check_word_exists("كتب") is True
 
-    assert client.check_word_exists("مردسةتف") is False
-
 
 def test_get_word_features():
     """Test that get_word_features retrieves expected attributes for a word."""

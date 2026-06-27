@@ -72,7 +72,7 @@ class ArramoozClient:
                     results.append(row_dict)
             except sqlite3.OperationalError:
                 logger.exception("Error querying table {}", table)
-        
+
         for word in self._stop_words:
             stop_word_dict = {"unvocalized": word, "table": "stop_words"}
             results.append(stop_word_dict)
@@ -168,7 +168,7 @@ class ArramoozClient:
                 return int(row["freq"])
         except sqlite3.OperationalError:
             logger.exception("Error querying word frequency for {!r}", word)
-        
+
         if word in self._stop_words:
             return STOP_WORD_FREQUENCY
         return 0
