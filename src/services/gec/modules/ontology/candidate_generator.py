@@ -49,13 +49,6 @@ class CandidateGenerator:
     ) -> list[CandidateEdit]:
         """Generates full sentence correction candidates.
 
-        Following the paper methodology:
-        1. Discover all grammatical relations from ontology
-        2. Validate constraints and detect violations
-        3. For each violation, generate alternative forms for affected tokens
-        4. Build complete corrected sentences by combining alternatives
-        5. Rank complete sentences by Levenshtein distance and other signals
-
         Args:
             tokens: Preprocessed text tokens.
             spans: Detected error spans from GED.
@@ -104,14 +97,12 @@ class CandidateGenerator:
             else:
                 confidence = ged_syntax_indices[tidx]
 
-            # Generate alternative forms for this token
             alternatives = self._generate_alternatives_for_token(
                 tokens, morph_features, violation, confidence
             )
 
             if alternatives:
                 token_alternatives[tidx] = alternatives
-                # Store explanation for the first violation at this token
                 if tidx not in token_explanations:
                     token_explanations[tidx] = (
                         self._explanation_generator.generate_explanation(
@@ -125,13 +116,11 @@ class CandidateGenerator:
             return []
 
         # Step 4: Generate complete sentences by combining alternatives
-        # Start with original sentence
         original_sentence = "".join(
             token.form + (" " if i < len(tokens) - 1 else "")
             for i, token in enumerate(tokens)
         )
 
-        # Generate all combinations of alternatives
         complete_sentences = self._generate_complete_sentences(
             tokens, original_sentence, token_alternatives
         )
@@ -166,13 +155,11 @@ class CandidateGenerator:
         target_internal = normalize_camel(target_analysis)
         expected_features = violation.expected_features
 
-        # Determine constraints for morphological generation
         is_annex = (
             violation.relation_name == "مضاف_اليه"
             or violation.violation_type == "nun_deletion"
         )
 
-        # Preserve original number for case/gender corrections
         number_val = target_internal.number
         if violation.violation_type == "number_mismatch":
             number_val = expected_features.get("number") or target_internal.number
@@ -235,30 +222,20 @@ class CandidateGenerator:
         """
         import itertools
 
-        # Get all token indices with alternatives
         token_indices = sorted(token_alternatives.keys())
 
-        # Get all alternative forms for each token
         all_alternatives = []
         for tidx in token_indices:
             forms = [alt[0] for alt in token_alternatives[tidx]]
             all_alternatives.append(forms)
 
-        # Generate all combinations
         complete_sentences = []
         if all_alternatives:
             for combination in itertools.product(*all_alternatives):
-                # Build sentence with this combination of alternatives
                 token_forms = list(zip(token_indices, combination, strict=False))
                 sentence = self._build_sentence(tokens, token_forms)
 
-                # Calculate minimum confidence across changes
-                min_conf = min(
-                    token_alternatives[tidx][0][
-                        2
-                    ]  # Use confidence from first alternative
-                    for tidx in token_indices
-                )
+                min_conf = min(token_alternatives[tidx][0][2] for tidx in token_indices)
 
                 complete_sentences.append(
                     {
@@ -284,10 +261,8 @@ class CandidateGenerator:
         Returns:
             Complete sentence string
         """
-        # Create a mapping of changed tokens
         form_map = dict(token_forms)
 
-        # Build sentence with original or changed forms
         forms = []
         for i, token in enumerate(tokens):
             if i in form_map:
@@ -308,31 +283,62 @@ class CandidateGenerator:
         if not complete_sentences:
             return []
 
-        # Full sentence span and all token references
-        full_span = (0, sum(len(token.form) + 1 for token in tokens) - 1)
-        all_token_refs = list(range(len(tokens)))
-
-        edits = []
+        sentence_edits = []
+        metadata_by_edit_id: dict[int, tuple[list[tuple[int, str]], str | None]] = {}
         for cs in complete_sentences:
             sentence = cs["sentence"]
             token_forms = cs["token_forms"]
             confidence = cs["min_confidence"]
 
-            # Use explanation from first changed token
             explanation = None
             if token_forms:
                 first_tidx = token_forms[0][0]
                 explanation = token_explanations.get(first_tidx)
 
             edit = CandidateEdit(
-                span=full_span,
-                token_refs=all_token_refs,
+                span=(0, len(original_sentence)),
+                token_refs=list(range(len(tokens))),
                 correction=sentence,
                 edit_confidence=confidence,
                 explanation=explanation,
             )
-            edits.append(edit)
+            sentence_edits.append(edit)
+            metadata_by_edit_id[id(edit)] = (token_forms, explanation)
 
-        # Rank by Levenshtein distance from original
-        ranked = self._ranking_engine.rank_complete_sentences(edits, original_sentence)
-        return ranked
+        ranked_sentences = self._ranking_engine.rank_complete_sentences(
+            sentence_edits, original_sentence
+        )
+        return [
+            self._localize_ranked_edit(
+                tokens=tokens,
+                token_forms=metadata_by_edit_id[id(edit)][0],
+                confidence=edit.edit_confidence,
+                explanation=metadata_by_edit_id[id(edit)][1],
+            )
+            for edit in ranked_sentences
+        ]
+
+    def _localize_ranked_edit(
+        self,
+        tokens: list[Token],
+        token_forms: list[tuple[int, str]],
+        confidence: float,
+        explanation: str | None,
+    ) -> CandidateEdit:
+        """Convert a sentence-level correction into a localized candidate edit."""
+        token_indices = [token_index for token_index, _ in token_forms]
+        first_token = min(token_indices)
+        last_token = max(token_indices)
+        replacement_forms = dict(token_forms)
+        replacement = " ".join(
+            replacement_forms.get(index, tokens[index].form)
+            for index in range(first_token, last_token + 1)
+        )
+
+        return CandidateEdit(
+            span=(tokens[first_token].span[0], tokens[last_token].span[1]),
+            token_refs=token_indices,
+            correction=replacement,
+            edit_confidence=confidence,
+            explanation=explanation,
+        )

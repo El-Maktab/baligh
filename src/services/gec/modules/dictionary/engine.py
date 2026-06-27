@@ -1,7 +1,10 @@
 """Orchestrates the dictionary module's sub-components."""
 
+from collections import OrderedDict
+
 from loguru import logger
 
+from src.core.schemas import Token
 from src.services.gec.schemas import (
     CandidateEdit,
     GECInput,
@@ -9,22 +12,21 @@ from src.services.gec.schemas import (
     ModuleResult,
     ModuleStatus,
 )
-from src.services.ged.schemas import ErrorCategory
+from src.services.ged.schemas import ErrorCategory, ErrorSource
 
 from .alternative_ranker import MAX_ALTERNATIVES, AlternativeRanker
 from .arramooz_client import ArramoozClient
 from .spell_checker import SpellChecker
 
 _GED_FLAGGED_CONFIDENCE = 0.9
-_UNFLAGGED_OOV_CONFIDENCE = 0.5
+_CANDIDATE_CACHE_SIZE = 2048
 
 
 class DictionaryEngine:
     """Integrates spell checking and ranking to process GEC inputs.
 
-    Checks all tokens for OOV spelling errors, not just those flagged by GED.
-    Tokens that appear in errors_span with ORTHOGRAPHY category
-    receive a higher edit confidence than tokens discovered as OOV independently.
+    Generates spelling suggestions only for tokens that the GED lexicon detector
+    already flagged as orthography mistakes.
     """
 
     def __init__(self, arramooz_client: ArramoozClient | None = None) -> None:
@@ -34,6 +36,7 @@ class DictionaryEngine:
         )
         self.spell_checker = SpellChecker(self.arramooz_client)
         self.alternative_ranker = AlternativeRanker(self.arramooz_client)
+        self._candidate_cache: OrderedDict[tuple[str, str], list[str]] = OrderedDict()
         logger.info("DictionaryEngine initialized successfully")
 
     def close(self) -> None:
@@ -45,10 +48,9 @@ class DictionaryEngine:
         """Process the input and return spelling corrections.
 
         Strategy:
-            1.  Collect token indices flagged by GED as ORTHOGRAPHY
-                errors. These are processed first with high confidence.
-            2.  Scan every remaining token for OOV and generate candidates
-                with lower confidence.
+            1.  Collect token indices flagged by the GED lexicon detector as
+                ORTHOGRAPHY errors.
+            2.  Generate candidates only for those flagged tokens.
 
         Args:
             input_data: The GEC pipeline input containing text, tokens,
@@ -66,9 +68,12 @@ class DictionaryEngine:
             len(input_data.errors_span),
         )
 
-        # Tokens flagged by GED as orthography errors
+        # Tokens flagged by the GED lexicon detector as orthography errors
         for error_span in input_data.errors_span:
-            if error_span.category != ErrorCategory.ORTHOGRAPHY:
+            if (
+                error_span.category != ErrorCategory.ORTHOGRAPHY
+                or ErrorSource.LEXICON_MATCHER not in error_span.sources
+            ):
                 continue
             for tidx in error_span.token_refs:
                 if tidx in ged_flagged:
@@ -79,21 +84,6 @@ class DictionaryEngine:
                     edits.append(edit)
 
         logger.debug("GED-flagged orthography tokens: {}", len(ged_flagged))
-
-        # Scan remaining tokens for OOV errors GED may have missed
-        oov_count = 0
-        for token in input_data.tokens:
-            tidx = token.index
-            if tidx in ged_flagged:
-                continue
-            if not self.spell_checker.is_oov(token):
-                continue
-            oov_count += 1
-            edit = self._check_token(input_data, tidx, _UNFLAGGED_OOV_CONFIDENCE)
-            if edit is not None:
-                edits.append(edit)
-
-        logger.debug("Unflagged OOV tokens discovered: {}", oov_count)
 
         status = ModuleStatus.INCORRECT if edits else ModuleStatus.CORRECT
         logger.info(
@@ -132,20 +122,8 @@ class DictionaryEngine:
             return None
 
         token = input_data.tokens[token_index]
-        candidates = self.spell_checker.generate_candidates(token)
-        if not candidates:
-            logger.warning(
-                "No spelling candidates for token '{}' at index {}",
-                token.form,
-                token_index,
-            )
-            return None
-
-        ranked_candidates = self.alternative_ranker.rank_alternatives(
-            token,
-            candidates,
-        )
-        if not ranked_candidates:
+        ranked_forms = self._get_ranked_forms(token)
+        if not ranked_forms:
             logger.warning(
                 "No ranked alternatives for token '{}' at index {}",
                 token.form,
@@ -161,12 +139,11 @@ class DictionaryEngine:
             for error_span in input_data.errors_span:
                 if (
                     error_span.category == ErrorCategory.ORTHOGRAPHY
+                    and ErrorSource.LEXICON_MATCHER in error_span.sources
                     and token_index in error_span.token_refs
                 ):
                     confidence = max(confidence, error_span.confidence)
                     break
-
-        ranked_forms = [c.form for c in ranked_candidates[:MAX_ALTERNATIVES]]
 
         return CandidateEdit(
             span=(start, end),
@@ -175,3 +152,38 @@ class DictionaryEngine:
             correction=ranked_forms[0],
             edit_confidence=min(confidence, 1.0),
         )
+
+    def _get_ranked_forms(self, token: Token) -> list[str]:
+        """Return cached ranked forms for a token surface when available."""
+        if not token.form or not token.affix_structure:
+            logger.warning("Token missing form or affix_structure: {}", token)
+            return []
+        cache_key = (token.form, token.affix_structure)
+        cached = self._candidate_cache.get(cache_key)
+        if cached is not None:
+            self._candidate_cache.move_to_end(cache_key)
+            return list(cached)
+
+        candidates = self.spell_checker.generate_candidates(token)
+        if not candidates:
+            self._remember_ranked_forms(cache_key, [])
+            return []
+
+        ranked_candidates = self.alternative_ranker.rank_alternatives(
+            token,
+            candidates,
+        )
+        ranked_forms = [c.form for c in ranked_candidates[:MAX_ALTERNATIVES]]
+        self._remember_ranked_forms(cache_key, ranked_forms)
+        return list(ranked_forms)
+
+    def _remember_ranked_forms(
+        self,
+        cache_key: tuple[str, str],
+        ranked_forms: list[str],
+    ) -> None:
+        """Store ranked forms in a small LRU cache."""
+        self._candidate_cache[cache_key] = list(ranked_forms)
+        self._candidate_cache.move_to_end(cache_key)
+        if len(self._candidate_cache) > _CANDIDATE_CACHE_SIZE:
+            self._candidate_cache.popitem(last=False)

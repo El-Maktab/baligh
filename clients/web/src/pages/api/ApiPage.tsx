@@ -56,7 +56,7 @@ const apiGroups: ApiGroup[] = [
         path: "/api/v1/drafts",
         title: "قائمة المسودات (List Drafts)",
         description:
-          "استرجاع قائمة بجميع مسودات المستخدم مع ملخص لكل مسودة (المعرف، العنوان، حالة التقدم، وتاريخ التعديل).",
+          "استرجاع قائمة بجميع مسودات المستخدم مع ملخص لكل مسودة (المعرف، العنوان، حالة التقدم، وتاريخ التعديل). إذا لم تكن هناك بيانات بعد فستعود المصفوفة فارغة، ويقوم الخادم افتراضياً بإنشاء مسودة أولية لتسهيل فتح المحرر.",
         responseJson: JSON.stringify(
           [
             {
@@ -157,6 +157,7 @@ const apiGroups: ApiGroup[] = [
               {
                 id: "err-1",
                 category: "spelling",
+                bucket: "spelling",
                 status: "active",
                 span: { start: 14, end: 19 },
                 title: "ياء زائفة",
@@ -166,6 +167,10 @@ const apiGroups: ApiGroup[] = [
                 explanation:
                   "الأفعال المعتلة الآخر بالياء تُكتب بالياء المنقوطة (ي) وليس بالألف المقصورة (ى).",
                 ruleLabel: "كتابة الياء المتطرفة",
+                taxonomyCode: "OT:ya",
+                taxonomyLabel: "ya",
+                sourceModule: "DICTIONARY",
+                confidence: 0.93,
               },
             ],
           },
@@ -303,15 +308,20 @@ const apiGroups: ApiGroup[] = [
               {
                 id: "err-1",
                 category: "spelling",
+                bucket: "spelling",
                 status: "active",
                 span: { start: 14, end: 19 },
-                title: "ياء زائفة",
+                title: "تصحيح إملائي",
                 lineLabel: "السطر ١",
                 original: "يحتوى",
                 replacement: "يحتوي",
                 explanation:
                   "الأفعال المعتلة الآخر بالياء تُكتب بالياء المنقوطة (ي) وليس بالألف المقصورة (ى).",
                 ruleLabel: "كتابة الياء المتطرفة",
+                taxonomyCode: "OT:ya",
+                taxonomyLabel: "ya",
+                sourceModule: "DICTIONARY",
+                confidence: 0.93,
               },
             ],
             counts: {
@@ -374,15 +384,20 @@ const apiGroups: ApiGroup[] = [
               {
                 id: "err-1",
                 category: "spelling",
+                bucket: "spelling",
                 status: "accepted",
                 span: { start: 14, end: 19 },
-                title: "ياء زائفة",
+                title: "تصحيح إملائي",
                 lineLabel: "السطر ١",
                 original: "يحتوى",
                 replacement: "يحتوي",
                 explanation:
                   "الأفعال المعتلة الآخر بالياء تُكتب بالياء المنقوطة (ي) وليس بالألف المقصورة (ى).",
                 ruleLabel: "كتابة الياء المتطرفة",
+                taxonomyCode: "OT:ya",
+                taxonomyLabel: "ya",
+                sourceModule: "DICTIONARY",
+                confidence: 0.93,
               },
             ],
             counts: {
@@ -444,15 +459,20 @@ const apiGroups: ApiGroup[] = [
               {
                 id: "err-1",
                 category: "spelling",
+                bucket: "spelling",
                 status: "ignored",
                 span: { start: 14, end: 19 },
-                title: "ياء زائفة",
+                title: "تصحيح إملائي",
                 lineLabel: "السطر ١",
                 original: "يحتوى",
                 replacement: "يحتوي",
                 explanation:
                   "الأفعال المعتلة الآخر بالياء تُكتب بالياء المنقوطة (ي) وليس بالألف المقصورة (ى).",
                 ruleLabel: "كتابة الياء المتطرفة",
+                taxonomyCode: "OT:ya",
+                taxonomyLabel: "ya",
+                sourceModule: "DICTIONARY",
+                confidence: 0.93,
               },
             ],
             counts: {
@@ -600,9 +620,9 @@ const apiGroups: ApiGroup[] = [
         ),
         responseJson: JSON.stringify(
           {
-            draftBody: "كَتَبَ بَلِيغٌ نَصَّاُ",
+            draftBody: "كتب بليغ نصا",
             replaceRange: { start: 0, end: 12 },
-            persistedRevision: 6,
+            persistedRevision: 5,
           },
           null,
           2,

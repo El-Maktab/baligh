@@ -43,7 +43,7 @@ describe("useRulesController", () => {
     renderHarness();
 
     await waitFor(() => {
-      expect(screen.getByTestId("visible-count")).toHaveTextContent("7");
+      expect(screen.getByTestId("visible-count")).toHaveTextContent("8");
       expect(screen.getByTestId("first-title")).toHaveTextContent(
         "جزم المضارع بعد «لم»",
       );
@@ -54,7 +54,7 @@ describe("useRulesController", () => {
     renderHarness();
 
     await waitFor(() => {
-      expect(screen.getByTestId("visible-count")).toHaveTextContent("7");
+      expect(screen.getByTestId("visible-count")).toHaveTextContent("8");
     });
 
     fireEvent.click(screen.getByText("filter-orthography"));
@@ -69,7 +69,7 @@ describe("useRulesController", () => {
     renderHarness();
 
     await waitFor(() => {
-      expect(screen.getByTestId("visible-count")).toHaveTextContent("7");
+      expect(screen.getByTestId("visible-count")).toHaveTextContent("8");
     });
 
     fireEvent.click(screen.getByText("search-semantic"));

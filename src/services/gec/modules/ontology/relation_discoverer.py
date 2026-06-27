@@ -14,6 +14,7 @@ from src.services.gec.features.camel_adapter import (
     normalize_camel,
 )
 from src.services.gec.modules.ontology.constants import (
+    BASE_PRIORITIES,
     EQUIVALENT_CLASS_URI,
     INTERSECTION_OF_URI,
     NOUN_CASES,
@@ -99,23 +100,33 @@ class RelationDiscoverer:
         """Discovers all applicable grammatical relations between tokens."""
         relations = []
 
+        for i in range(len(tokens)):
+            logger.debug(
+                "Token[{}]: {} | MorphFeatures: {}",
+                i,
+                tokens[i].form,
+                morph_features[i],
+            )
+
         for i in range(len(tokens) - 1):
+            if tokens[i].form in [".", ",", ";", ":", "!", "?"]:
+                continue
+
             for j in range(i + 1, len(tokens)):
+                if tokens[j].form in [".", ",", ";", ":", "!", "?"]:
+                    break
+
                 relations.extend(self._check_pair(i, j, morph_features))
                 relations.extend(self._check_pair(j, i, morph_features))
 
-        # Global filtering: for each token pair, keep only best priority relations
         if relations:
-            # Group by unordered (source, target) pair
             pair_best: dict[frozenset, list[RelationMetadata]] = {}
             for r in relations:
-                # Use frozenset to group both directions of same pair
                 pair = frozenset([r.source_token_idx, r.target_token_idx])
                 if pair not in pair_best:
                     pair_best[pair] = []
                 pair_best[pair].append(r)
 
-            # Keep only best priority relations for each pair
             filtered = []
             for rels in pair_best.values():
                 rels.sort(key=lambda r: r.priority)
@@ -124,7 +135,6 @@ class RelationDiscoverer:
 
             relations = filtered
 
-        # Deduplicate by (relation_name, source, target)
         seen = set()
         deduped = []
         for r in relations:
@@ -274,35 +284,7 @@ class RelationDiscoverer:
                     )
                 )
 
-        # Sort by priority and filter to keep only best relations
-        if relations:
-            # Group by (source, target) pair and keep best priority per pair
-            pair_best: dict[tuple[int, int], list[RelationMetadata]] = {}
-            for r in relations:
-                pair = (r.source_token_idx, r.target_token_idx)
-                if pair not in pair_best:
-                    pair_best[pair] = []
-                pair_best[pair].append(r)
-
-            # Keep only best priority relations for each pair
-            filtered = []
-            for rels in pair_best.values():
-                rels.sort(key=lambda r: r.priority)
-                best_priority = rels[0].priority
-                filtered.extend([r for r in rels if r.priority == best_priority])
-
-            relations = filtered
-
-        # Deduplicate by (relation_name, source, target)
-        seen = set()
-        deduped = []
-        for r in relations:
-            key = (r.relation_name, r.source_token_idx, r.target_token_idx)
-            if key not in seen:
-                seen.add(key)
-                deduped.append(r)
-
-        return deduped
+        return relations
 
     def _calculate_priority(
         self,
@@ -310,63 +292,30 @@ class RelationDiscoverer:
         source_internal: InternalMorphFeatures,
         target_internal: InternalMorphFeatures,
     ) -> int:
-        """Calculates priority for a relation based on POS specificity.
+        """Calculate the priority of a relation based on morphological features."""
 
-        Lower priority = better match. Priority rules:
-        - Adjective relations (نعت) get priority 0 when target is adj
-        - Idafa relations get priority 0 when target is definite genitive
-        - Subject-verb (فاعل) gets priority 0 for noun-verb pairs
-        - Badal relations get priority 10 (less specific)
-        - Tamyeez relations get priority 8 (less specific than idafa)
-        - Object relations get priority 7 (less specific than subject)
-        - Other relations get priority 5
-        """
-        # نعت (adjective) relation should be preferred when target is adjective
         if rel_name == "نعت" and target_internal.pos == "adj":
             return 0
 
-        # مضاف_اليه (idafa) should be preferred when:
-        # - source is indefinite (نكرة)
-        # - target is definite (معرفة) and genitive
-        if rel_name == "مضاف_اليه":
-            if (
-                source_internal.definiteness == "indefinite"
-                and target_internal.definiteness == "definite"
-                and target_internal.case == "genitive"
-            ):
-                return 0
+        if (
+            rel_name == "مضاف_اليه"
+            and source_internal.definiteness == "indefinite"
+            and target_internal.definiteness == "definite"
+            and target_internal.case == "genitive"
+        ):
+            return 0
 
-        # فاعل (subject) should be preferred for noun-verb pairs
-        if rel_name == "فاعل":
-            if source_internal.pos in ("noun", "adj") and target_internal.pos == "verb":
-                return 0
+        if (
+            rel_name in {"فاعل", "نائب_الفاعل"}
+            and source_internal.pos in {"noun", "adj"}
+            and target_internal.pos == "verb"
+        ):
+            return 0
 
-        # نائب_الفاعل (passive subject) also for noun-verb pairs
-        if rel_name == "نائب_الفاعل":
-            if source_internal.pos in ("noun", "adj") and target_internal.pos == "verb":
-                return 0
+        for prefix, priority in BASE_PRIORITIES.items():
+            if rel_name.startswith(prefix):
+                return priority
 
-        # تمييز_ذات (tamyeez) is less specific than idafa
-        if rel_name == "تمييز_ذات":
-            return 8
-
-        # تمييز_نسبة (tamyeez) is also less specific
-        if rel_name == "تمييز_نسبة":
-            return 8
-
-        # Object relations (مفعول) are less specific than subject
-        if rel_name.startswith("مفعول"):
-            return 7
-
-        # بدل (badal/apposition) is less specific, give lower priority
-        if rel_name.startswith("بدل"):
-            return 10
-
-        # توكيد (emphasis) is also less specific
-        if rel_name.startswith("توكيد"):
-            return 10
-
-        # Default priority
         return 5
 
     def _get_ontology_classes(self, analysis: MorphAnalysis) -> list[str]:

@@ -12,6 +12,8 @@ _DICT_DB = _DATA_DIR / "arabicdictionary.sqlite"
 _FREQ_DB = _DATA_DIR / "wordfreq.sqlite"
 _STOP_WORDS = _DATA_DIR / "stopwords.txt"
 
+STOP_WORD_FREQUENCY = 1000
+
 
 def _open_db(path: Path) -> sqlite3.Connection:
     """Open a read-only SQLite connection with Row factory."""
@@ -71,6 +73,10 @@ class ArramoozClient:
             except sqlite3.OperationalError:
                 logger.exception("Error querying table {}", table)
 
+        for word in self._stop_words:
+            stop_word_dict = {"unvocalized": word, "table": "stop_words"}
+            results.append(stop_word_dict)
+
         return results
 
     def check_word_exists(self, word: str) -> bool:
@@ -124,7 +130,8 @@ class ArramoozClient:
             except sqlite3.OperationalError:
                 logger.exception("Error fetching words from {}", table)
 
-        words.update(self._stop_words)
+        for word in self._stop_words:
+            words.add(word)
 
         logger.info("Fetched {} normalized words from dictionary", len(words))
         return list(words)
@@ -161,6 +168,9 @@ class ArramoozClient:
                 return int(row["freq"])
         except sqlite3.OperationalError:
             logger.exception("Error querying word frequency for {!r}", word)
+
+        if word in self._stop_words:
+            return STOP_WORD_FREQUENCY
         return 0
 
     def get_words_by_root(

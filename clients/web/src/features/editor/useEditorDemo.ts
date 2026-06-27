@@ -196,7 +196,13 @@ export function editorDemoReducer(
           const target = draft.corrections.find(
             (correction) => correction.id === action.correctionId,
           );
-          if (!target || target.status === "stale") return draft;
+          if (
+            !target ||
+            target.status === "stale" ||
+            target.kind !== "correction"
+          ) {
+            return draft;
+          }
 
           const { start, end } = target.span;
           if (draft.body.slice(start, end) !== target.original) {

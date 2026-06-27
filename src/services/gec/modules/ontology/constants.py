@@ -64,3 +64,10 @@ ONTOLOGY_CLASSES = {
     "مثنى": "dual",
     "جمع": "plural",
 }
+
+BASE_PRIORITIES = {
+    "مفعول": 7,
+    "تمييز": 8,
+    "بدل": 10,
+    "توكيد": 10,
+}

@@ -18,15 +18,13 @@ class EditTaggerService(GECModule):
 
     def __init__(self):
         """Initialize EditTaggerService."""
-        best_model_path = Path(
-            "src/services/gec/models/gec_models/edit_tagger_v1/checkpoint-3642"
-        )
+        best_model_path = Path("src/services/gec/models/edit_tagger_v1/checkpoint-3642")
         inference_model = AutoModelForTokenClassification.from_pretrained(
             best_model_path
         )
         tokenizer = Tokenizer()
         self.tagger_engine = TaggerEngine(model=inference_model, tokenizer=tokenizer)
 
-    def run(self, payload: GECInput) -> ModuleResult:
+    def run(self, input: GECInput) -> ModuleResult:
         """Run the tagger module and return candidate edits."""
-        return self.tagger_engine.process(input_txt=payload)
+        return self.tagger_engine.process(payload=input)

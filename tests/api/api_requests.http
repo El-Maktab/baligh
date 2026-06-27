@@ -1,0 +1,89 @@
+# VS Code REST Client file to test Baligh API endpoints
+# Base URL (adjust if running on a different host/port)
+@baseUrl = http://127.0.0.1:8000
+
+### 1. List all drafts
+GET {{baseUrl}}/api/v1/drafts/ HTTP/1.1
+
+### 2. Create a new draft
+POST {{baseUrl}}/api/v1/drafts/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Test Draft",
+  "body": "هذه نص تجريبي مبدأي."
+}
+
+### 3. Get a draft (replace <DRAFT_ID> after creation)
+GET {{baseUrl}}/api/v1/drafts/draft-95422fdf-db9b-4a50-aaff-65b7eb8e2b34 HTTP/1.1
+
+### 4. Update a draft (partial update)
+PATCH {{baseUrl}}/api/v1/drafts/draft-95422fdf-db9b-4a50-aaff-65b7eb8e2b34 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "body": "النص بعد التعديث."
+}
+
+### 5. Delete a draft (replace <DRAFT_ID> after creation)
+DELETE {{baseUrl}}/api/v1/drafts/draft-d0a107ca-793f-4c74-9e8b-4c979ffb3390 HTTP/1.1
+
+### 6. Run analysis on a draft
+POST {{baseUrl}}/api/v1/drafts/draft-95422fdf-db9b-4a50-aaff-65b7eb8e2b34/analyze HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "هذا النص يحتوى على خطأ.",
+  "selection": { "start": 23, "end": 23 },
+  "caret": 23,
+  "clientRevision": 1,
+  "categories": ["spelling", "grammar", "style"]
+}
+
+### 7. Accept a correction (replace <CORRECTION_ID>)
+POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/corrections/corr-4fbd8aff-5901-43e8-96d3-02a15c78daaa/accept HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "هذا النص يحتوى على خطأ.",
+  "clientRevision": 1
+}
+
+### 8. Ignore a correction (replace <CORRECTION_ID>)
+POST {{baseUrl}}/api/v1/drafts/draft-1c8e1f9c-b4d3-4abf-b8db-3003a7faa956/corrections/corr-13bc3491-3992-4dcf-8808-9aab2571db8b/ignore HTTP/1.1
+Content-Type: application/json
+
+{
+  "clientRevision": 1
+}
+
+### 9. Get suggestions for a draft
+POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/suggestions HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "الكتابة هي الم",
+  "selection": { "start": 14, "end": 14 },
+  "caret": 14,
+  "clientRevision": 1,
+  "mode": "word",
+  "limit": 3
+}
+
+### 10. Apply Tashkeel (diacritization) to a draft
+POST {{baseUrl}}/api/v1/drafts/<DRAFT_ID>/tashkeel HTTP/1.1
+Content-Type: application/json
+
+{
+  "body": "كتب بليغ نصا",
+  "selection": { "start": 0, "end": 12 },
+  "clientRevision": 1
+}
+
+# ---------------------------------------------------------------
+# Note:
+# - Replace <DRAFT_ID> with the actual UUID returned from the create request.
+# - Replace <CORRECTION_ID> with an ID from the `corrections` array returned by the analysis endpoint.
+# - The API expects JSON bodies; adjust fields as needed for your tests.
+# - Run the FastAPI server (uvicorn src.api.app:app --reload) before executing these requests.

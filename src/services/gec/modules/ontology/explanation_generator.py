@@ -40,7 +40,7 @@ class ExplanationGenerator:
 
     def generate_explanation(
         self,
-        relation_type: str,
+        relation_uri: str,
         expected_features: dict[str, Any],
         actual_features: dict[str, Any],
     ) -> str:
@@ -54,15 +54,6 @@ class ExplanationGenerator:
         Returns:
             The explanation string in Arabic.
         """
-        # Map legacy names to URIs
-        relation_uri = relation_type
-        if not relation_type.startswith("http"):
-            if relation_type == "subject_verb":
-                relation_uri = "http://arabicontology.org/oas_grammar.owl#فاعل"
-            elif relation_type == "noun_adjective":
-                relation_uri = "http://arabicontology.org/oas_grammar.owl#نعت"
-            elif relation_type == "idafa":
-                relation_uri = "http://arabicontology.org/oas_grammar.owl#مضاف_اليه"
 
         # Determine violation type
         violation_type = "case_mismatch"
@@ -118,34 +109,5 @@ class ExplanationGenerator:
                     res = res.replace("{actual_case}", str(actual_case))
                     res = res.replace("{number_type}", number_type)
                     return res
-
-        # Legacy fallbacks
-        norm_type = (
-            relation_type.split("#")[-1] if "#" in relation_type else relation_type
-        )
-        if norm_type in ("subject_verb", "فاعل"):
-            expected_case = expected_features.get("case")
-            actual_case = actual_features.get("case")
-            if expected_case == "nominative" and actual_case in (
-                "accusative",
-                "genitive",
-            ):
-                return "الفاعل يجب أن يكون مرفوعاً"
-
-            expected_number = expected_features.get("number")
-            actual_number = actual_features.get("number")
-            if expected_number == "singular" and actual_number in ("dual", "plural"):
-                return "إذا تقدم الفعل على الفاعل، لزم إفراده"
-
-            return "الفاعل يجب أن يكون مرفوعاً"
-
-        elif norm_type in ("noun_adjective", "نعت"):
-            return "النعت يتبع المنعوت في التذكير والتأنيث"
-
-        elif norm_type in ("idafa", "مضاف_اليه"):
-            actual_number = actual_features.get("number")
-            if actual_number == "dual":
-                return "تحذف نون المثنى عند الإضافة"
-            return "تحذف نون جمع المذكر السالم عند الإضافة"
 
         return "مخالفة في قواعد التركيب النحوي"

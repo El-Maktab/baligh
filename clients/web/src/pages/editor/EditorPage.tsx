@@ -70,6 +70,18 @@ function DraftList({
   activeDraftId: string;
   selectDraft: (draftId: string) => void;
 }) {
+  if (drafts.length === 0) {
+    return (
+      <div className="editor-page__empty-state">
+        <span>
+          <FolderOpen aria-hidden="true" size={20} />
+        </span>
+        <strong>لا توجد مسودات بعد</strong>
+        <p>أضف نصاً جديداً لتظهره هذه القائمة.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="editor-page__draft-list" aria-label="المسودات">
       {drafts.map((draft) => (
@@ -306,16 +318,29 @@ export function EditorPage() {
     return (
       <main className="editor-page editor-page--loading">
         <div className="editor-page__loading-state">
-          <LoaderCircle
-            aria-hidden="true"
-            className="editor-page__spinner"
-            size={26}
-          />
-          <p>
-            {draftsLoading || isHydratingDraft
-              ? "جار تجهيز المحرر..."
-              : "لا توجد مسودة نشطة."}
-          </p>
+          {draftsLoading || isHydratingDraft ? (
+            <>
+              <LoaderCircle
+                aria-hidden="true"
+                className="editor-page__spinner"
+                size={26}
+              />
+              <p>جار تجهيز المحرر...</p>
+            </>
+          ) : (
+            <>
+              <FolderOpen aria-hidden="true" size={26} />
+              <strong>لا توجد مسودة نشطة</strong>
+              <p>أنشئ أول مسودة وسنفتحها لك مباشرة داخل المحرر.</p>
+              <ArabicConfettiButton
+                className="editor-page__primary-action"
+                onPress={addDraft}
+              >
+                <FilePlus2 aria-hidden="true" size={18} />
+                إضافة أول نص
+              </ArabicConfettiButton>
+            </>
+          )}
         </div>
       </main>
     );
@@ -399,6 +424,7 @@ export function EditorPage() {
               <article
                 className="editor-page__correction-card"
                 data-active={focusedCorrectionId === correction.id || undefined}
+                data-kind={correction.kind}
                 data-stale={stale || undefined}
                 data-tone={correction.category}
                 key={correction.id}
@@ -413,23 +439,38 @@ export function EditorPage() {
                     <span className="editor-page__correction-tag">
                       {meta.label}
                     </span>
+                    {correction.kind === "detection" && (
+                      <span className="editor-page__correction-tag">
+                        رصد فقط
+                      </span>
+                    )}
                     <span className="editor-page__correction-line">
                       {correction.lineLabel}
                     </span>
                   </span>
                   <strong>{correction.title}</strong>
-                  <span className="editor-page__correction-change">
-                    <del>{correction.original}</del>
-                    <span aria-hidden="true">←</span>
-                    <ins>{correction.replacement}</ins>
+                  <span className="editor-page__correction-line">
+                    {correction.taxonomyLabel}
                   </span>
+                  {correction.kind === "correction" ? (
+                    <span className="editor-page__correction-change">
+                      <del>{correction.original}</del>
+                      <span aria-hidden="true">←</span>
+                      <ins>{correction.replacement}</ins>
+                    </span>
+                  ) : (
+                    <span className="editor-page__correction-change">
+                      <span>النص المرصود:</span>
+                      <strong>{correction.original}</strong>
+                    </span>
+                  )}
                 </button>
 
                 {expanded && (
                   <div className="editor-page__correction-details">
                     <p>{correction.explanation}</p>
                     <p className="editor-page__rule-link">
-                      {correction.ruleLabel}
+                      {correction.ruleLabel} · {correction.sourceModule}
                     </p>
                     {stale && (
                       <p className="editor-page__stale-note">
@@ -438,19 +479,21 @@ export function EditorPage() {
                       </p>
                     )}
                     <div className="editor-page__correction-actions">
-                      <Button
-                        className="editor-page__accept-button"
-                        isDisabled={stale}
-                        onPress={() => acceptCorrection(correction.id)}
-                      >
-                        <Check aria-hidden="true" size={16} />
-                        قبول
-                      </Button>
+                      {correction.kind === "correction" && (
+                        <Button
+                          className="editor-page__accept-button"
+                          isDisabled={stale}
+                          onPress={() => acceptCorrection(correction.id)}
+                        >
+                          <Check aria-hidden="true" size={16} />
+                          قبول
+                        </Button>
+                      )}
                       <Button
                         className="editor-page__ignore-button"
                         onPress={() => ignoreCorrection(correction.id)}
                       >
-                        تجاهل
+                        {correction.kind === "correction" ? "تجاهل" : "إخفاء"}
                       </Button>
                     </div>
                   </div>

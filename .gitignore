@@ -25,6 +25,7 @@ test-results/
 *.tsbuildinfo
 .env.local
 .env.*.local
+.env
 
 
 #############################
@@ -53,6 +54,10 @@ env/
 #############################
 # Data/Resources
 #############################
+/artifacts/
+/src/services/ged/detectors/lexicon/dictionary
+/src/services/ged/data
+/src/services/nws/data
 /src/services/ged/features/subsystems/lexicon/dictionary
-src/services/gec/data/edit_tagger/
-src/services/gec/models/gec_models
+/src/services/gec/data/edit_tagger/
+/src/services/gec/models/

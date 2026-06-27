@@ -29,18 +29,43 @@ export type TashkeelResult = {
   applied: boolean;
 };
 
-export type Correction = {
+export type FindingKind = "correction" | "detection";
+
+type FindingBase = {
   id: string;
+  kind: FindingKind;
+  actionable: boolean;
   category: CorrectionCategory;
+  bucket: CorrectionCategory;
   status: CorrectionStatus;
   span: EditorSelection;
   title: string;
   lineLabel: string;
   original: string;
-  replacement: string;
   explanation: string;
   ruleLabel: string;
+  taxonomyCode: string;
+  taxonomyLabel: string;
+  sourceModule: string;
+  confidence?: number;
+  tokenRefs?: number[];
+  alternatives?: string[];
 };
+
+export type CorrectionFinding = FindingBase & {
+  kind: "correction";
+  actionable: true;
+  replacement: string;
+};
+
+export type DetectionFinding = FindingBase & {
+  kind: "detection";
+  actionable: false;
+  replacement: null;
+};
+
+export type EditorFinding = CorrectionFinding | DetectionFinding;
+export type Correction = EditorFinding;
 
 export type CorrectionCounts = Record<CorrectionCategory | "all", number>;
 
@@ -85,6 +110,7 @@ export type AnalysisState = "idle" | "loading" | "ready" | "error";
 export type DraftUpdatePayload = {
   title?: string;
   body?: string;
+  formatting?: EditorFormatting;
   clientRevision: DraftRevision;
 };
 

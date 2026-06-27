@@ -7,7 +7,10 @@ import type { Correction } from "./types";
 
 const correction: Correction = {
   id: "correction-1",
+  kind: "correction",
+  actionable: true,
   category: "spelling",
+  bucket: "spelling",
   status: "active",
   span: { start: 3, end: 7 },
   title: "تصحيح",
@@ -16,6 +19,9 @@ const correction: Correction = {
   replacement: "جميلٌ",
   explanation: "شرح",
   ruleLabel: "قاعدة",
+  taxonomyCode: "OT:sample",
+  taxonomyLabel: "sample",
+  sourceModule: "DICTIONARY",
 };
 
 const formatting = {

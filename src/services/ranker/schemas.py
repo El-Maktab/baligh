@@ -5,7 +5,7 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 from src.core.schemas import Token
-from src.services.gec.schemas import ModuleResult
+from src.services.gec.schemas import ModuleName, ModuleResult
 from src.services.ged.schemas import ErrorSpan
 
 
@@ -16,8 +16,11 @@ class RankedEdit(BaseModel):
     span: tuple[int, int]
     token_refs: list[int]
     correction: str
-    selected_module: str
+    selected_module: ModuleName
     final_score: float
+    edit_confidence: float
+    explanation: str | None = None
+    alternatives: list[str] | None = None
 
 
 class RankingMetadata(BaseModel):

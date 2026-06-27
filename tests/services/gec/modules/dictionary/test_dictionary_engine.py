@@ -34,7 +34,7 @@ class TestDictionaryEngine(unittest.TestCase):
         )
 
     def test_engine_process_ged_flagged(self):
-        """Test that GED-flagged orthography tokens get high confidence."""
+        """Only GED lexicon-flagged orthography tokens should get edits."""
         tokens = [
             Token(
                 index=0,
@@ -80,23 +80,19 @@ class TestDictionaryEngine(unittest.TestCase):
         self.assertIsInstance(result, ModuleResult)
         self.assertEqual(result.module_name, ModuleName.DICTIONARY)
 
-        # Both OOV tokens (2 and 3) should produce edits
+        # Only the GED lexicon-flagged token should produce an edit
         ged_edits = [e for e in result.candidate_edits if 2 in e.token_refs]
         unflagged_edits = [e for e in result.candidate_edits if 3 in e.token_refs]
 
         self.assertGreaterEqual(len(ged_edits), 1)
-        self.assertGreaterEqual(len(unflagged_edits), 1)
+        self.assertEqual(len(unflagged_edits), 0)
 
         # GED-flagged token should have confidence >= 0.85
         ged_edit = ged_edits[0]
         self.assertGreaterEqual(ged_edit.edit_confidence, 0.85)
 
-        # Unflagged OOV token should have lower confidence than GED-flagged
-        unflagged_edit = unflagged_edits[0]
-        self.assertLess(unflagged_edit.edit_confidence, ged_edit.edit_confidence)
-
     def test_engine_ged_flagged_gets_higher_confidence(self):
-        """Test that GED-flagged token gets GED confidence, unflagged gets lower."""
+        """GED lexicon-flagged tokens should inherit GED confidence."""
         tokens = [
             Token(
                 index=0,
@@ -141,9 +137,6 @@ class TestDictionaryEngine(unittest.TestCase):
 
         ged_edit = [e for e in result.candidate_edits if 2 in e.token_refs][0]
         self.assertAlmostEqual(ged_edit.edit_confidence, 0.92)
-
-        unflagged_edit = [e for e in result.candidate_edits if 3 in e.token_refs][0]
-        self.assertAlmostEqual(unflagged_edit.edit_confidence, 0.5)
 
     def test_engine_no_edits_returns_correct(self):
         """Test that the module returns CORRECT status when no edits are found."""
@@ -211,6 +204,42 @@ class TestDictionaryEngine(unittest.TestCase):
         result = self.engine.process(input_data)
 
         self.assertEqual(len(result.candidate_edits), 0)
+
+    def test_engine_non_lexicon_orthography_errors_are_ignored(self):
+        """Only GED dictionary spans should unlock dictionary suggestions."""
+        tokens = [
+            Token(
+                index=0,
+                form="المردسة",
+                span=(0, 7),
+                norm_span=(0, 7),
+                affix_structure="DET+STEM",
+            ),
+        ]
+        morph = MorphAnalysis(token_index=0, pos="noun")
+        orthography_error = ErrorSpan(
+            span=(0, 7),
+            token_refs=[0],
+            category=ErrorCategory.ORTHOGRAPHY,
+            subtype="spelling",
+            confidence=0.95,
+            sources=[ErrorSource.RULE_BASED],
+            provenance_tier=ProvenanceTier.TIER_1_RULE_DERIVED,
+            explanation_eligible=True,
+            explanation_text="Orthography error from non-lexicon detector",
+        )
+
+        input_data = GECInput(
+            text="المردسة",
+            tokens=tokens,
+            morph_features=[[morph]],
+            errors_span=[orthography_error],
+        )
+
+        result = self.engine.process(input_data)
+
+        self.assertEqual(result.status, ModuleStatus.CORRECT)
+        self.assertEqual(result.candidate_edits, [])
 
 
 if __name__ == "__main__":

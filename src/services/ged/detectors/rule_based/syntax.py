@@ -143,8 +143,18 @@ def check_noun_adj_definiteness(
                 j += 1
                 continue
             if adj_morph.pos == "ADJ" and adj_morph.definiteness is not None:
-                if adj_morph.definiteness != noun_morph.definiteness:
-                    hits.append((tokens[j].span[0], tokens[j].span[1], tokens[j].index))
+                if adj_morph.definiteness == noun_morph.definiteness:
+                    break
+                # A definite noun followed by an indefinite adjective is often a
+                # valid mubtada-khabar sequence (for example: "الكتابان مفيدان"),
+                # so treating every such pair as naat-man'oot creates noisy
+                # false positives.
+                if (
+                    noun_morph.definiteness == "definite"
+                    and adj_morph.definiteness == "indefinite"
+                ):
+                    break
+                hits.append((tokens[j].span[0], tokens[j].span[1], tokens[j].index))
             break
 
     return hits

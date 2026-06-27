@@ -8,7 +8,6 @@ dependencies = [
     "pydantic>=2.13.4",
     "pyarabic",
     "torch>=2.4",
-    "arramooz-pysqlite",
     "sparqlwrapper",
     "pyyaml>=6.0",
     "loguru>=0.7.3",
@@ -20,7 +19,13 @@ dependencies = [
     "sentencepiece>=0.2.0",
     "transformers>=4.43.4",
     "accelerate>=0.21.0",
-    "pytorch-crf>=0.1.0"
+    "pytorch-crf>=0.1.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "motor>=3.6.0",
+    "python-dotenv>=1.0.0",
+    "pydantic-settings>=2.0.0",
+    "gdown>=4.9.0",
 ]
 
 [dependency-groups]
@@ -53,6 +58,7 @@ quote-style = "double"
 [tool.mypy]
 python_version = "3.12"
 files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = [
