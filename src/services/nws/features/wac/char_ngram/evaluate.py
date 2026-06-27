@@ -5,19 +5,18 @@ Authors:
 """
 
 import argparse
-import json
 import logging
 import sys
 from collections import defaultdict
-from pathlib import Path  # noqa: E402
+from pathlib import Path
 
-from src.services.nws.features.wac.char_ngram.dataset import (  # noqa: E402
+from src.services.nws.features.wac.char_ngram.dataset import (
     generate_prefix_pairs,
     get_eval_stream,
 )
-from src.services.nws.features.wac.char_ngram.model import CharNGramLM  # noqa: E402
-from src.services.nws.features.wac.char_ngram.serializer import load_model  # noqa: E402
-from tqdm import tqdm  # noqa: E402
+from src.services.nws.features.wac.char_ngram.model import CharNGramLM
+from src.services.nws.features.wac.char_ngram.serializer import load_model
+from tqdm import tqdm
 
 logging.basicConfig(
     level=logging.INFO,

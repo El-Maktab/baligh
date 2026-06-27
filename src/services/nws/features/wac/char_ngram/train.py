@@ -13,7 +13,7 @@ from src.services.nws.features.wac.char_ngram.counter import NGramCounter
 from src.services.nws.features.wac.char_ngram.dataset import (
     get_eval_stream,
 )
-from src.services.nws.features.wac.char_ngram.serializer import save_model 
+from src.services.nws.features.wac.char_ngram.serializer import save_model
 from src.services.nws.features.wac.char_ngram.smoother import (
     KneserNeySmoother,
 )

@@ -50,6 +50,7 @@ def normalise_arabic(text: str) -> str:
 # NWS Orchestrator
 #############################################################################
 
+
 class NWSOrchestrator:
     """Orchestrates predictions using Caching, WAC, and NWP modules."""
 
@@ -106,7 +107,7 @@ class NWSOrchestrator:
                     if context_text
                     else input_data.current_fragment
                 )
-            
+
             full_text = normalise_arabic(full_text)
             model_results = self.wac.predict(full_text, top_k=input_data.top_k)
 
