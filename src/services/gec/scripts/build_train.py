@@ -10,10 +10,10 @@ from src.services.gec.config import (
     ID2LABEL_PATH,
     LABEL2ID_PATH,
     MIN_LABEL_FREQUENCY,
+    NOPNX_TRAIN_OUTPUT,
+    PNX_TRAIN_OUTPUT,
     TRAIN_COR_PATH,
     TRAIN_SENT_PATH,
-    PNX_TRAIN_OUTPUT,
-    NOPNX_TRAIN_OUTPUT,
 )
 from src.services.gec.features.common import build_feature_builder
 from src.services.gec.features.exporter import DatasetExporter
@@ -44,7 +44,7 @@ def build_train() -> None:
     logger.info("examples created")
 
     pruner = LabelPruner(min_frequency=MIN_LABEL_FREQUENCY)
-    
+
     examples = pruner.prune(examples)
     logger.info("pruned")
     vocab_builder = LabelVocabularyBuilder()

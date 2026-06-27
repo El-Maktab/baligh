@@ -27,7 +27,7 @@ class DatasetExporter:
             record = {
                 "subwords": examples.subwords,
                 "labels": examples.labels,
-                "labels_star": examples.labels_star
+                "labels_star": examples.labels_star,
             }
             file.write(
                 json.dumps(
