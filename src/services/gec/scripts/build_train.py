@@ -10,13 +10,17 @@ from src.services.gec.config import (
     ID2LABEL_PATH,
     LABEL2ID_PATH,
     MIN_LABEL_FREQUENCY,
+    NOPNX_TRAIN_OUTPUT,
+    PNX_TRAIN_OUTPUT,
     TRAIN_COR_PATH,
     TRAIN_SENT_PATH,
 )
 from src.services.gec.features.common import build_feature_builder
+from src.services.gec.features.exporter import DatasetExporter
 from src.services.gec.features.feature_builder import FeatureBuilder
 from src.services.gec.features.pruner import LabelPruner
 from src.services.gec.features.vocabulary import LabelVocabularyBuilder
+from src.services.gec.modules.edit_tagger.preprocessing.segregator import Segregator
 
 
 def save_json(
@@ -52,6 +56,8 @@ def build_train() -> None:
 
     logger.info("label2id created")
 
-    # exporter = DatasetExporter()
-    # exporter.export_jsonl(examples, NOPNX_TRAIN_OUTPUT)
-    # exporter.export_jsonl(examples, PNX_TRAIN_OUTPUT)
+    exporter = DatasetExporter()
+    segregator = Segregator()
+    punc_examples, non_punc_examples = segregator.segregate(examples)
+    exporter.export_jsonl(punc_examples, NOPNX_TRAIN_OUTPUT)
+    exporter.export_jsonl(non_punc_examples, PNX_TRAIN_OUTPUT)

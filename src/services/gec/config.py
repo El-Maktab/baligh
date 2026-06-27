@@ -19,12 +19,6 @@ NOPNX_TRAIN_OUTPUT = PROCESSED_DATA_DIR / "qalb14_nopnx_train.jsonl"
 PNX_TRAIN_OUTPUT = PROCESSED_DATA_DIR / "qalb14_pnx_train.jsonl"
 
 MIN_LABEL_FREQUENCY = 3
-DEFAULT_LABEL = "KEEP"
+DEFAULT_LABEL = "K"
 UNK_LABEL = "[UNK_EDIT]"
 PAD_LABEL = "[PAD]"
-
-# CRF Configuration
-USE_CRF = False  # Set to True to enable CRF layer
-CRF_CHECKPOINT_SUFFIX = "_crf"  # Suffix for checkpoint directories when CRF is used
-
-MAX_LENGTH = 256

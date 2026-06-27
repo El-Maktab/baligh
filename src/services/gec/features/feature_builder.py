@@ -89,6 +89,7 @@ class FeatureBuilder:
                 self.extractor,
                 self.compressor,
             )
+
             processed_results.append(examp)
             all_results.append(examp)
             if (

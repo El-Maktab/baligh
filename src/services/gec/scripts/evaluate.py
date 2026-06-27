@@ -156,7 +156,7 @@ def main():
 
     with open(args.label2id, encoding="utf-8") as f:
         label2id = json.load(f)
-    logger.info(f"Label vocabulary: {len(label2id)} labels")
+    logger.info(f"Label vocabulary: {len(label2id)}")
 
     tokenizer = AutoTokenizer.from_pretrained(args.base_checkpoint)
 

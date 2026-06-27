@@ -12,7 +12,6 @@ def build_trainer(
     num_train_epochs=10,
     weight_decay=0.01,
     warmup_ratio=0.1,
-    use_crf: bool = False,
 ):
     """Build a HuggingFace Trainer for the edit-tagger model."""
     args = TrainingArguments(

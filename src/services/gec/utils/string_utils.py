@@ -8,8 +8,6 @@ from camel_tools.utils.normalize import (
 )
 from transformers import AutoTokenizer
 
-# Max sequence length used during training. Must stay in sync with
-# GECTrainingDataset(max_length=...) to avoid train/inference mismatch.
 _MAX_LENGTH = 256
 
 
@@ -52,12 +50,7 @@ class Tokenizer:
         return self.tokenizer.convert_tokens_to_ids(tokens)
 
     def encode(self, text: str):
-        """Encode raw Arabic text for inference.
-
-        Applies the same normalization as the QALB training corpus and
-        truncates to the training max_length so the model never sees
-        sequences longer than those it was trained on.
-        """
+        """Encode raw Arabic text for inference."""
         text = _normalize_arabic(text)
         return self.tokenizer(
             text,

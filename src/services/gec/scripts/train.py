@@ -7,9 +7,6 @@ from pathlib import Path
 from transformers import AutoTokenizer
 
 from src.services.gec.config import CHECKPOINT_PATH, LABEL2ID_PATH, TEST_JSONL_PATH
-from src.services.gec.modules.edit_tagger.crf.model_loader import (
-    load_model_with_optional_crf,
-)
 from src.services.gec.modules.edit_tagger.training.datasets import GECTrainingDataset
 from src.services.gec.modules.edit_tagger.training.trainer import build_trainer
 
@@ -46,16 +43,8 @@ def main():
         args.train_jsonl, tokenizer, label2id, max_length=args.max_length
     )
 
-    # Load the base model, optionally wrapped with CRF.
-    model = load_model_with_optional_crf(
-        checkpoint_path=args.checkpoint,
-        num_labels=len(label2id),
-        label2id=label2id,
-        use_crf=args.use_crf,
-    )
-
     trainer = build_trainer(
-        model=model,
+        model=args.checkpoint,
         train_dataset=train_dataset,
         tokenizer=tokenizer,
         output_dir=args.output_dir,

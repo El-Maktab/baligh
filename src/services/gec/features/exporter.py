@@ -11,7 +11,7 @@ class DatasetExporter:
 
     def export_jsonl(
         self,
-        examples: list[ProjectedExample],
+        examples: ProjectedExample,
         output_path: Path,
     ) -> None:
         """Export examples to a JSONL file.
@@ -24,18 +24,15 @@ class DatasetExporter:
             mode="w",
             encoding="utf-8",
         ) as file:
-            for example in examples:
-                record = {
-                    "subwords": example.subwords,
-                    "labels": example.labels,
-                }
-                if example.labels_star is not None:
-                    record["labels_star"] = example.labels_star
-
-                file.write(
-                    json.dumps(
-                        record,
-                        ensure_ascii=False,
-                    )
+            record = {
+                "subwords": examples.subwords,
+                "labels": examples.labels,
+                "labels_star": examples.labels_star,
+            }
+            file.write(
+                json.dumps(
+                    record,
+                    ensure_ascii=False,
                 )
-                file.write("\n")
+            )
+            file.write("\n")
