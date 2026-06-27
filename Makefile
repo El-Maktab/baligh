@@ -40,7 +40,7 @@ help:
 	@echo "  make run-api               Run the API server"
 	@echo ""
 
-setup: install camel-data ged-setup-prod nws-model-download
+setup: install camel-data ged-setup-prod nws-model-download text-editing-models text-editing-datasets
 	@echo "Baligh setup done"
 
 
