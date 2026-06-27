@@ -24,7 +24,7 @@ _UNFLAGGED_SYNTAX_CONFIDENCE = 0.5
 
 
 class CandidateGenerator:
-    """Generates full sentence corrections using ontology-driven approach."""
+    """Generates sentence-localized corrections using ontology-driven approach."""
 
     def __init__(
         self,
@@ -43,21 +43,48 @@ class CandidateGenerator:
 
     def generate_candidates(
         self,
+        text: str,
         tokens: list[Token],
         spans: list[ErrorSpan],
         morph_features: list[list[MorphAnalysis]],
     ) -> list[CandidateEdit]:
-        """Generates full sentence correction candidates.
+        """Generate localized correction candidates sentence by sentence.
 
         Args:
+            text: Original input text.
             tokens: Preprocessed text tokens.
             spans: Detected error spans from GED.
             morph_features: Morphological features for each token.
 
         Returns:
-            List of CandidateEdit objects, each containing a full sentence correction.
+            List of CandidateEdit objects localized to the changed sentence spans.
         """
         logger.info("tokens={} spans={}", len(tokens), len(spans))
+
+        sentence_edits: list[CandidateEdit] = []
+        for start, end in self._sentence_ranges(text, tokens):
+            sentence_tokens = tokens[start:end]
+            sentence_morph_features = morph_features[start:end]
+            sentence_spans = self._spans_for_sentence(sentence_tokens, spans)
+            sentence_edits.extend(
+                self._generate_sentence_candidates(
+                    sentence_tokens,
+                    sentence_spans,
+                    sentence_morph_features,
+                )
+            )
+
+        return sentence_edits
+
+    def _generate_sentence_candidates(
+        self,
+        tokens: list[Token],
+        spans: list[ErrorSpan],
+        morph_features: list[list[MorphAnalysis]],
+    ) -> list[CandidateEdit]:
+        """Generate ranked localized edits for a single sentence slice."""
+        if not tokens:
+            return []
 
         ged_syntax_spans = [
             span for span in spans if span.category == ErrorCategory.SYNTAX
@@ -115,7 +142,7 @@ class CandidateGenerator:
         if not token_alternatives:
             return []
 
-        # Step 4: Generate complete sentences by combining alternatives
+        # Step 4: Generate sentence-level candidates by combining alternatives
         original_sentence = "".join(
             token.form + (" " if i < len(tokens) - 1 else "")
             for i, token in enumerate(tokens)
@@ -125,7 +152,7 @@ class CandidateGenerator:
             tokens, original_sentence, token_alternatives
         )
 
-        # Step 5: Rank complete sentences
+        # Step 5: Rank sentence candidates, then emit only localized changed spans
         ranked_edits = self._rank_complete_sentences(
             tokens,
             original_sentence,
@@ -133,8 +160,70 @@ class CandidateGenerator:
             token_explanations,
         )
 
-        logger.info("Generated {} complete sentence candidates", len(ranked_edits))
+        logger.info("Generated {} localized ontology edits", len(ranked_edits))
         return ranked_edits
+
+    @staticmethod
+    def _sentence_ranges(text: str, tokens: list[Token]) -> list[tuple[int, int]]:
+        """Split tokens into sentence-like ranges using punctuation and newlines."""
+        if not tokens:
+            return []
+
+        sentence_breakers = {".", "!", "?", "؟", ";", "؛"}
+        ranges: list[tuple[int, int]] = []
+        start = 0
+
+        for index, token in enumerate(tokens[:-1]):
+            next_token = tokens[index + 1]
+            gap = text[token.span[1] : next_token.span[0]]
+            if token.form in sentence_breakers or "\n" in gap or "\r" in gap:
+                ranges.append((start, index + 1))
+                start = index + 1
+
+        ranges.append((start, len(tokens)))
+        return [
+            (range_start, range_end)
+            for range_start, range_end in ranges
+            if range_start < range_end
+        ]
+
+    @staticmethod
+    def _spans_for_sentence(
+        sentence_tokens: list[Token],
+        spans: list[ErrorSpan],
+    ) -> list[ErrorSpan]:
+        """Filter GED spans to those that belong to the current sentence."""
+        if not sentence_tokens:
+            return []
+
+        local_index_by_global_ref = {
+            token.index: local_index
+            for local_index, token in enumerate(sentence_tokens)
+        }
+        sentence_start = sentence_tokens[0].span[0]
+        sentence_end = sentence_tokens[-1].span[1]
+
+        sentence_spans: list[ErrorSpan] = []
+        for span in spans:
+            local_token_refs = [
+                local_index_by_global_ref[token_ref]
+                for token_ref in span.token_refs
+                if token_ref in local_index_by_global_ref
+            ]
+            overlaps_sentence = (
+                span.span[0] < sentence_end and span.span[1] > sentence_start
+            )
+            if not local_token_refs and not overlaps_sentence:
+                continue
+            sentence_spans.append(
+                span.model_copy(
+                    update={
+                        "token_refs": local_token_refs,
+                    }
+                )
+            )
+
+        return sentence_spans
 
     def _generate_alternatives_for_token(
         self,
@@ -279,66 +368,77 @@ class CandidateGenerator:
         complete_sentences: list[dict],
         token_explanations: dict[int, str],
     ) -> list[CandidateEdit]:
-        """Rank complete sentences and convert to OntologyCandidateEdit objects."""
+        """Rank sentence candidates and emit localized changed-token edits."""
         if not complete_sentences:
             return []
 
         sentence_edits = []
-        metadata_by_edit_id: dict[int, tuple[list[tuple[int, str]], str | None]] = {}
+        metadata_by_edit_id: dict[int, list[tuple[int, str]]] = {}
         for cs in complete_sentences:
             sentence = cs["sentence"]
             token_forms = cs["token_forms"]
             confidence = cs["min_confidence"]
-
-            explanation = None
-            if token_forms:
-                first_tidx = token_forms[0][0]
-                explanation = token_explanations.get(first_tidx)
 
             edit = CandidateEdit(
                 span=(0, len(original_sentence)),
                 token_refs=list(range(len(tokens))),
                 correction=sentence,
                 edit_confidence=confidence,
-                explanation=explanation,
             )
             sentence_edits.append(edit)
-            metadata_by_edit_id[id(edit)] = (token_forms, explanation)
+            metadata_by_edit_id[id(edit)] = token_forms
 
         ranked_sentences = self._ranking_engine.rank_complete_sentences(
             sentence_edits, original_sentence
         )
-        return [
-            self._localize_ranked_edit(
-                tokens=tokens,
-                token_forms=metadata_by_edit_id[id(edit)][0],
-                confidence=edit.edit_confidence,
-                explanation=metadata_by_edit_id[id(edit)][1],
-            )
-            for edit in ranked_sentences
-        ]
+        if not ranked_sentences:
+            return []
+
+        best_sentence = ranked_sentences[0]
+        return self._localize_ranked_edit(
+            tokens=tokens,
+            token_forms=metadata_by_edit_id[id(best_sentence)],
+            confidence=best_sentence.edit_confidence,
+            token_explanations=token_explanations,
+        )
 
     def _localize_ranked_edit(
         self,
         tokens: list[Token],
         token_forms: list[tuple[int, str]],
         confidence: float,
-        explanation: str | None,
-    ) -> CandidateEdit:
-        """Convert a sentence-level correction into a localized candidate edit."""
-        token_indices = [token_index for token_index, _ in token_forms]
-        first_token = min(token_indices)
-        last_token = max(token_indices)
-        replacement_forms = dict(token_forms)
-        replacement = " ".join(
-            replacement_forms.get(index, tokens[index].form)
-            for index in range(first_token, last_token + 1)
-        )
+        token_explanations: dict[int, str],
+    ) -> list[CandidateEdit]:
+        """Convert a ranked sentence candidate into localized changed-span edits."""
+        if not token_forms:
+            return []
 
-        return CandidateEdit(
-            span=(tokens[first_token].span[0], tokens[last_token].span[1]),
-            token_refs=token_indices,
-            correction=replacement,
-            edit_confidence=confidence,
-            explanation=explanation,
-        )
+        sorted_token_forms = sorted(token_forms)
+        replacement_forms = dict(token_forms)
+        grouped_indices: list[list[int]] = []
+
+        for token_index, _ in sorted_token_forms:
+            if not grouped_indices or token_index != grouped_indices[-1][-1] + 1:
+                grouped_indices.append([token_index])
+            else:
+                grouped_indices[-1].append(token_index)
+
+        localized_edits: list[CandidateEdit] = []
+        for group in grouped_indices:
+            first_token = group[0]
+            last_token = group[-1]
+            replacement = " ".join(
+                replacement_forms.get(index, tokens[index].form)
+                for index in range(first_token, last_token + 1)
+            )
+            localized_edits.append(
+                CandidateEdit(
+                    span=(tokens[first_token].span[0], tokens[last_token].span[1]),
+                    token_refs=[tokens[index].index for index in group],
+                    correction=replacement,
+                    edit_confidence=confidence,
+                    explanation=token_explanations.get(first_token),
+                )
+            )
+
+        return localized_edits

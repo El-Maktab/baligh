@@ -51,6 +51,7 @@ class OntologyEngine:
         )
         try:
             edits = self._candidate_generator.generate_candidates(
+                input_data.text,
                 input_data.tokens,
                 input_data.errors_span,
                 input_data.morph_features,
