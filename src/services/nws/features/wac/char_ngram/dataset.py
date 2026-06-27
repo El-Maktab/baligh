@@ -1,3 +1,9 @@
+"""Dataset processing for character n-gram language modeling.
+
+Authors:
+    Akram Hany
+"""
+
 import re
 from collections.abc import Iterator
 
@@ -17,6 +23,7 @@ def clean_text_for_lm(text: str) -> str:
 
 
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -28,16 +35,8 @@ def get_eval_stream(
 ) -> Iterator[str]:
     """Get a streaming iterator over the dataset split."""
     if dataset_name == "lstm":
-        logger.info(f"Streaming from LSTM corpus output for {split_type} split...")
-        from pathlib import Path
-
-        current_dir = Path(__file__).resolve().parent
-        while current_dir.name and not (current_dir / "pyproject.toml").exists():
-            current_dir = current_dir.parent
-
-        data_file = (
-            current_dir / f"src/services/nws/data/lstm_corpus/corpus_{split_type}.txt"
-        )
+        logger.info(f"Streaming LSTM corpus: {split_type}")
+        data_file = Path(f"src/services/nws/data/ar_corpus/corpus_{split_type}.txt")
         if not data_file.exists():
             raise FileNotFoundError(f"LSTM corpus not found at {data_file}")
 
@@ -57,16 +56,14 @@ def get_eval_stream(
                     break
         return
 
-    logger.info(f"Connecting to HuggingFace to stream: {dataset_name}")
+    logger.info(f"Streaming HuggingFace dataset: {dataset_name}")
     dataset = load_dataset(dataset_name, split="train", streaming=True)
 
     if dataset_name == "CALM/arwiki":
-        logger.info("Shuffling Wikipedia articles (buffer=10000)...")
+        logger.info("Shuffling dataset (buffer: 10000)")
         dataset = dataset.shuffle(seed=42, buffer_size=10_000)
     else:
-        logger.info(
-            f"Skipping shuffle for {dataset_name} to guarantee instant startup."
-        )
+        logger.info(f"Skipping shuffle for {dataset_name}")
 
     if dataset_name == "CALM/arwiki":
         if split_type == "train":
@@ -76,7 +73,6 @@ def get_eval_stream(
         elif split_type == "test":
             dataset = dataset.skip(120_000).take(20_000)
     elif dataset_name == "mohres/The_Arabic_E-Book_Corpus":
-        # For the books dataset, there are only ~1,745 rows (books).
         if split_type == "train":
             dataset = dataset.take(1_500)
         elif split_type == "val":
@@ -88,7 +84,6 @@ def get_eval_stream(
 
     chars_processed = 0
     for row in dataset:
-        # Different datasets use different column names for their main text
         raw_text = row.get("text", row.get("content", row.get("document", "")))
         if not raw_text:
             continue
@@ -107,10 +102,7 @@ def get_eval_stream(
 
 
 def generate_prefix_pairs(text: str) -> list[tuple[str, str, int]]:
-    """Implements Format B: Generate (prefix, word, prefix_len) pairs.
-
-    Includes preceding context words so the CharNGramLM can score based on context history.
-    """
+    """Generate (prefix, word, prefix_len) pairs from text."""
     words = text.split()
     pairs = []
     for i, word in enumerate(words):

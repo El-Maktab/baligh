@@ -1,25 +1,22 @@
-"""Module docstring."""
+"""Evaluation module for character n-gram language models.
+
+Authors:
+    Akram Hany
+"""
 
 import argparse
-import json
 import logging
 import sys
+from collections import defaultdict
 from pathlib import Path
 
-current_dir = Path(__file__).resolve().parent
-while current_dir.name and not (current_dir / "pyproject.toml").exists():
-    current_dir = current_dir.parent
-sys.path.append(str(current_dir))  # noqa: E402
-
-from collections import defaultdict
-
-from src.services.nws.evaluation.wac.char_ngram.dataset import (  # noqa: E402
+from src.services.nws.features.wac.char_ngram.dataset import (
     generate_prefix_pairs,
     get_eval_stream,
 )
-from src.services.nws.features.wac.char_ngram.model import CharNGramLM  # noqa: E402
-from src.services.nws.features.wac.char_ngram.serializer import load_model  # noqa: E402
-from tqdm import tqdm  # noqa: E402
+from src.services.nws.features.wac.char_ngram.model import CharNGramLM
+from src.services.nws.features.wac.char_ngram.serializer import load_model
+from tqdm import tqdm
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """Function docstring."""
+    """Evaluate Char N-gram LM on Test Set."""
     parser = argparse.ArgumentParser(description="Evaluate Char N-gram LM on Test Set")
     parser.add_argument(
         "--dataset",
@@ -56,35 +53,35 @@ def main():
 
     model_path = Path(args.model)
     if not model_path.exists():
-        logger.error(f"Model not found at {model_path}")
+        logger.error(f"Model not found: {model_path}")
         sys.exit(1)
 
-    logger.info("Loading model...")
+    logger.info("Loading model")
     model = CharNGramLM(load_model(model_path))
 
-    logger.info("Loading Test dataset stream...")
+    logger.info("Loading test dataset")
     test_stream = get_eval_stream(
         dataset_name=args.dataset, split_type="test", limit_chars=args.limit_chars
     )
 
-    logger.info("Generating Format B (prefix, word) pairs...")
+    logger.info("Generating prefix pairs")
     test_pairs = []
     # We load chunks into memory to generate pairs.
     for chunk in test_stream:
         test_pairs.extend(generate_prefix_pairs(chunk))
 
-    logger.info(f"Generated {len(test_pairs):,} pairs.")
+    logger.info(f"Pairs generated: {len(test_pairs)}")
     if not test_pairs:
-        logger.error("No pairs generated.")
+        logger.error("No pairs generated")
         sys.exit(1)
 
-    # Cap test pairs for a reliable mathematical evaluation
+    # Cap test pairs
     max_eval_pairs = 250
     if len(test_pairs) > max_eval_pairs:
-        logger.info(f"Capping evaluation to {max_eval_pairs} pairs for speed...")
+        logger.info(f"Capped evaluation to {max_eval_pairs} pairs")
         test_pairs = test_pairs[:max_eval_pairs]
 
-    logger.info("Computing metrics in a single optimized pass...")
+    logger.info("Computing metrics")
     hits_1, hits_3, hits_5 = 0, 0, 0
     rr_sum = 0.0
     ksr_total_without = 0
@@ -108,7 +105,7 @@ def main():
             rank = predictions.index(true_word) + 1
             rr_sum += 1.0 / rank
 
-        # KSR (Using user specified top_k)
+        # KSR
         ksr_predictions = predictions[: args.top_k]
         ksr_without = len(true_word)
         if true_word in ksr_predictions:
@@ -118,7 +115,6 @@ def main():
         ksr_total_without += ksr_without
         ksr_total_with += ksr_with
 
-        # Record for breakdown
         pairs_by_len[prefix_len].append((true_word, predictions[:5]))
 
     n_pairs = len(test_pairs)
@@ -128,14 +124,14 @@ def main():
     mrr = rr_sum / n_pairs if n_pairs else 0.0
     ksr = 1.0 - (ksr_total_with / ksr_total_without) if ksr_total_without else 0.0
 
-    logger.info("--- Final Evaluation Results ---")
+    logger.info("Evaluation results:")
     logger.info(f"Top-1 Accuracy: {top_1:.4f}")
     logger.info(f"Top-3 Accuracy: {top_3:.4f}")
     logger.info(f"Top-5 Accuracy: {top_5:.4f}")
     logger.info(f"MRR: {mrr:.4f}")
     logger.info(f"KSR (K={args.top_k}): {ksr:.4f}")
 
-    logger.info("Computing breakdown by prefix length...")
+    logger.info("Computing prefix length breakdown")
 
     breakdown = {}
     for length in sorted(pairs_by_len.keys())[:10]:
@@ -144,29 +140,8 @@ def main():
         sub_acc = sub_hits_5 / len(sub_pairs)
         breakdown[length] = {"count": len(sub_pairs), "top_5_acc": round(sub_acc, 4)}
         logger.info(
-            f"Prefix length {length}: Top-5 Acc = {sub_acc:.4f} (n={len(sub_pairs)})"
+            f"Prefix length {length} Top-5 Acc: {sub_acc:.4f} (n={len(sub_pairs)})"
         )
-
-    out_path = Path(args.output)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-
-    report = {
-        "model": str(model_path),
-        "split": "test",
-        "pairs_evaluated": len(test_pairs),
-        "metrics": {
-            "top_1_accuracy": round(top_1, 4),
-            "top_3_accuracy": round(top_3, 4),
-            "top_5_accuracy": round(top_5, 4),
-            "mrr": round(mrr, 4),
-            f"ksr_k{args.top_k}": round(ksr, 4),
-        },
-        "breakdown_by_prefix_length": breakdown,
-    }
-
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2)
-    logger.info(f"Report saved to {out_path}")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,12 @@
+"""LSTM-based Neural Next-Word Predictor.
+
+Defines a PyTorch LSTM language model and a high-level wrapper that manages
+autoregressive beam-search generation and tokenization via SentencePiece.
+
+Authors:
+    - Akram Hany
+"""
+
 import math
 
 import sentencepiece as spm
@@ -23,6 +32,15 @@ class ArabicLSTMLM(nn.Module):
         num_layers: int,
         dropout: float,
     ):
+        """Initializes the LSTM language model.
+
+        Args:
+            vocab_size: The number of tokens in the vocabulary.
+            embed_dim: Dimensionality of the token embeddings.
+            hidden_size: Number of features in the LSTM hidden state.
+            num_layers: Number of recurrent layers.
+            dropout: Dropout probability applied between LSTM layers.
+        """
         super().__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -55,6 +73,15 @@ class ArabicLSTMLM(nn.Module):
     def forward(
         self, input_ids: torch.Tensor, hidden: tuple | None = None
     ) -> tuple[torch.Tensor, tuple]:
+        """Performs a forward pass through the language model.
+
+        Args:
+            input_ids: A batch of token IDs.
+            hidden: The previous hidden state tuple (h_n, c_n). Defaults to None.
+
+        Returns:
+            A tuple containing the output logits and the new hidden state.
+        """
         x = self.drop(self.embedding(input_ids))
         x, hidden = self.lstm(x, hidden)
         x = self.drop(x)
@@ -64,6 +91,14 @@ class ArabicLSTMLM(nn.Module):
         return logits, hidden
 
     def init_hidden(self, batch_size: int) -> tuple[torch.Tensor, torch.Tensor]:
+        """Initializes a zeroed hidden state for a new batch.
+
+        Args:
+            batch_size: The number of sequences in the batch.
+
+        Returns:
+            A tuple of (h_0, c_0) zero tensors.
+        """
         h = torch.zeros(
             self.num_layers,
             batch_size,
@@ -75,9 +110,16 @@ class ArabicLSTMLM(nn.Module):
 
 
 class LSTMNWPModel:
-    """Wrapper that conforms to the WordNGramLM protocol."""
+    """Wrapper that manages SentencePiece tokenization and LSTM inference."""
 
     def __init__(self, model_path: str, sp_model_path: str, device: str = "cpu"):
+        """Initializes the LSTM wrapper and loads the pre-trained weights.
+
+        Args:
+            model_path: Path to the PyTorch model checkpoint (.pt).
+            sp_model_path: Path to the SentencePiece model file (.model).
+            device: The device to run inference on ('cpu' or 'cuda'). Defaults to 'cpu'.
+        """
         self.device = torch.device(device)
         self.sp = spm.SentencePieceProcessor(model_file=sp_model_path)
 
@@ -94,7 +136,14 @@ class LSTMNWPModel:
         self.model.eval()
 
     def score_sequence(self, tokens: list[str]) -> float:
-        """Calculate the average log-probability of a sequence for perplexity."""
+        """Calculates the average log-probability of a sequence for perplexity evaluation.
+
+        Args:
+            tokens: A list of string tokens representing the sequence.
+
+        Returns:
+            The average negative log-likelihood (log probability) of the sequence.
+        """
         if not tokens:
             return 0.0
 
@@ -121,7 +170,17 @@ class LSTMNWPModel:
     def predict_next_word_beam(
         self, text: str, top_k: int = 5, beam_width: int = 10
     ) -> list[tuple[str, float]]:
-        """Predict the top-k next words using autoregressive beam search."""
+        """Predicts the top-k next words using autoregressive beam search.
+
+        Args:
+            text: The normalized Arabic text preceding the cursor.
+            top_k: The number of top completed words to return. Defaults to 5.
+            beam_width: The number of active paths to maintain during search. Defaults to 10.
+
+        Returns:
+            A list of tuples containing (word, length_normalized_log_prob) sorted
+            in descending order of log probability.
+        """
         import re
 
         ARABIC_CHARS = re.compile(r"[\u0600-\u06FF\u0750-\u077F]")

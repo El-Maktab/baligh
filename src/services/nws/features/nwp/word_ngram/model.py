@@ -1,6 +1,7 @@
 """The runtime Word N-Gram Language Model.
 
-Provides Next Word Prediction (NWP) based on integerized n-gram counts.
+Authors:
+    Akram Hany
 """
 
 import math
@@ -10,16 +11,19 @@ from src.services.nws.features.nwp.word_ngram.vocab import Vocabulary
 
 
 class WordNGramLM:
+    """Language model for word N-grams."""
+
     def __init__(self, model_data: dict[int, Any]):
+        """Initialize the WordNGramLM."""
         self.model_data = model_data
         self.max_n = max(model_data.keys())
         self.p_continuation = model_data[1]
         self.vocab = Vocabulary()
 
-        # Pre-sort unigrams for fast fallback
+        # Pre-sort unigrams for fallback.
         self._top_unigrams = sorted(
             self.p_continuation.items(), key=lambda x: x[1], reverse=True
-        )[:100]  # Keep top 100 for fast padding
+        )[:100]  # Keep top 100 for padding.
 
     def _get_word_prob(self, word_id: int, context: tuple[int, ...]) -> float:
         """Recursively calculate P(word_id | context) using Modified Kneser-Ney."""
@@ -40,10 +44,7 @@ class WordNGramLM:
         return discounted_p + lambd * self._get_word_prob(word_id, context[1:])
 
     def score_sequence(self, tokens: list[str]) -> float:
-        """Calculate the average log-probability of a token sequence.
-
-        Used for Perplexity calculations.
-        """
+        """Calculate the average log-probability of a token sequence."""
         if not tokens:
             return 0.0
 
@@ -89,8 +90,7 @@ class WordNGramLM:
         ]
         current_ctx = tuple(context_ids)
 
-        # Gather candidate target IDs from the exact context backoff chain
-        # to avoid scoring all 100,000 words in the dictionary.
+        # Get candidate target IDs from backoff.
         candidates = set()
         ctx_len = len(current_ctx)
 
@@ -105,12 +105,11 @@ class WordNGramLM:
             if ctx_data:
                 candidates.update(ctx_data["probs"].keys())
                 if debug:
-                    ctx_words = [self.vocab.id_to_word(cid) for cid in sub_ctx]
-                    print(f"[DEBUG] Found {n}-Gram match for context: {ctx_words}")
+                    pass
 
         scored = []
         for cand_id in candidates:
-            # Skip predicting punctuation or special tokens
+            # Skip punctuation and special tokens.
             if cand_id < 0:
                 continue
             p = self._get_word_prob(cand_id, current_ctx)
@@ -120,12 +119,8 @@ class WordNGramLM:
 
         results = [self.vocab.id_to_word(cid) for cid, p in scored[:top_k]]
 
-        # If the backoff chain didn't yield enough results, pad with global Top Unigrams
+        # Pad with top unigrams if needed.
         if len(results) < top_k:
-            if debug:
-                print(
-                    f"[DEBUG] Padding remaining {top_k - len(results)} slots using Unigram backoff!"
-                )
             for cand_id, p in self._top_unigrams:
                 if cand_id >= 0:
                     word = self.vocab.id_to_word(cand_id)

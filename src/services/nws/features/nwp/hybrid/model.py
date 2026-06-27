@@ -1,3 +1,12 @@
+"""Hybrid Arabic Next-Word Predictor.
+
+A hybrid approach that uses the lstm model along with the word n-gram
+model to give a balanced prediction.
+
+Authors:
+    - Akram Hany
+"""
+
 import math
 
 from src.services.nws.features.nwp.lstm.model import (
@@ -7,76 +16,68 @@ from src.services.nws.features.nwp.word_ngram.model import WordNGramLM
 
 
 class HybridArabicPredictor:
+    """A hybrid model combining LSTM and N-Gram predictions."""
+
     def __init__(self, neural_model: LSTMNWPModel, kn_model: WordNGramLM):
+        """Initializes the HybridArabicPredictor."""
         self.neural = neural_model
         self.kn = kn_model
 
     def predict(self, context_text: str, top_k: int = 5) -> list[tuple[str, float]]:
-        """Predicts the top-k next words using Confidence-Weighted Blending."""
-        # 1. Take the last N characters (where N covers ~32 subword tokens)
-        # SentencePiece handles the text internally
-        context_ids = self.neural.sp.encode(context_text, out_type=int)[-32:]
-        if not context_ids:
+        """Predicts the top-k next words using Confidence-Weighted mix."""
+        if not context_text.strip():
             return []
 
-        # 2. Run the LSTM Autoregressive Beam Search to extract top-K full words
+        # Extract top-K words using LSTM
         neural_results = self.neural.predict_next_word_beam(
             context_text, top_k=top_k * 2
         )
 
-        neural_candidates = {}
+        neural_log_probs = {}
         for word, score in neural_results:
-            # Convert length-normalized log probability back to raw probability for blending
-            neural_candidates[word] = math.exp(score)
+            neural_log_probs[word] = score
 
-        # The max_neural_prob is used for alpha blending scaling. We use the top word's prob
-        if neural_candidates:
-            max_neural_prob = max(neural_candidates.values())
+        if neural_log_probs:
+            max_neural_log_prob = max(neural_log_probs.values())
         else:
-            max_neural_prob = 0.0
+            max_neural_log_prob = -float("inf")
 
-        # 4. Query the Kneser-Ney model with the last 2 full words
-        # Clean the context to match the N-Gram dictionary format
+        # Get N-Gram results
         context_tokens = context_text.strip().split()
         kn_candidates = self.kn.predict_next(context_tokens, top_k=top_k * 2)
 
         kn_scores = {}
         for word in kn_candidates:
-            # Re-calculate the exact Kneser-Ney probability for blending
-            # score_token returns log_prob, so we exp() it to get raw probability or use log-space directly
             log_p = self.kn.score_token(context_tokens, word)
             kn_scores[word] = log_p
 
-        # 5. Compute the confidence of the neural model
-        if max_neural_prob > 0.35:
+        # Compute confidence
+        if max_neural_log_prob > math.log(0.35):
             alpha = 0.75
         else:
             alpha = 0.50
 
-        # 6. Merge the two candidate lists and sum weighted log-probabilities
+        # Merge candidate lists
         combined_scores = {}
-        all_words = set(list(neural_candidates.keys()) + list(kn_scores.keys()))
+        all_words = set(list(neural_log_probs.keys()) + list(kn_scores.keys()))
 
         for word in all_words:
-            # Get neural log_prob
-            if word in neural_candidates:
-                p_n = max(neural_candidates[word], 1e-10)
-                log_n = math.log(p_n)
+            if word in neural_log_probs:
+                log_n = neural_log_probs[word]
             else:
-                log_n = -10.0  # Heavy penalty for unseen
+                log_n = -20.0  # Penalty for unseen words
 
-            # Get KN log_prob
             if word in kn_scores:
                 log_kn = kn_scores[word]
             else:
-                # Ask KN model to score it even if it wasn't in its top-k
+                # Score unsuggested words
                 log_kn = self.kn.score_token(context_tokens, word)
 
-            # Confidence-Weighted Blending Formula
+            # Merge formula
             final_score = (alpha * log_n) + ((1.0 - alpha) * log_kn)
             combined_scores[word] = final_score
 
-        # Return the top-5 words sorted by combined score
+        # Sort results
         top_results = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)[
             :top_k
         ]
@@ -84,7 +85,7 @@ class HybridArabicPredictor:
         if not top_results:
             return []
 
-        # Softmax normalization over the top-K candidates
+        # Normalize scores
         max_score = top_results[0][1]
         exp_scores = [math.exp(score - max_score) for _, score in top_results]
         sum_exp = sum(exp_scores)

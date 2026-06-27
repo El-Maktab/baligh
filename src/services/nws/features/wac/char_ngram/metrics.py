@@ -1,3 +1,9 @@
+"""Metrics calculation for character n-gram models.
+
+Authors:
+    Akram Hany
+"""
+
 import math
 from collections.abc import Iterable
 
@@ -7,11 +13,7 @@ from src.services.nws.features.wac.char_ngram.model import CharNGramLM
 def compute_perplexity(
     model: CharNGramLM, text_stream: Iterable[str]
 ) -> tuple[float, float, int]:
-    """Computes cross-entropy (BPC) and perplexity on raw text stream.
-
-    Returns:
-        (bpc, perplexity, total_characters)
-    """
+    """Compute cross-entropy (BPC) and perplexity on raw text stream."""
     total_log_prob = 0.0
     total_chars = 0
     context_len = model.max_n - 1
@@ -39,6 +41,7 @@ def compute_perplexity(
 def top_k_accuracy(
     test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int
 ) -> float:
+    """Calculate the top-k accuracy of the model."""
     hits = 0
     for prefix, true_word in test_pairs:
         predictions = [p[0] for p in model.predict(prefix, top_k=k)]
@@ -50,6 +53,7 @@ def top_k_accuracy(
 def mean_reciprocal_rank(
     test_pairs: list[tuple[str, str]], model: CharNGramLM, max_k: int = 10
 ) -> float:
+    """Calculate the mean reciprocal rank of the model."""
     rr_sum = 0.0
     for prefix, true_word in test_pairs:
         predictions = [p[0] for p in model.predict(prefix, top_k=max_k)]
@@ -62,6 +66,7 @@ def mean_reciprocal_rank(
 def keystroke_savings_rate(
     test_pairs: list[tuple[str, str]], model: CharNGramLM, k: int
 ) -> float:
+    """Calculate the keystroke savings rate."""
     total_without = 0
     total_with = 0
     for prefix, true_word in test_pairs:
