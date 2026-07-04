@@ -10,10 +10,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.services.ged.config import GED_ROOT
+from src.runtime_config import REPO_ROOT
 
 FORBIDDEN_SUBSTRINGS = ("&gt;", "&lt;", ">", "<")
-DATA_ROOT = GED_ROOT / "data" / "ml"
+DATA_ROOT = REPO_ROOT / "src" / "services" / "ged" / "data" / "ml"
 
 
 @dataclass(frozen=True)

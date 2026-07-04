@@ -1,0 +1,56 @@
+api:
+  mongodb_uri: mongodb://localhost:27017/baligh
+  nws_config_path:
+
+ged:
+  detectors:
+    rule_based:
+      enabled: true
+    lexicon:
+      enabled: true
+    ml:
+      enabled: true
+  lexicon:
+    patterns_path: src/services/ged/detectors/lexicon/resources/patterns.yaml
+    dictionary:
+      raw_dir: src/services/ged/detectors/lexicon/dictionary
+      processed_dir: src/services/ged/detectors/lexicon/dictionary/processed
+      words_source: arabic-wordlist-1.6.txt
+      entities_source: WIKIFANE_gazet_NE_wordlist.txt
+      words_trie: words.marisa
+      entity_phrases_trie: entity_phrases.marisa
+      entity_tokens_trie: entity_tokens.marisa
+      metadata: metadata.json
+    spelling_suspicion:
+      enabled: true
+  ml:
+    bundle_dir: artifacts/ged/ml/crf-surface-morph-v2/v0.2.0
+
+gec:
+  modules:
+    ontology:
+      enabled: false
+    dictionary:
+      enabled: false
+    tagger:
+      enabled: false
+  edit_tagger:
+    model_dir: src/services/gec/models/edit_tagger_v1/checkpoint-3642
+    raw_data_dir: src/services/gec/data/edit_tagger/raw
+    processed_data_dir: src/services/gec/data/edit_tagger/processed
+    test_jsonl_path: src/services/gec/data/edit_tagger/processed/test_tokens_labels
+    checkpoint_path: src/services/gec/data/edit_tagger/processed/tokens_labels.jsonl
+    train_sent_path: src/services/gec/data/edit_tagger/raw/train/QALB-2014-L1-Train.sent
+    train_cor_path: src/services/gec/data/edit_tagger/raw/train/QALB-2014-L1-Train.cor
+    label2id_path: src/services/gec/data/edit_tagger/processed/label2id.json
+    id2label_path: src/services/gec/data/edit_tagger/processed/id2label.json
+    nopnx_train_output: src/services/gec/data/edit_tagger/processed/qalb14_nopnx_train.jsonl
+    pnx_train_output: src/services/gec/data/edit_tagger/processed/qalb14_pnx_train.jsonl
+    min_label_frequency: 3
+    default_label: K
+    unk_label: "[UNK_EDIT]"
+    pad_label: "[PAD]"
+
+nws:
+  enabled: false
+ranker: {}

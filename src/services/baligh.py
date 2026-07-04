@@ -2,9 +2,11 @@
 
 from pathlib import Path
 
-from src.services.gec.schemas import GECInput
+from src.runtime_config import RuntimeConfig, load_runtime_config
+from src.services.gec.schemas import GECInput, ModuleName
 from src.services.gec.serving.controller import GECController
 from src.services.gec.serving.dictionary_module import DictionaryService
+from src.services.gec.serving.module import GECModule
 from src.services.gec.serving.ontology_module import OntologyService
 from src.services.gec.serving.tagger_module import EditTaggerService
 from src.services.ged.detectors.lexicon.detector import LexiconDetector
@@ -33,18 +35,51 @@ from src.services.ranker.schemas import RankerInput, RankerOutput
 class Baligh:
     """Main Baligh class for Arabic text correction."""
 
-    def __init__(self):
-        """Initialize Baligh with all service controllers."""
-        ontology = OntologyService()
-        dictionary = DictionaryService()
-        tagger = EditTaggerService()
-        self.gec = GECController(ontology, dictionary, tagger)
+    def __init__(self, runtime_config: RuntimeConfig | None = None):
+        """Initialize Baligh with config-driven service controllers."""
+        self.runtime_config = runtime_config or load_runtime_config()
 
-        rule_detector = RuleBasedDetector()
-        lexicon_detector = LexiconDetector()
-        ml_detector = MLDetector()
-        detectors = [rule_detector, lexicon_detector, ml_detector]
-        self.ged = GEDService(detectors)
+        self.gec = GECController(self._build_gec_modules())
+        self.ged = GEDService(self._build_ged_detectors())
+        self.nws = self._build_nws()
+
+        self.ranker = RankerService()
+
+    def _build_gec_modules(self):
+        """Instantiate enabled GEC modules in ranker-friendly order."""
+        modules: list[tuple[ModuleName, GECModule]] = []
+        module_config = self.runtime_config.gec.modules
+        if module_config.ontology.enabled:
+            modules.append((ModuleName.ONTOLOGY, OntologyService()))
+        if module_config.dictionary.enabled:
+            modules.append((ModuleName.DICTIONARY, DictionaryService()))
+        if module_config.tagger.enabled:
+            modules.append(
+                (
+                    ModuleName.TAG,
+                    EditTaggerService(config=self.runtime_config.gec.edit_tagger),
+                )
+            )
+        return modules
+
+    def _build_ged_detectors(self):
+        """Instantiate enabled GED detectors in fusion order."""
+        detectors = []
+        detector_config = self.runtime_config.ged.detectors
+        if detector_config.rule_based.enabled:
+            detectors.append(RuleBasedDetector())
+        if detector_config.lexicon.enabled:
+            detectors.append(LexiconDetector(config=self.runtime_config.ged.lexicon))
+        if detector_config.ml.enabled:
+            detectors.append(
+                MLDetector(bundle_dir=self.runtime_config.ged.ml.resolved_bundle_dir)
+            )
+        return detectors
+
+    def _build_nws(self) -> NWSOrchestrator | None:
+        """Instantiate NWS only when enabled."""
+        if not self.runtime_config.nws.enabled:
+            return None
 
         curr_dir = Path(__file__).resolve().parent
         dir = curr_dir / "nws" / "data"
@@ -64,13 +99,11 @@ class Baligh:
             tier3=UserLRUCache(maxsize=1000),
         )
 
-        self.nws = NWSOrchestrator(
+        return NWSOrchestrator(
             cache_manager=cache_manager,
             nwp_model=hybrid,
             wac_model=char_model,
         )
-
-        self.ranker = RankerService()
 
     def run(self, input_text: str) -> tuple[RankerOutput, GEDOutput]:
         """Run the full Baligh pipeline on input text."""
@@ -107,6 +140,11 @@ class Baligh:
         """Run the NWS"""
         preprocessing_input = PreprocessingInput(text=input_text)
         preprocessing_output: PreprocessingOutput = preprocess(preprocessing_input)
+        if self.nws is None:
+            return NWSOutput(
+                mode=preprocessing_output.mode,
+                suggestions=[],
+            )
         nws_input = NWSInput(
             tokens=preprocessing_output.tokens,
             morph_features=preprocessing_output.morph_features,

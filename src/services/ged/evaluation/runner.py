@@ -7,7 +7,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from src.services.ged.config import load_ged_config
+from src.runtime_config import load_runtime_config
 from src.services.ged.detectors import BaseDetector
 from src.services.ged.detectors.ml.artifact import read_manifest
 from src.services.ged.evaluation.datasets import (
@@ -65,7 +65,7 @@ def evaluate(config: EvaluationConfig) -> EvaluationReport:
             LexiconDetector(),
             MLDetector(),
         ]
-        manifest = read_manifest(load_ged_config().ml.resolved_bundle_dir)
+        manifest = read_manifest(load_runtime_config().ged.ml.resolved_bundle_dir)
     except Exception as error:
         raise EvaluationError(f"Failed to initialize GED resources: {error}") from error
 

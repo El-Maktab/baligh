@@ -21,7 +21,7 @@ from src.core.utils.arabic import (
     loose_arabic_lookup_key,
     normalize_arabic_surface,
 )
-from src.services.ged.config import LexiconDictionaryConfig, load_ged_config
+from src.runtime_config import LexiconDictionaryConfig, load_runtime_config
 
 _WIKIFANE_RE = re.compile(r"^<(?P<tag>[^>]+)>(?P<entity>.*)</(?P=tag)>$")
 
@@ -94,7 +94,9 @@ def build_processed_lexicon(
     dictionary_config: LexiconDictionaryConfig | None = None,
 ) -> ProcessedLexiconMetadata:
     """Build word, entity phrase, and entity token tries."""
-    dictionary_config = dictionary_config or load_ged_config().lexicon.dictionary
+    dictionary_config = (
+        dictionary_config or load_runtime_config().ged.lexicon.dictionary
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     words = set(iter_clean_words(words_path))
@@ -144,7 +146,11 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
 
-    config = load_ged_config(args.config) if args.config else load_ged_config()
+    config = (
+        load_runtime_config(args.config).ged
+        if args.config
+        else load_runtime_config().ged
+    )
     dictionary_config = config.lexicon.dictionary
     metadata = build_processed_lexicon(
         words_path=args.words or dictionary_config.words_path,

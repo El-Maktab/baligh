@@ -16,7 +16,7 @@ import marisa_trie
 
 from src.core.schemas import Token
 from src.core.utils.arabic import is_arabic_word, loose_arabic_lookup_key
-from src.services.ged.config import LexiconDictionaryConfig, load_ged_config
+from src.runtime_config import LexiconDictionaryConfig, load_runtime_config
 
 
 @dataclass(frozen=True)
@@ -49,7 +49,9 @@ class LexiconTrieStore:
         processed_dir: Path | None = None,
     ) -> LexiconTrieStore:
         """Load all processed tries from disk."""
-        dictionary_config = dictionary_config or load_ged_config().lexicon.dictionary
+        dictionary_config = (
+            dictionary_config or load_runtime_config().ged.lexicon.dictionary
+        )
         processed_dir = processed_dir or dictionary_config.processed_output_dir
 
         words = marisa_trie.Trie()
@@ -128,7 +130,7 @@ def load_processed_lexicon(
     processed_dir: str | Path | None = None,
 ) -> LexiconTrieStore:
     """Load processed lexicon tries once."""
-    config = load_ged_config().lexicon.dictionary
+    config = load_runtime_config().ged.lexicon.dictionary
     return LexiconTrieStore.load(
         dictionary_config=config,
         processed_dir=Path(processed_dir) if processed_dir is not None else None,

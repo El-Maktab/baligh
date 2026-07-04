@@ -10,7 +10,7 @@ from typing import Any
 from sklearn_crfsuite import CRF
 
 from src.core.schemas import MorphAnalysis, Token
-from src.services.ged.config import load_ged_config
+from src.runtime_config import load_runtime_config
 from src.services.ged.detectors.base import BaseDetector
 from src.services.ged.detectors.ml.artifact import load_bundle
 from src.services.ged.detectors.ml.features import (
@@ -44,7 +44,9 @@ class MLDetector(BaseDetector):
             raise ValueError("Model and manifest must be provided together.")
 
         if model is None:
-            configured_dir = bundle_dir or load_ged_config().ml.resolved_bundle_dir
+            configured_dir = (
+                bundle_dir or load_runtime_config().ged.ml.resolved_bundle_dir
+            )
             model, manifest = load_bundle(configured_dir)
 
         assert manifest is not None
