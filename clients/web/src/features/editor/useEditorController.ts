@@ -375,11 +375,6 @@ export function useEditorController() {
     );
   };
 
-  const hydrateLatestDraft = (latestDraft: DraftDocument) => {
-    syncDraftCaches(latestDraft);
-    loadDraft(latestDraft);
-  };
-
   const rebaseLocalDraftOnLatest = (
     latestDraft: DraftDocument,
     options?: {
