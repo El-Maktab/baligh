@@ -15,7 +15,6 @@ import {
   LoaderCircle,
   Sparkles,
   SpellCheck2,
-  Terminal,
   X,
 } from "lucide-react";
 import type { KeyboardEvent, ReactNode } from "react";
@@ -305,10 +304,6 @@ export function EditorPage() {
         <Link className="editor-page__side-link" to="/mo3gm">
           <BookOpenText aria-hidden="true" size={19} />
           <span>المعجم</span>
-        </Link>
-        <Link className="editor-page__side-link" to="/api">
-          <Terminal aria-hidden="true" size={19} />
-          <span>واجهة البرمجة (API)</span>
         </Link>
       </section>
     </div>
