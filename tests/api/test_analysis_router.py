@@ -16,6 +16,7 @@ from src.services.ged.schemas import (
     GEDOutput,
     ProvenanceTier,
 )
+from src.services.nws.schemas import Suggestion
 from src.services.ranker.schemas import RankedEdit, RankerOutput, RankingMetadata
 
 
@@ -112,7 +113,7 @@ def test_suggestions_fall_back_when_nws_is_disabled(monkeypatch) -> None:
         )
 
     class _DisabledNWSOutput:
-        suggestions = []
+        suggestions: list[Suggestion] = []
 
     monkeypatch.setattr("src.api.routers.suggestions.get_draft", _get_draft)
     monkeypatch.setattr(

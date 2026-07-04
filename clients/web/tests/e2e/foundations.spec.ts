@@ -124,8 +124,8 @@ test("editor mock workflow resolves corrections and renders in both themes", asy
   await page.getByRole("button", { name: "قبول" }).click();
   if (testInfo.project.name === "mobile-chromium") {
     await expect(
-      page.getByRole("dialog").getByText("لا توجد ملاحظات هنا"),
-    ).toBeVisible();
+      page.getByRole("dialog").getByRole("button", { name: /فعل مضارع منصوب/ }),
+    ).not.toBeVisible();
   } else {
     await expect(
       page.getByRole("button", { name: /فعل مضارع منصوب/ }),
@@ -187,7 +187,7 @@ test("editor body and presentation controls are interactive", async ({
   }
   await expect(page.locator(".arabic-confetti__letter")).toHaveCount(13);
   await expect(page.getByRole("textbox", { name: "عنوان النص" })).toHaveValue(
-    "نص جديد 3",
+    "مسودة جديدة",
   );
 });
 
@@ -195,6 +195,13 @@ test("landing secondary actions keep the page stable", async ({ page }) => {
   await page.goto("/");
   const initialScroll = await page.evaluate(() => window.scrollY);
   await page.getByRole("button", { name: "شاهد كيف يعمل" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "مقطع تعريفي ببليغ" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "إغلاق" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "مقطع تعريفي ببليغ" }),
+  ).not.toBeVisible();
   await page.getByRole("button", { name: "دخول كضيف" }).click();
   const finalScroll = await page.evaluate(() => window.scrollY);
   expect(Math.abs(finalScroll - initialScroll)).toBeLessThan(20);

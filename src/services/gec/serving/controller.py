@@ -4,12 +4,13 @@ from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from src.services.gec.schemas import GECInput, ModuleName, ModuleResult, ModuleStatus
+from src.services.gec.serving.module import GECModule
 
 
 class GECController:
     """Orchestrate the configured GEC modules."""
 
-    def __init__(self, modules: Iterable[tuple[ModuleName, object]]):
+    def __init__(self, modules: Iterable[tuple[ModuleName, GECModule]]):
         """Initialize GECController with the enabled modules in output order."""
         self.modules = list(modules)
 

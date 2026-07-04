@@ -57,6 +57,12 @@ def test_baligh_only_constructs_enabled_modules_and_detectors(monkeypatch) -> No
 def test_run_nws_returns_empty_output_when_disabled(monkeypatch) -> None:
     """Disabled NWS should yield an empty output instead of loading models."""
     runtime_config = load_runtime_config().model_copy(deep=True)
+    runtime_config.ged.detectors.rule_based.enabled = False
+    runtime_config.ged.detectors.lexicon.enabled = False
+    runtime_config.ged.detectors.ml.enabled = False
+    runtime_config.gec.modules.ontology.enabled = False
+    runtime_config.gec.modules.dictionary.enabled = False
+    runtime_config.gec.modules.tagger.enabled = False
     runtime_config.nws.enabled = False
 
     preprocessing_output = type(

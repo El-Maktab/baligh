@@ -5,7 +5,10 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { createAppQueryClient } from "../../app/queryClient";
 import { ThemeProvider } from "../../design-system/theme/ThemeProvider";
-import { createMockEditorApi, EditorApiProvider } from "../../features/editor/api";
+import {
+  createMockEditorApi,
+  EditorApiProvider,
+} from "../../features/editor/api";
 import { EditorPage } from "./EditorPage";
 
 function renderPage() {
@@ -45,7 +48,9 @@ describe("EditorPage", () => {
       expect(screen.getByText("النص المرصود:")).toBeInTheDocument();
     });
 
-    expect(screen.queryByRole("button", { name: "قبول" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "قبول" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "إخفاء" })).toBeInTheDocument();
   });
 

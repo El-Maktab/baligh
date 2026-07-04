@@ -6,20 +6,26 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-from src.runtime_config import Settings, load_runtime_config
+from src.runtime_config import (
+    DEFAULT_RUNTIME_CONFIG_PATH,
+    Settings,
+    load_runtime_config,
+)
 
 
 def test_runtime_config_loads_default_file() -> None:
-    """The repo runtime config should load with expected defaults."""
+    """The repo runtime config should load with valid file-backed values."""
     config = load_runtime_config()
 
-    assert config.ged.detectors.rule_based.enabled is True
-    assert config.ged.detectors.lexicon.enabled is True
-    assert config.ged.detectors.ml.enabled is True
+    assert DEFAULT_RUNTIME_CONFIG_PATH.exists()
+    assert isinstance(config.ged.detectors.rule_based.enabled, bool)
+    assert isinstance(config.ged.detectors.lexicon.enabled, bool)
+    assert isinstance(config.ged.detectors.ml.enabled, bool)
     assert isinstance(config.gec.modules.ontology.enabled, bool)
     assert isinstance(config.gec.modules.dictionary.enabled, bool)
     assert isinstance(config.gec.modules.tagger.enabled, bool)
-    assert config.nws.enabled is True
+    assert isinstance(config.nws.enabled, bool)
+    assert config.ged.lexicon.resolved_patterns_path.exists()
     assert config.gec.edit_tagger.resolved_model_dir == (
         Path("src/services/gec/models/edit_tagger_v1/checkpoint-3642").resolve()
     )

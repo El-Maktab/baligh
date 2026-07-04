@@ -482,10 +482,7 @@ export function HomePage() {
         <p className="supervisor">تحت إشراف دكتور أيمن أبوالحسن</p>
       </section>
 
-      <VideoPlayerModal
-        open={videoOpen}
-        onClose={() => setVideoOpen(false)}
-      />
+      <VideoPlayerModal open={videoOpen} onClose={() => setVideoOpen(false)} />
     </main>
   );
 }

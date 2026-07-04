@@ -61,10 +61,7 @@ function TestHarness() {
       <button onClick={() => controller.updateSelection([6, 6])} type="button">
         caret-6
       </button>
-      <button
-        onClick={() => controller.updateSelection([0, 5])}
-        type="button"
-      >
+      <button onClick={() => controller.updateSelection([0, 5])} type="button">
         select-0-5
       </button>
       <button onClick={() => controller.toggleStrong([0, 5])} type="button">
@@ -195,14 +192,12 @@ describe("useEditorController", () => {
   });
 
   it("includes formatting in the draft save payload", async () => {
-    let updatePayload:
-      | {
-          title?: string;
-          body?: string;
-          formatting?: unknown;
-          clientRevision: number;
-        }
-      | null = null;
+    let updatePayload: {
+      title?: string;
+      body?: string;
+      formatting?: unknown;
+      clientRevision: number;
+    } | null = null;
     const baseApi = createMockEditorApi();
     const capturingApi: EditorApi = {
       ...baseApi,
@@ -278,9 +273,7 @@ describe("useEditorController", () => {
       },
       { timeout: 1_500 },
     );
-    expect(screen.getByTestId("suggestion-mode")).toHaveTextContent(
-      "sentence",
-    );
+    expect(screen.getByTestId("suggestion-mode")).toHaveTextContent("sentence");
   });
 
   it("starts tashkeel before any queued analyze request", async () => {

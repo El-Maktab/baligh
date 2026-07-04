@@ -18,6 +18,9 @@ This document outlines the conventions and guidelines to follow when working on 
   - [Setting up baligh for the first time](#setting-up-baligh-for-the-first-time)
     - [Prerequisites](#prerequisites)
     - [Setting up the project](#setting-up-the-project)
+    - [Environment files](#environment-files)
+    - [Running the backend](#running-the-backend)
+    - [Running the frontend](#running-the-frontend)
   - [Running Tests](#running-tests)
 
 ---
@@ -159,12 +162,40 @@ Make sure you have these installed:
 - Make
 - UV
 - Java Runtime
+- pnpm
+- mongo
 
 ### Setting up the project
 
 ```bash
-make install
-make camel-data
+make setup
+```
+
+`make setup` is the one-time project bootstrap command. It installs backend and
+frontend dependencies and downloads the runtime assets needed to run the
+application locally.
+
+### Environment files
+
+Create two local env files from the provided examples:
+
+- `.env` from `.env.example`
+- `clients/web/.env` from `clients/web/.env.example`
+
+### Running the backend
+
+Start the FastAPI server:
+
+```bash
+make run-api
+```
+
+### Running the frontend
+
+Start the web frontend:
+
+```bash
+make run-frontend
 ```
 
 ---
