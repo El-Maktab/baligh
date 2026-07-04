@@ -15,14 +15,15 @@ from transformers import (
     DataCollatorForTokenClassification,
 )
 
-from src.services.gec.config import (
-    LABEL2ID_PATH,
-    MIN_LABEL_FREQUENCY,
-    PROCESSED_DATA_DIR,
-)
+from src.runtime_config import load_runtime_config
 from src.services.gec.features.common import build_feature_builder
 from src.services.gec.features.pruner import LabelPruner
 from src.services.gec.modules.edit_tagger.training.datasets import GECTrainingDataset
+
+_EDIT_TAGGER = load_runtime_config().gec.edit_tagger
+LABEL2ID_PATH = _EDIT_TAGGER.resolved_label2id_path
+MIN_LABEL_FREQUENCY = _EDIT_TAGGER.min_label_frequency
+PROCESSED_DATA_DIR = _EDIT_TAGGER.resolved_processed_data_dir
 
 IGNORE_INDEX = -100
 BETA_SQ = 0.25

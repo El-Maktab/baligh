@@ -123,7 +123,8 @@ export const SEEDED_DRAFTS: EditorDraft[] = [
         lineLabel: "السطر 2",
         original: "تنتفخ",
         replacement: null,
-        explanation: "تم رصد موضع نحوي يحتاج مراجعة، لكن لا يوجد اقتراح تصحيح مباشر.",
+        explanation:
+          "تم رصد موضع نحوي يحتاج مراجعة، لكن لا يوجد اقتراح تصحيح مباشر.",
         ruleLabel: "SY / review_only",
         taxonomyCode: "SY:review_only",
         taxonomyLabel: "review only",

@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD034 -->
 <!-- markdownlint-disable MD041 -->
 
 <p align="center">
@@ -15,39 +16,10 @@
   <img src="https://img.shields.io/badge/license-proprietary-1B1B1B?style=flat-square" alt="License: proprietary">
 </p>
 
-
 https://github.com/user-attachments/assets/f5f6ddc8-5b6f-40d5-a7a4-1a9052c67ab8
 
-
-
-## How to run
-
-1. You need an environment with:
-   - UV
-   - Make
-   - MongoDB
-   - PNPM
-
-2. Run the setup make command
-
-```sh
-make setup
-```
-
-3. Create 2 env files for frontend and backend, based on the provided `.env.example` files in each directory.
-
-4. Run the server
-
-```sh
-make run-api
-```
-
-5. Run the frontend
-
-```sh
-cd clients/web/
-pnpm run dev
-```
+Setup, local run instructions, and contributor workflow are in
+[CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Project Documents
 

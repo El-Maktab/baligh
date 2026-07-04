@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 
 import marisa_trie
-from src.services.ged.config import load_ged_config
+from src.runtime_config import load_runtime_config
 from src.services.ged.detectors.lexicon.processor import (
     build_processed_lexicon,
     parse_wikifane_line,
@@ -28,7 +28,7 @@ def test_build_processed_lexicon_cleans_deduplicates_and_writes_tries(tmp_path):
     words_path = tmp_path / "words.txt"
     entities_path = tmp_path / "entities.txt"
     output_dir = tmp_path / "processed"
-    dictionary_config = load_ged_config().lexicon.dictionary
+    dictionary_config = load_runtime_config().ged.lexicon.dictionary
     words_path.write_text("أَحمد\nاحمد\nبَيْت\nhello\n\n", encoding="utf-8")
     entities_path.write_text(
         "<PER_Artist>\u200eجوستاف_لوبون</PER_Artist>\n"

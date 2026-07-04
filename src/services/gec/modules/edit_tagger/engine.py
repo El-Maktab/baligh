@@ -1,7 +1,7 @@
 import json
 from difflib import SequenceMatcher
 
-from src.services.gec.config import LABEL2ID_PATH
+from src.runtime_config import load_runtime_config
 from src.services.gec.modules.edit_tagger.inference.inference import (
     GECInferencePipeline,
 )
@@ -21,8 +21,9 @@ class TaggerEngine:
     def __init__(self, model, tokenizer):
         self.rewriter = Rewriter()
         self.aligner = Aligner()
+        label2id_path = load_runtime_config().gec.edit_tagger.resolved_label2id_path
 
-        with open(LABEL2ID_PATH, encoding="utf-8") as f:
+        with label2id_path.open(encoding="utf-8") as f:
             label2id = json.load(f)
         id2label = {v: k for k, v in label2id.items()}
 

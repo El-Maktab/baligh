@@ -1,53 +1,84 @@
 .PHONY: \
-	help install format lint type-check test all clean pre-commit \
+	help setup install install-backend install-frontend env-hint \
+	run run-api run-frontend \
+	format format-check lint lint-fix type-check test all pre-commit clean \
 	camel-data ged-dict-download ged-lexicon ged-ml-datasets \
 	ged-ml-model-download ged-eval-datasets ged-evaluate ged-setup-prod \
-	nws-model-download
+	nws-model-download text-editing-models text-editing-datasets
 
 # Default target
 help:
 	@echo "Baligh Development Commands"
-	@echo "============================"
+	@echo "==========================="
 	@echo ""
-	@echo "Setup:"
-	@echo "  make setup                 Setup development environment"
-	@echo "  make install               Install all dependencies"
-	@echo "  make camel-data            Download CAMeL Tools data (morphology & disambiguation)"
-	@echo "  make ged-dict-download     Download dictionaries from our drive"
+	@echo "Getting started:"
+	@echo "  make setup                 Install backend + frontend deps and runtime assets"
+	@echo "  make run-api               Run the FastAPI backend"
+	@echo "  make run-frontend          Run the web frontend"
+	@echo ""
+	@echo "Installation:"
+	@echo "  make install               Install backend and frontend dependencies"
+	@echo "  make install-backend       Install Python dependencies with uv"
+	@echo "  make install-frontend      Install frontend dependencies with pnpm"
+	@echo ""
+	@echo "Runtime assets:"
+	@echo "  make camel-data            Download CAMeL Tools data"
+	@echo "  make ged-setup-prod        Prepare GED runtime dependencies"
+	@echo "  make nws-model-download    Download NWS models"
+	@echo "  make text-editing-models   Download text editing models"
+	@echo "  make text-editing-datasets Download text editing datasets"
+	@echo ""
+	@echo "GED tooling:"
 	@echo "  make ged-lexicon           Build processed GED lexicon trie resources"
-	@echo "  make ged-ml-model-download Download a pinned Hugging Face model"
-	@echo "  make nws-model-download    Download NWS models from Hugging Face"
-	@echo "  make text-editing-models   Download text editing models from Drive"
-	@echo "  make text-editing-datasets Download text editing datasets from Drive"
-	@echo "  make ged-setup-prod        Prepare GED runtime dependencies for production"
-	@echo ""
-	@echo "GED commands:"
-	@echo "  make ged-evaluate          Evaluate all GED detectors"
-	@echo "  make ged-eval-datasets     Download GED evaluation datasets from our drive"
+	@echo "  make ged-dict-download     Download GED dictionaries"
+	@echo "  make ged-ml-model-download Download pinned GED ML model bundle"
 	@echo "  make ged-ml-datasets       Download GED ML datasets"
+	@echo "  make ged-eval-datasets     Download GED evaluation datasets"
+	@echo "  make ged-evaluate          Evaluate all GED detectors"
 	@echo ""
-	@echo "Quality Checks:"
-	@echo "  make format                Format code with ruff"
-	@echo "  make lint                  Lint code with ruff"
+	@echo "Quality:"
+	@echo "  make format                Format Python code with Ruff"
+	@echo "  make format-check          Check Python formatting"
+	@echo "  make lint                  Lint Python code with Ruff"
+	@echo "  make lint-fix              Lint and auto-fix Python code with Ruff"
 	@echo "  make type-check            Type check with mypy"
-	@echo "  make test                  Run tests with pytest"
+	@echo "  make test                  Run the Python test suite"
 	@echo "  make all                   Run format, lint, type-check, and tests"
-	@echo ""
-	@echo "Other:"
-	@echo "  make clean                 Remove temporary files and caches"
 	@echo "  make pre-commit            Run pre-commit hooks on all files"
-	@echo "  make run                   Run a Python script (usage: make run SCRIPT=src/...)"
-	@echo "  make run-api               Run the API server"
 	@echo ""
+	@echo "Utilities:"
+	@echo "  make clean                 Remove temporary files and caches"
+	@echo "  make run SCRIPT=src/...    Run a Python script with project root on PYTHONPATH"
+	@echo ""
+	@echo "After 'make setup', create backend and frontend env files from:"
+	@echo "  .env.example"
+	@echo "  clients/web/.env.example"
 
-setup: install camel-data ged-setup-prod nws-model-download text-editing-models text-editing-datasets
+
+setup: install camel-data ged-setup-prod nws-model-download text-editing-models text-editing-datasets env-hint
 	@echo "Baligh setup done"
 
 
-# Install dependencies
-install:
-	@echo "Installing dependencies..."
+install: install-backend install-frontend
+	@echo "Installed backend and frontend dependencies"
+
+
+install-backend:
+	@echo "Installing Python dependencies..."
 	uv sync --group dev
+
+
+install-frontend:
+	@echo "Installing frontend dependencies..."
+	cd clients/web && pnpm install
+
+
+env-hint:
+	@echo ""
+	@echo "Next step: create your env files from:"
+	@echo "  .env.example"
+	@echo "  clients/web/.env.example"
+
 
 # Download CAMeL Tools data
 camel-data:
@@ -55,37 +86,45 @@ camel-data:
 	uv run camel_data -i morphology-db-msa-r13
 	uv run camel_data -i disambig-mle-calima-msa-r13
 
+
 # Download GED dictionaries
 ged-dict-download:
 	@echo "Downloading GED dictionaries..."
 	uv run --with gdown gdown -O src/services/ged/detectors/lexicon/dictionary/ 1XnAZL1chShOsus-qoqDJLcGzbq_pngPg
 	uv run --with gdown gdown -O src/services/ged/detectors/lexicon/dictionary/ 1SulNK5S4KfNZSiVFu047GncG84QyoKlv
 
-# Download GED ml datasets
+
+# Download GED ML datasets
 ged-ml-datasets:
 	@echo "Downloading GED ML datasets..."
 	uv run --with gdown gdown -O src/services/ged/data/ml/qalb14/ 1QnhPR4LCfT2oG92VtnWHZWSuaPrcUVoM
 	unzip -o ./src/services/ged/data/ml/qalb14/baligh-ged-qalb14-wo-camelira-coarse-v0.1.0.zip -d ./src/services/ged/data/ml/qalb14/
 
-# Download the pinned model bundle.
+
+# Download the pinned GED model bundle
 ged-ml-model-download:
+	@echo "Downloading GED ML model bundle..."
 	uv run --with huggingface-hub hf download "amirkedis/baligh-ged-crf-morph" \
 		--repo-type model \
 		--local-dir "artifacts/ged/ml/crf-surface-morph-v2/v0.2.0"
 
+
 # Download NWS models
 nws-model-download:
+	@echo "Downloading NWS models..."
 	@mkdir -p src/services/nws/data
 	uv run --with huggingface-hub hf download akramhany65/nws_models \
 		--repo-type model \
 		--local-dir src/services/nws/data
 	@echo "Download complete! Models are ready in src/services/nws/data"
 
+
 # Download text editing models
 text-editing-models:
 	@echo "Downloading text editing models..."
 	uv run --with gdown gdown -O src/services/gec/models/ --folder 1ilLnP8Dt_cSGPzwhFmbq8K8I7XJTMgzu
 	@echo "Download complete! Models are ready in src/services/gec/models/"
+
 
 # Download text editing datasets
 text-editing-datasets:
@@ -98,49 +137,65 @@ text-editing-datasets:
 ged-setup-prod: ged-dict-download ged-lexicon ged-ml-model-download
 	@echo "GED production setup complete!"
 
+
 # Download GED evaluation datasets
 ged-eval-datasets:
 	@echo "Downloading GED evaluation datasets..."
 	uv run --with gdown gdown -O src/services/ged/data/evaluation/ 1xy-FKY6mKAztAex7e1r0m9wTUda3yY63
 	unzip -o ./src/services/ged/data/evaluation/baligh-ged-eval-datasets-v0.1.0.zip -d ./src/services/ged/data/evaluation/
 
-# Evaluate the three GED detectors and their fused output.
+
+# Evaluate the three GED detectors and their fused output
 ged-evaluate:
 	uv run python -m src.services.ged.evaluation
+
 
 # Build processed GED lexicon tries
 ged-lexicon:
 	@echo "Building GED lexicon trie resources..."
 	uv run python -m src.services.ged.detectors.lexicon.processor
 
+
 # Format code
 format:
-	@echo "Formatting code with ruff..."
+	@echo "Formatting code with Ruff..."
 	uv run ruff format .
+
+
+# Format check (without fixing)
+format-check:
+	@echo "Checking format with Ruff..."
+	uv run ruff format --check .
+
 
 # Check linting
 lint:
-	@echo "Linting code with ruff..."
+	@echo "Linting code with Ruff..."
 	uv run ruff check .
 
-# Lint code
+
+# Lint and fix code
 lint-fix:
-	@echo "Linting code with ruff..."
+	@echo "Linting code with Ruff and applying fixes..."
 	uv run ruff check --fix .
+
 
 # Type check
 type-check:
 	@echo "Type checking with mypy..."
 	uv run mypy
 
+
 # Run tests
 test:
 	@echo "Running tests with pytest..."
 	uv run pytest
 
+
 # Run all quality checks
 all: format lint type-check test
-	@echo "✓ All quality checks passed!"
+	@echo "All quality checks passed!"
+
 
 # Clean temporary files
 clean:
@@ -154,24 +209,28 @@ clean:
 	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name "build" -exec rm -rf {} + 2>/dev/null || true
-	@echo "✓ Cleaned!"
+	@echo "Cleaned!"
+
 
 # Run pre-commit hooks
 pre-commit:
 	@echo "Running pre-commit hooks..."
 	uv run pre-commit run --all-files
 
+
 # Run a Python script with project root on PYTHONPATH
 run:
 	@echo "Running $(SCRIPT)..."
 	PYTHONPATH=. uv run python $(SCRIPT)
+
 
 # Run the API server
 run-api:
 	@echo "Running API server..."
 	uv run uvicorn src.api.app:app --reload
 
-# Format check (without fixing) - useful for CI
-format-check:
-	@echo "Checking format with ruff..."
-	uv run ruff format --check .
+
+# Run the frontend dev server
+run-frontend:
+	@echo "Running frontend dev server..."
+	cd clients/web && pnpm dev

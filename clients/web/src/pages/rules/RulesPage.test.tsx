@@ -68,20 +68,21 @@ describe("RulesPage", () => {
 
   it("hides empty rule fields when the API omits examples and notes", async () => {
     renderPage({
-      listRules: async () => [
-        {
-          id: "SY_LAM_JUSSIVE",
-          category: "syntax",
-          subtype: "jussive_operator",
-          tier: "tier_1_rule_derived",
-          title: "الفعل المضارع بعد «لم» يجب أن يكون مجزومًا.",
-          explanation: "",
-          incorrect: "",
-          correct: "",
-          note: "",
-        },
-      ],
-      listCategories: async () => [{ value: "all", label: "الكل" }],
+      listRules: () =>
+        Promise.resolve([
+          {
+            id: "SY_LAM_JUSSIVE",
+            category: "syntax",
+            subtype: "jussive_operator",
+            tier: "tier_1_rule_derived",
+            title: "الفعل المضارع بعد «لم» يجب أن يكون مجزومًا.",
+            explanation: "",
+            incorrect: "",
+            correct: "",
+            note: "",
+          },
+        ]),
+      listCategories: () => Promise.resolve([{ value: "all", label: "الكل" }]),
     });
 
     await screen.findByText("الفعل المضارع بعد «لم» يجب أن يكون مجزومًا.");

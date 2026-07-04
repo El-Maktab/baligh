@@ -14,8 +14,8 @@ from src.core.utils.arabic import (
     is_arabic_word,
     normalize_arabic_surface,
 )
+from src.runtime_config import LexiconConfig, load_runtime_config
 from src.services.ged.confidence import TIER_CONFIDENCE
-from src.services.ged.config import LexiconConfig, load_ged_config
 from src.services.ged.detectors.base import BaseDetector
 from src.services.ged.detectors.lexicon.loader import load_patterns
 from src.services.ged.detectors.lexicon.models import LexiconPattern
@@ -49,7 +49,7 @@ class LexiconDetector(BaseDetector):
         processed_dir: Path | None = None,
     ) -> None:
         """Initialize the detector with curated lexicon patterns."""
-        self.config = config or load_ged_config().lexicon
+        self.config = config or load_runtime_config().ged.lexicon
         patterns_path = self.config.resolved_patterns_path
         self.patterns = (
             patterns if patterns is not None else load_patterns(patterns_path)

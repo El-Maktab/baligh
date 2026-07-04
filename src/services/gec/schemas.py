@@ -67,6 +67,5 @@ class GECInput(BaseModel):
     errors_span: list[ErrorSpan]
 
 
-# GECOutput is defined as a list of exactly three ModuleResult objects
-# (TAG, ONTOLOGY, DICTIONARY)
+# GECOutput contains only the enabled-and-executed module results for a request.
 GECOutput = list[ModuleResult]

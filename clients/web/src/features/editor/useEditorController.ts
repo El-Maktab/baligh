@@ -375,11 +375,6 @@ export function useEditorController() {
     );
   };
 
-  const hydrateLatestDraft = (latestDraft: DraftDocument) => {
-    syncDraftCaches(latestDraft);
-    loadDraft(latestDraft);
-  };
-
   const rebaseLocalDraftOnLatest = (
     latestDraft: DraftDocument,
     options?: {
@@ -784,7 +779,9 @@ export function useEditorController() {
   const acceptCorrection = (correctionId: string) => {
     const snapshot = draftRef.current;
     if (!snapshot) return;
-    const target = snapshot.corrections.find((entry) => entry.id === correctionId);
+    const target = snapshot.corrections.find(
+      (entry) => entry.id === correctionId,
+    );
     if (!target || target.kind !== "correction") return;
 
     acceptCorrectionMutation.mutate(
@@ -801,11 +798,11 @@ export function useEditorController() {
             const acceptedCorrection = current.corrections.find(
               (entry) => entry.id === correctionId,
             );
-            const nextCaret = acceptedCorrection
-              && acceptedCorrection.kind === "correction"
-              ? acceptedCorrection.span.start +
-                acceptedCorrection.replacement.length
-              : selectionRef.current[0];
+            const nextCaret =
+              acceptedCorrection && acceptedCorrection.kind === "correction"
+                ? acceptedCorrection.span.start +
+                  acceptedCorrection.replacement.length
+                : selectionRef.current[0];
             const nextDraft = {
               ...current,
               body: response.draftBody,
@@ -1041,8 +1038,16 @@ export function useEditorController() {
         ...current,
         body: nextBody,
         updatedAt: "الآن",
-        formatting: reconcileFormatting(current.formatting, current.body, nextBody),
-        corrections: resolveCorrections(current.body, nextBody, current.corrections),
+        formatting: reconcileFormatting(
+          current.formatting,
+          current.body,
+          nextBody,
+        ),
+        corrections: resolveCorrections(
+          current.body,
+          nextBody,
+          current.corrections,
+        ),
       }),
       { scheduleSave: true, scheduleAnalysis: true, closeSuggestions: true },
     );

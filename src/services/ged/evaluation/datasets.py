@@ -16,7 +16,7 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.services.ged.config import GED_ROOT
+from src.runtime_config import REPO_ROOT
 
 NO_ERROR = "UC"
 UNKNOWN = "UNK"
@@ -59,7 +59,7 @@ class GoldSentence:
     labels: tuple[str, ...]
 
 
-_DATA_ROOT = GED_ROOT / "data" / "evaluation"
+_DATA_ROOT = REPO_ROOT / "src" / "services" / "ged" / "data" / "evaluation"
 DATASETS = {
     "qalb14": DatasetSpec(
         "qalb14",

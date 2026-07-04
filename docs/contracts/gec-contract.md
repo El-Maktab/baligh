@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Defines the request/response contract for the GEC stage. The GEC stage returns outputs from three submodules:
+Defines the request/response contract for the GEC stage. The GEC stage returns outputs from the enabled submodules:
 
 - `TAG` - a sequence tagging model that identifies error spans and proposes edits with edit operations.
 - `ONTOLOGY` - a rule-based module that applies linguistic and contextual rules to identify errors and propose edits, grouped into atomic edit sets.
@@ -35,7 +35,7 @@ Each submodule returns a status plus a list of candidate edits.
 
 ### GECOutput
 
-`GECOutput` is a list of exactly three `ModuleResult` objects, one per module (`TAG`, `ONTOLOGY`, `DICTIONARY`).
+`GECOutput` is a list of `ModuleResult` objects for the enabled-and-executed GEC modules. Disabled modules are omitted from the response.
 
 ### ModuleResult
 

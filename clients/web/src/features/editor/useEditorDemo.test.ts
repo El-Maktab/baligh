@@ -71,7 +71,8 @@ describe("editorDemoReducer", () => {
     const corrections = getActiveDraft(nextState).corrections;
     expect(corrections[0]?.status).toBe("stale");
     expect(
-      corrections.find((correction) => correction.id === "correction-3")?.status,
+      corrections.find((correction) => correction.id === "correction-3")
+        ?.status,
     ).toBe("active");
   });
 

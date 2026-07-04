@@ -6,9 +6,14 @@ from pathlib import Path
 
 from transformers import AutoTokenizer
 
-from src.services.gec.config import CHECKPOINT_PATH, LABEL2ID_PATH, TEST_JSONL_PATH
+from src.runtime_config import load_runtime_config
 from src.services.gec.modules.edit_tagger.training.datasets import GECTrainingDataset
 from src.services.gec.modules.edit_tagger.training.trainer import build_trainer
+
+_EDIT_TAGGER = load_runtime_config().gec.edit_tagger
+CHECKPOINT_PATH = _EDIT_TAGGER.resolved_checkpoint_path
+LABEL2ID_PATH = _EDIT_TAGGER.resolved_label2id_path
+TEST_JSONL_PATH = _EDIT_TAGGER.resolved_test_jsonl_path
 
 
 def main():
@@ -16,7 +21,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", default="aubmindlab/bert-base-arabertv02")
     parser.add_argument("--train_jsonl", default=str(CHECKPOINT_PATH))
-    parser.add_argument("--eval_jsonl", default=TEST_JSONL_PATH)
+    parser.add_argument("--eval_jsonl", default=str(TEST_JSONL_PATH))
     parser.add_argument("--label2id", default=str(LABEL2ID_PATH))
     parser.add_argument(
         "--output_dir",
